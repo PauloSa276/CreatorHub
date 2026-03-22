@@ -230,6 +230,11 @@ html,body{
   transition:all .12s;
 }
 .user-card:hover{background:var(--s4)}
+.version-indicator{display:flex;align-items:center;gap:6px;padding:8px 14px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)}
+.version-dot{width:6px;height:6px;border-radius:50%;background:var(--gr);flex-shrink:0;animation:vPulse 2.5s ease-in-out infinite}
+.version-txt{color:var(--t3);font-weight:600}
+.version-date{margin-left:auto;opacity:.5}
+@keyframes vPulse{0%,100%{opacity:1;box-shadow:0 0 4px var(--gr)}50%{opacity:.4;box-shadow:0 0 8px var(--gr)}}
 .user-av{
   width:32px;height:32px;border-radius:var(--radius-md);
   background:var(--yr);border:1.5px solid rgba(212,160,23,.3);
@@ -501,12 +506,12 @@ html,body{
 .crm-card:last-child{margin-bottom:0}
 
 /* ── Gap 1: Briefing ── */
-.briefing-status{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:var(--radius-pill);text-transform:uppercase;letter-spacing:.06em}
+.briefing-status{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 8px;border-radius:var(--radius-pill);text-transform:uppercase;letter-spacing:.06em}
 .briefing-status.ok{background:rgba(34,197,94,.1);color:var(--gr);border:1px solid rgba(34,197,94,.2)}
 .briefing-status.pend{background:rgba(212,160,23,.1);color:var(--am);border:1px solid rgba(212,160,23,.2)}
 .briefing-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .bf-field{display:flex;flex-direction:column;gap:3px}
-.bf-lbl{font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em}
+.bf-lbl{font-family:var(--mono);font-size:11px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em}
 .bf-val{font-size:12px;color:var(--t2);line-height:1.5}
 
 /* ── Quick Access Hub ── */
@@ -519,16 +524,16 @@ html,body{
 .qa-panel.open{display:flex;animation:qaPanelIn .25s cubic-bezier(.34,1.4,.64,1)}
 @keyframes qaPanelIn{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 .qa-panel-header{padding:14px 16px 10px;border-bottom:1px solid var(--e1);display:flex;align-items:center;gap:8px}
-.qa-panel-header span{font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.1em}
+.qa-panel-header span{font-family:var(--mono);font-size:11px;color:var(--t4);text-transform:uppercase;letter-spacing:.1em}
 .qa-item{display:flex;align-items:center;gap:11px;padding:11px 16px;cursor:pointer;transition:background .12s,color .12s;color:var(--t2);font-size:13px;font-family:var(--sans);border:none;background:none;width:100%;text-align:left}
 .qa-item:hover{background:var(--s3);color:var(--t1)}
 .qa-item .qa-ic{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s}
 .qa-item:hover .qa-ic{transform:scale(1.08)}
 .qa-item .qa-label{display:flex;flex-direction:column;gap:1px}
-.qa-item .qa-label small{font-size:10px;color:var(--t4);font-family:var(--mono)}
+.qa-item .qa-label small{font-size:11px;color:var(--t4);font-family:var(--mono)}
 .qa-sep{height:1px;background:var(--e1);margin:0}
 .qa-timer-bar{padding:10px 16px;background:rgba(34,197,94,.06);border-top:1px solid rgba(34,197,94,.1);display:flex;align-items:center;justify-content:space-between;gap:8px}
-.qa-timer-bar .qa-timer-time{font-family:var(--mono);font-size:18px;font-weight:800;color:var(--gr);letter-spacing:-.02em}
+.qa-timer-bar .qa-timer-time{font-family:var(--mono);font-size:var(--fs-xl);font-weight:800;color:var(--gr);letter-spacing:-.02em}
 .focus-widget{position:fixed;bottom:84px;right:24px;z-index:212;background:var(--s2);border:1px solid var(--e3);border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,.4);padding:14px 16px;width:240px;display:none;flex-direction:column;gap:10px}
 .focus-widget.open{display:flex;animation:qaPanelIn .25s cubic-bezier(.34,1.4,.64,1)}
 .focus-time-big{font-size:34px;font-weight:800;letter-spacing:-.05em;color:var(--t1);font-family:var(--mono);text-align:center;line-height:1}
@@ -543,7 +548,7 @@ html,body{
 .report-val{font-size:14px;font-weight:700;color:var(--t1)}
 
 /* ── Gap 4: Quick Notes (drawer kept, fab removed — accessed via QA hub) ── */
-.qnbadge-inline{background:var(--y);color:#0C0C0E;font-family:var(--mono);font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;margin-left:auto}
+.qnbadge-inline{background:var(--y);color:#0C0C0E;font-family:var(--mono);font-size:11px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;margin-left:auto}
 .qnotes-drawer{position:fixed;top:0;right:0;width:340px;height:100vh;background:var(--s1);border-left:1px solid var(--e2);z-index:210;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:var(--sh3)}
 .qnotes-drawer.open{transform:translateX(0)}
 .qn-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--e2)}
@@ -552,13 +557,13 @@ html,body{
 .qn-item{background:var(--s2);border:1px solid var(--e2);border-radius:var(--radius-md);padding:10px 12px;position:relative;transition:border-color .12s}
 .qn-item:hover{border-color:var(--e3)}
 .qn-item:hover .qn-del{opacity:1}
-.qn-tag{display:inline-flex;align-items:center;font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:2px 7px;border-radius:3px;margin-bottom:5px}
+.qn-tag{display:inline-flex;align-items:center;font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:2px 7px;border-radius:3px;margin-bottom:5px}
 .qn-tag.ideia{background:rgba(167,139,250,.15);color:var(--pu)}
 .qn-tag.cliente{background:var(--yr);color:var(--y)}
 .qn-tag.copy{background:rgba(96,165,250,.12);color:var(--bl)}
 .qn-tag.ref{background:rgba(34,197,94,.1);color:var(--gr)}
 .qn-body{font-size:12px;color:var(--t2);line-height:1.5;word-break:break-word}
-.qn-date{font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:5px}
+.qn-date{font-family:var(--mono);font-size:11px;color:var(--t4);margin-top:5px}
 .qn-del{position:absolute;top:7px;right:9px;font-size:11px;color:var(--t4);cursor:pointer;opacity:0;transition:opacity .12s;padding:2px 4px}
 .qn-del:hover{color:var(--rd)}
 
@@ -567,7 +572,7 @@ html,body{
 .meta-prog-fill{height:100%;border-radius:5px;transition:width .5s ease}
 .meta-stats{display:flex;gap:20px;flex-wrap:wrap;margin-top:10px}
 .meta-stat{display:flex;flex-direction:column;gap:2px}
-.meta-stat-lbl{font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em}
+.meta-stat-lbl{font-family:var(--mono);font-size:11px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em}
 .meta-stat-val{font-size:20px;font-weight:700;letter-spacing:-.04em;color:var(--t1)}
 
 /* ── Perfil aprimorado ── */
@@ -581,15 +586,15 @@ html,body{
 .level-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--e2);display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--s3);position:relative;z-index:1;transition:all .2s}
 .level-dot.done{border-color:var(--y);background:var(--yr);color:var(--y)}
 .level-dot.current{border-color:var(--y);background:var(--y);color:#0C0C0E;font-weight:800;box-shadow:0 0 0 3px rgba(212,160,23,.2)}
-.level-lbl{font-family:var(--mono);font-size:9px;color:var(--t4);text-transform:uppercase;letter-spacing:.05em;text-align:center;white-space:nowrap}
+.level-lbl{font-family:var(--mono);font-size:11px;color:var(--t4);text-transform:uppercase;letter-spacing:.05em;text-align:center;white-space:nowrap}
 .level-lbl.done,.level-lbl.current{color:var(--y);font-weight:600}
-.level-xp{font-family:var(--mono);font-size:9px;color:var(--t4);text-align:center}
+.level-xp{font-family:var(--mono);font-size:11px;color:var(--t4);text-align:center}
 .conq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .conq-item{display:flex;flex-direction:column;align-items:center;padding:12px 8px;border-radius:var(--radius-md);border:1px solid var(--e2);background:var(--s3);gap:5px;text-align:center;transition:all .14s}
 .conq-item.unlocked{border-color:rgba(212,160,23,.35);background:rgba(212,160,23,.06)}
 .conq-item.locked{opacity:.4;filter:grayscale(.6)}
 .conq-ico{font-size:24px;line-height:1}
-.conq-name{font-family:var(--mono);font-size:10px;color:var(--t3);line-height:1.3;font-weight:500}
+.conq-name{font-family:var(--mono);font-size:11px;color:var(--t3);line-height:1.3;font-weight:500}
 .conq-item.unlocked .conq-name{color:var(--y);font-weight:600}
 
 /* ── CRM Popup ── */
@@ -857,7 +862,7 @@ html,body{
 /* ── Perfil badges ── */
 .badge{display:flex;flex-direction:column;align-items:center;gap:4px;padding:var(--sp-3);background:var(--s3);border-radius:var(--radius-md);border:1px solid var(--e2);text-align:center}
 .badge.lk{opacity:.3}
-.badge-ico{font-size:22px}
+.badge-ico{font-size:var(--fs-2xl)}
 .badge-name{font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:var(--fw-semi)}
 .skill-row{display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-2)}
 .sk-name{font-family:var(--mono);font-size:var(--fs-xs);color:var(--t2);min-width:100px}
@@ -923,14 +928,14 @@ html,body{
 .rpg-fim-cliente{font-size:17px;font-weight:700;color:var(--y);margin-bottom:3px}
 .rpg-fim-tipo{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.06em}
 .rpg-nota-wrap{display:flex;align-items:center;justify-content:center;gap:5px;margin:18px 0 6px}
-.rpg-nota-star{font-size:22px;transition:transform .2s}
+.rpg-nota-star{font-size:var(--fs-2xl);transition:transform .2s}
 .rpg-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:18px 22px}
 .rpg-stat{background:var(--s3);border:1px solid var(--e1);border-radius:var(--r3);padding:13px 11px;text-align:center}
 .rpg-stat-val{font-size:21px;font-weight:900;letter-spacing:-.04em;color:var(--t1);margin-bottom:3px}
 .rpg-stat-lbl{font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
 .rpg-stat-badge{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:20px;border:1px solid;margin-top:5px;display:inline-block;font-weight:600}
 .rpg-medalha{margin:0 22px 18px;padding:13px 16px;border-radius:var(--r3);border:1px solid;display:flex;align-items:center;gap:12px}
-.rpg-medalha-ico{font-size:28px;flex-shrink:0}
+.rpg-medalha-ico{font-size:var(--fs-3xl);flex-shrink:0}
 .rpg-medalha-titulo{font-size:14px;font-weight:800;letter-spacing:-.02em;margin-bottom:2px}
 .rpg-medalha-desc{font-family:var(--mono);font-size:11px;opacity:.7;line-height:1.5}
 .rpg-ciclos{padding:0 22px 18px}
@@ -958,7 +963,7 @@ html,body{
 .rej-opt{background:var(--s3);border:1px solid var(--e2);border-radius:var(--r2);padding:11px 13px;cursor:pointer;transition:all .15s;margin-bottom:6px;display:flex;align-items:center;gap:12px}
 .rej-opt:hover{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06)}
 .rej-opt.sel{border-color:rgba(239,68,68,.6);background:rgba(239,68,68,.08)}
-.rej-opt-ico{font-size:18px;flex-shrink:0}
+.rej-opt-ico{font-size:var(--fs-xl);flex-shrink:0}
 .rej-opt-title{font-size:13px;font-weight:600;color:var(--t1)}
 .rej-opt-desc{font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:2px}
 .notif-panel{position:fixed;top:56px;right:20px;width:300px;background:var(--s2);border:1px solid var(--e3);border-radius:var(--r3);box-shadow:var(--sh4);z-index:80;display:none;max-height:380px;overflow-y:auto}
@@ -1984,17 +1989,17 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div class="rpg-sec-title">Criticidade do cliente</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:12px">
         <div class="crit-card crit-alta" id="cc-alta" onclick="setCrit('alta')">
-          <div style="font-size:18px;margin-bottom:4px">🔴</div>
+          <div style="font-size:var(--fs-xl);margin-bottom:4px">🔴</div>
           <div style="font-size:12px;font-weight:700;color:var(--rd)">Alta</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:2px">Urgência máxima. Prazo inegociável. Tratar com prioridade total.</div>
         </div>
         <div class="crit-card crit-media" id="cc-media" onclick="setCrit('media')">
-          <div style="font-size:18px;margin-bottom:4px">🟡</div>
+          <div style="font-size:var(--fs-xl);margin-bottom:4px">🟡</div>
           <div style="font-size:12px;font-weight:700;color:var(--am)">Média</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:2px">Flexível dentro do combinado. Comunicação normal.</div>
         </div>
         <div class="crit-card crit-baixa" id="cc-baixa" onclick="setCrit('baixa')">
-          <div style="font-size:18px;margin-bottom:4px">🟢</div>
+          <div style="font-size:var(--fs-xl);margin-bottom:4px">🟢</div>
           <div style="font-size:12px;font-weight:700;color:var(--gr)">Baixa</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:2px">Ótimo relacionamento. Posso aumentar o prazo se necessário.</div>
         </div>
@@ -2084,7 +2089,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 <div class="moverlay" id="m-finalizar">
   <div class="modal" style="max-width:500px;text-align:center">
     <div style="font-size:52px;margin-bottom:12px" id="fin-emoji">🎉</div>
-    <div class="modal-title" style="text-align:center;font-size:22px;margin-bottom:6px" id="fin-proj-nome">Projeto concluído!</div>
+    <div class="modal-title" style="text-align:center;font-size:var(--fs-2xl);margin-bottom:6px" id="fin-proj-nome">Projeto concluído!</div>
     <div class="modal-sub" style="text-align:center;margin-bottom:22px">Este projeto saiu da fila de produção. Para onde vai?</div>
 
     <!-- OPÇÃO 1: FINALIZADO -->
@@ -2096,7 +2101,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     onmouseover="this.style.borderColor='var(--gr)';this.style.background='var(--gb)'"
     onmouseout="this.style.borderColor='var(--e2)';this.style.background='var(--s3)'">
       <div style="display:flex;align-items:center;gap:12px">
-        <div style="font-size:28px">✅</div>
+        <div style="font-size:var(--fs-3xl)">✅</div>
         <div>
           <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px">Marcar como entregue</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--t3)">Projeto sai da fila de produção e vai para "Entregues". Simples e rápido.</div>
@@ -2113,7 +2118,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     onmouseover="this.style.borderColor='var(--y)';this.style.background='var(--yb)'"
     onmouseout="this.style.borderColor='var(--e2)';this.style.background='var(--s3)'">
       <div style="display:flex;align-items:center;gap:12px">
-        <div style="font-size:28px">◆</div>
+        <div style="font-size:var(--fs-3xl)">◆</div>
         <div>
           <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px">Criar case para portfólio</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--t3)">Documenta o projeto como case. Ideal para mostrar no portfólio e atrair novos clientes.</div>
@@ -2378,24 +2383,24 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- MOBILE BOTTOM NAV -->
   <div class="sidebar-nav-mobile" style="display:none">
     <div class="mob-tab active" onclick="nav('dashboard',this)" data-page="dashboard">
-      <div style="font-size:18px">▣</div>
-      <div style="font-family:var(--mono);font-size:7px;margin-top:2px;color:var(--t3)">Home</div>
+      <div style="font-size:var(--fs-xl)">▣</div>
+      <div style="font-family:var(--mono);font-size:11px;margin-top:2px;color:var(--t3)">Home</div>
     </div>
     <div class="mob-tab" onclick="nav('projetos',this)" data-page="projetos">
-      <div style="font-size:18px">◈</div>
-      <div style="font-family:var(--mono);font-size:7px;margin-top:2px;color:var(--t3)">Projetos</div>
+      <div style="font-size:var(--fs-xl)">◈</div>
+      <div style="font-family:var(--mono);font-size:11px;margin-top:2px;color:var(--t3)">Projetos</div>
     </div>
     <div class="mob-tab" onclick="nav('crm',this)" data-page="crm">
-      <div style="font-size:18px">◉</div>
-      <div style="font-family:var(--mono);font-size:7px;margin-top:2px;color:var(--t3)">CRM</div>
+      <div style="font-size:var(--fs-xl)">◉</div>
+      <div style="font-family:var(--mono);font-size:11px;margin-top:2px;color:var(--t3)">CRM</div>
     </div>
     <div class="mob-tab" onclick="nav('pipeline',this)" data-page="pipeline">
-      <div style="font-size:18px">◐</div>
-      <div style="font-family:var(--mono);font-size:7px;margin-top:2px;color:var(--t3)">Pipeline</div>
+      <div style="font-size:var(--fs-xl)">◐</div>
+      <div style="font-family:var(--mono);font-size:11px;margin-top:2px;color:var(--t3)">Pipeline</div>
     </div>
     <div class="mob-tab" onclick="toggleMobileMenu()" id="mob-more-btn">
-      <div style="font-size:18px">≡</div>
-      <div style="font-family:var(--mono);font-size:7px;margin-top:2px;color:var(--t3)">Menu</div>
+      <div style="font-size:var(--fs-xl)">≡</div>
+      <div style="font-family:var(--mono);font-size:11px;margin-top:2px;color:var(--t3)">Menu</div>
     </div>
   </div>
 
@@ -2441,6 +2446,11 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="user-role" id="sb-role">Designer · Branding</div>
         <div class="user-site" id="sb-site">paulosa.studio</div>
       </div>
+    </div>
+    <div class="version-indicator">
+      <span class="version-dot"></span>
+      <span class="version-txt" id="version-label">v3.0.0</span>
+      <span class="version-date">22 mar 2026</span>
     </div>
   </div>
 </aside>
@@ -3015,7 +3025,7 @@ button:active{transform:scale(.97);transition:transform .08s}
             <circle id="d-entregue" cx="60" cy="60" r="44" fill="none" stroke="#22C55E" stroke-width="14" stroke-dasharray="0 276.46" stroke-linecap="round"/>
           </svg>
           <div style="position:absolute;text-align:center">
-            <div style="font-size:22px;font-weight:900;letter-spacing:-.04em;color:var(--t1)" id="d-center-val">0</div>
+            <div style="font-size:var(--fs-2xl);font-weight:900;letter-spacing:-.04em;color:var(--t1)" id="d-center-val">0</div>
             <div style="font-family:var(--mono);font-size:11px;color:var(--t3)">projetos</div>
           </div>
         </div>
@@ -3102,12 +3112,12 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:18px;padding-bottom:17px;border-bottom:1px solid var(--e1)">
         <!-- Avatar com foto -->
         <div style="position:relative;flex-shrink:0">
-          <div id="perfil-av" style="width:72px;height:72px;border-radius:var(--r3);background:var(--yb);border:2px solid rgba(212,160,23,.28);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:var(--y);overflow:hidden;cursor:pointer" onclick="document.getElementById('foto-input').click()" title="Clique para mudar foto">P</div>
-          <div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:2px solid var(--s2)" onclick="document.getElementById('foto-input').click()">✎</div>
+          <div id="perfil-av" style="width:72px;height:72px;border-radius:var(--r3);background:var(--yb);border:2px solid rgba(212,160,23,.28);display:flex;align-items:center;justify-content:center;font-size:var(--fs-3xl);font-weight:900;color:var(--y);overflow:hidden;cursor:pointer" onclick="document.getElementById('foto-input').click()" title="Clique para mudar foto">P</div>
+          <div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;border:2px solid var(--s2)" onclick="document.getElementById('foto-input').click()">✎</div>
           <input type="file" id="foto-input" accept="image/*" style="display:none" onchange="carregarFoto(this)">
         </div>
         <div style="flex:1">
-          <div id="perfil-nome-display" style="font-size:22px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:3px">Paulo Oliveira</div>
+          <div id="perfil-nome-display" style="font-size:var(--fs-2xl);font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:3px">Paulo Oliveira</div>
           <div id="perfil-espec-display" style="font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;font-weight:500">Designer Criativo · Branding & Identidade Visual</div>
           <div id="perfil-bio-display" style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:10px">Designer criativo especializado em identidade visual e estratégia de marca.</div>
           <!-- Redes sociais -->
@@ -3118,7 +3128,7 @@ button:active{transform:scale(.97);transition:transform .08s}
       <!-- KPIs -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:20px" id="perfil-kpis"></div>
       <!-- Progressão de nível -->
-      <div style="margin-bottom:20px;padding:14px 16px;background:var(--s3);border-radius:var(--radius-md);border:1px solid var(--e2)">
+      <div class="card" style="margin-bottom:20px">
         <div style="font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:500">Progressão de nível</div>
         <div class="level-track" id="perfil-level-track"></div>
         <div id="perfil-level-desc" style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:10px;text-align:center"></div>
@@ -3133,7 +3143,7 @@ button:active{transform:scale(.97);transition:transform .08s}
           <div class="sk-row"><span class="sk-name">Gestão de Projetos</span><div class="sk-track"><div class="sk-fill" style="width:70%;background:var(--gr)"></div></div><span class="sk-val">70%</span></div>
           <div class="sk-row"><span class="sk-name">Apresentações</span><div class="sk-track"><div class="sk-fill" style="width:65%;background:var(--bl)"></div></div><span class="sk-val">65%</span></div>
           <!-- Meta financeira no perfil -->
-          <div id="perfil-meta-widget" style="margin-top:16px;padding:12px 14px;background:var(--s3);border-radius:var(--radius-md);border:1px solid var(--e2)"></div>
+          <div id="perfil-meta-widget" class="card" style="margin-top:16px"></div>
         </div>
         <div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:11px;font-weight:500">Conquistas <span id="conq-count" style="color:var(--y)"></span></div>
@@ -3175,16 +3185,16 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div class="card-title">Backup e exportação</div>
       <div class="g2" style="gap:10px">
         <div class="export-btn" onclick="exportarDados()">
-          <span style="font-size:18px">💾</span>
+          <span style="font-size:var(--fs-xl)">💾</span>
           <div><div style="font-weight:600">Exportar todos os dados</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">JSON com projetos, clientes, financeiro</div></div>
         </div>
         <div class="export-btn" onclick="document.getElementById('import-file').click()">
-          <span style="font-size:18px">📂</span>
+          <span style="font-size:var(--fs-xl)">📂</span>
           <div><div style="font-weight:600">Importar backup</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">Restaurar dados de um arquivo JSON</div></div>
         </div>
         <input type="file" id="import-file" accept=".json" style="display:none" onchange="importarDados(event)">
       </div>
-      <div style="margin-top:12px;padding:10px 12px;background:var(--s3);border-radius:var(--r2);border:1px solid var(--e1)">
+      <div class="card" style="margin-top:12px">
         <div style="font-family:var(--mono);font-size:11px;color:var(--t3)">Último backup automático: <span id="ultimo-backup" style="color:var(--t2)">Nunca</span></div>
         <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:3px">Dados armazenados localmente no seu navegador. Exporte regularmente para não perder nada.</div>
       </div>
@@ -3225,6 +3235,8 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
+const APP_VERSION='v3.0.0';
+const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
   {id:'definicao',n:'Definição',i:'lightbulb',xp:80,desc:'Organize o aprendido. Defina o conceito criativo central.',tasks:['Sintetizar insights da imersão','Definir conceito criativo central','Criar mapa de palavras e atributos','Alinhar direção criativa com o cliente','Validar briefing criativo final']},
@@ -3614,7 +3626,7 @@ function renderGestao(){
   if(!p){setEl('g-title','Selecione um projeto');return;}
   setEl('g-title',p.nome+(p.pausado?' ⏸':''));
   const gm=document.getElementById('g-meta');if(gm)gm.innerHTML=`<span>${p.cli}</span><span>·</span><span>${p.tipo}</span><span>·</span><span style="color:${p.urg==='urgent'?'var(--y)':'var(--t3)'}">${p.prazo?'Entrega: '+new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR'):''}</span>`;
-  const ga=document.getElementById('g-actions');if(ga)ga.innerHTML=`<div style="display:flex;align-items:center;gap:8px">${!p.pausado?`<button class="pause-btn" onclick="abrirPausa()" style="display:inline-flex;align-items:center;gap:4px"><i data-lucide="pause-circle" style="width:13px;height:13px"></i>Pausar</button>`:`<button class="pause-btn" style="background:var(--gb);color:var(--gr);border-color:rgba(34,197,94,.28);display:inline-flex;align-items:center;gap:4px" onclick="retomar()"><i data-lucide="play-circle" style="width:13px;height:13px"></i>Retomar</button>`}</div><div style="text-align:right"><div style="font-size:22px;font-weight:900;letter-spacing:-.05em;color:var(--y)">${p.pct}%</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">CONCLUÍDO</div></div>`;
+  const ga=document.getElementById('g-actions');if(ga)ga.innerHTML=`<div style="display:flex;align-items:center;gap:8px">${!p.pausado?`<button class="pause-btn" onclick="abrirPausa()" style="display:inline-flex;align-items:center;gap:4px"><i data-lucide="pause-circle" style="width:13px;height:13px"></i>Pausar</button>`:`<button class="pause-btn" style="background:var(--gb);color:var(--gr);border-color:rgba(34,197,94,.28);display:inline-flex;align-items:center;gap:4px" onclick="retomar()"><i data-lucide="play-circle" style="width:13px;height:13px"></i>Retomar</button>`}</div><div style="text-align:right"><div style="font-size:var(--fs-2xl);font-weight:900;letter-spacing:-.05em;color:var(--y)">${p.pct}%</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">CONCLUÍDO</div></div>`;
   const bn=document.getElementById('g-pausa-banner');if(bn)bn.innerHTML=p.pausado?`<div class="pausa-banner"><i data-lucide="pause-circle" style="width:16px;height:16px;color:var(--am);flex-shrink:0"></i><div><div style="font-size:12px;font-weight:600;color:var(--am)">Projeto pausado</div><div style="font-family:var(--mono);font-size:12px;color:var(--t2)">${p.pMot}${p.pObs?' — '+p.pObs:''}</div></div></div>`:'';
   let pxp=0;for(let f=0;f<p.fi;f++)pxp+=FASES[f].xp;
   setEl('g-xp-tot',pxp+' XP');
@@ -3824,7 +3836,7 @@ function openRPG(id){
     const projs_el = document.getElementById('rpg-projs-list');
     if(projs_el){
       const hist = histCl.historicoProjetos;
-      projs_el.innerHTML += `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--e1)"><div style="font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-weight:600">Histórico concluídos</div>${hist.map(h=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--e1)"><span style="font-size:18px">${h.emoji||'🎯'}</span><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t1)">${h.projeto}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">${h.data} · ${h.ciclos} ciclo${h.ciclos>1?'s':''} · ${h.revisoes} rev.</div></div><div style="text-align:right"><div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--y)">${h.nota.toFixed(1)} ★</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">${h.medalha}</div></div></div>`).join('')}</div>`;
+      projs_el.innerHTML += `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--e1)"><div style="font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-weight:600">Histórico concluídos</div>${hist.map(h=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--e1)"><span style="font-size:var(--fs-xl)">${h.emoji||'🎯'}</span><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t1)">${h.projeto}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">${h.data} · ${h.ciclos} ciclo${h.ciclos>1?'s':''} · ${h.revisoes} rev.</div></div><div style="text-align:right"><div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--y)">${h.nota.toFixed(1)} ★</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">${h.medalha}</div></div></div>`).join('')}</div>`;
     }
   }
   document.getElementById('rpg-overlay').classList.add('open');document.body.style.overflow='hidden';
@@ -3956,10 +3968,10 @@ function renderPerfilDinamico(){
   // KPIs
   const kpiEl=document.getElementById('perfil-kpis');
   if(kpiEl) kpiEl.innerHTML=`
-    <div style="background:var(--s3);border:1px solid var(--e1);border-radius:var(--r2);padding:11px 14px;text-align:center;box-shadow:var(--sh1)"><div style="font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--t1)">${projs.length}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500">Projetos ativos</div></div>
-    <div style="background:var(--s3);border:1px solid var(--e1);border-radius:var(--r2);padding:11px 14px;text-align:center;box-shadow:var(--sh1)"><div style="font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--t1)">${clients.length}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500">Clientes</div></div>
-    <div style="background:var(--s3);border:1px solid var(--e1);border-radius:var(--r2);padding:11px 14px;text-align:center;box-shadow:var(--sh1)"><div style="font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--t1)">${xp}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500">XP acumulado</div></div>
-    <div style="background:var(--s3);border:1px solid var(--e1);border-radius:var(--r2);padding:11px 14px;text-align:center;box-shadow:var(--sh1)"><div style="font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--y)">${lv}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500">Nível atual</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:var(--fs-2xl);font-weight:800;letter-spacing:-.05em;color:var(--t1)">${projs.length}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500">Projetos ativos</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:var(--fs-2xl);font-weight:800;letter-spacing:-.05em;color:var(--t1)">${clients.length}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500">Clientes</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:var(--fs-2xl);font-weight:800;letter-spacing:-.05em;color:var(--t1)">${xp}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500">XP acumulado</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:var(--fs-2xl);font-weight:800;letter-spacing:-.05em;color:var(--y)">${lv}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500">Nível atual</div></div>
   `;
 
   // Progressão de nível
@@ -4001,7 +4013,7 @@ function renderPerfilDinamico(){
       const pct=Math.min(tM/meta.mensal*100,100);
       const cor=pct>=100?'var(--gr)':pct>=60?'var(--am)':'var(--y)';
       mwEl.innerHTML=`
-        <div style="font-family:var(--mono);font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:500">🎯 Meta mensal</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:500">🎯 Meta mensal</div>
         <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:6px"><span>${fmt(tM)}</span><span style="color:var(--y)">${fmt(meta.mensal)}</span></div>
         <div class="meta-prog-track" style="height:7px"><div class="meta-prog-fill" style="width:${pct}%;background:${cor}"></div></div>
         <div style="font-family:var(--mono);font-size:11px;color:${cor};margin-top:6px;font-weight:600">${Math.round(pct)}% atingido</div>
@@ -4121,7 +4133,7 @@ function renderBriefingCard(p){
     const actEl=document.getElementById('g-actions');
     if(actEl&&!actEl.querySelector('.br-btn')){
       const totalSecs=p.sessions?p.sessions.reduce((s,ss)=>s+ss.secs,0):0;
-      const tempoHtml=totalSecs>0?`<div style="font-family:var(--mono);font-size:10px;color:var(--t3);text-align:center;margin-top:2px;display:flex;align-items:center;gap:3px"><i data-lucide="clock" style="width:10px;height:10px"></i>${fmtTime(totalSecs)} investidos</div>`:'';
+      const tempoHtml=totalSecs>0?`<div style="font-family:var(--mono);font-size:11px;color:var(--t3);text-align:center;margin-top:2px;display:flex;align-items:center;gap:3px"><i data-lucide="clock" style="width:10px;height:10px"></i>${fmtTime(totalSecs)} investidos</div>`:'';
       actEl.insertAdjacentHTML('afterbegin',`<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><button class="btn-g br-btn" style="font-size:11px;display:inline-flex;align-items:center;gap:4px" onclick="abrirBriefing()"><i data-lucide="clipboard-list" style="width:12px;height:12px"></i>Briefing</button>${tempoHtml}</div>`);
     }
     // Refresh icons after injecting
@@ -4205,13 +4217,13 @@ function renderFocusWidget(){
   const w=document.getElementById('focus-widget');if(!w)return;
   if(!focusState.running){
     const opts=projs.filter(p=>!p.pausado).map(p=>`<option value="${p.id}"${p.id===curProjId?'selected':''}>${p.nome.split('—')[0].trim().substring(0,28)}</option>`).join('');
-    w.innerHTML=`<div style="font-family:var(--mono);font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">⏱ Modo Foco</div>
+    w.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">⏱ Modo Foco</div>
       <select id="focus-proj-sel" style="background:var(--s3);border:1px solid var(--e2);border-radius:4px;padding:5px 8px;font-size:12px;color:var(--t1);font-family:var(--mono);width:100%">${opts}</select>
       <button class="btn-p" style="width:100%;font-size:12px" onclick="startFocus(parseInt(document.getElementById('focus-proj-sel').value))">▶ Iniciar foco</button>`;
   } else {
     const secs=focusState._start?Math.floor((Date.now()-focusState._start)/1000):focusState._elapsed;
     const p=projs.find(x=>x.id===focusState.projId);
-    w.innerHTML=`<div style="font-family:var(--mono);font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:.06em">● Em foco</div>
+    w.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:.06em">● Em foco</div>
       <div style="font-size:11px;color:var(--t3);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p?p.nome.split('—')[0].trim():''}</div>
       <div class="focus-time-big" id="focus-time-disp">${fmtTime(secs)}</div>
       <div style="display:flex;gap:6px">
@@ -4244,7 +4256,7 @@ function gerarRelatorio(){
   const el=document.getElementById('rel-body');if(!el)return;
   el.innerHTML=`
     <div class="report-section">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">💰 Financeiro</div>
+      <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">💰 Financeiro</div>
       <div class="report-stat"><span class="report-key">Faturamento</span><span class="report-val" style="color:var(--gr)">${fmt(totalEnt)}</span></div>
       <div class="report-stat"><span class="report-key">Saídas</span><span class="report-val" style="color:var(--rd)">${fmt(totalSai)}</span></div>
       <div class="report-stat"><span class="report-key">Margem líquida</span><span class="report-val">${margem}%</span></div>
@@ -4252,7 +4264,7 @@ function gerarRelatorio(){
       ${pctMeta!==null?`<div class="report-stat"><span class="report-key">Meta atingida</span><span class="report-val" style="color:${pctMeta>=100?'var(--gr)':'var(--am)'}">${pctMeta}% de ${fmt(meta.mensal)}</span></div>`:''}
     </div>
     <div class="report-section">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📁 Projetos</div>
+      <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📁 Projetos</div>
       <div class="report-stat"><span class="report-key">Ativos agora</span><span class="report-val">${projs.length}</span></div>
       <div class="report-stat"><span class="report-key">Finalizados no mês</span><span class="report-val">${projsMes.length}</span></div>
       <div class="report-stat"><span class="report-key">Em revisão</span><span class="report-val">${projs.filter(p=>p.st==='Em revisão').length}</span></div>
@@ -4260,7 +4272,7 @@ function gerarRelatorio(){
       ${totalTempoSecs>0?`<div class="report-stat"><span class="report-key">Tempo em foco</span><span class="report-val" style="color:var(--y)">${fmtTime(totalTempoSecs)}</span></div>`:''}
     </div>
     <div class="report-section">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📈 Crescimento</div>
+      <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📈 Crescimento</div>
       <div class="report-stat"><span class="report-key">XP total</span><span class="report-val" style="color:var(--y)">${xpTotal} XP</span></div>
       <div class="report-stat"><span class="report-key">Nível</span><span class="report-val">${xpTotal<200?'Iniciante':xpTotal<400?'Júnior':xpTotal<600?'Pleno':xpTotal<800?'Sênior':'Mestre'}</span></div>
       <div class="report-stat"><span class="report-key">Clientes ativos</span><span class="report-val">${clients.filter(c=>c.status==='ativo').length}</span></div>
@@ -4579,7 +4591,7 @@ function renderMetricas(){
   // Saldo
   const saldoEl=document.getElementById('met-saldo-detalhe-v2');if(saldoEl)saldoEl.innerHTML=`<div class="saldo-hero"><div class="saldo-num" style="color:${saldoMes>=0?'var(--y)':'var(--rd)'}">${saldoMes>=0?'+':''}${fmt(saldoMes)}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:4px;text-transform:uppercase;letter-spacing:.08em">${now2.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</div></div><div class="saldo-row"><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Entradas do mês</span><span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--gr)">${fmt(entMes.reduce((s,l)=>s+l.val,0))}</span></div><div class="saldo-row"><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Saídas do mês</span><span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--am)">${fmt(saiMes.reduce((s,l)=>s+l.val,0))}</span></div><div class="saldo-row"><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Ticket médio</span><span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--y)">${ticket>0?fmt(ticket):'—'}</span></div>`;
   // Progresso
-  const progEl=document.getElementById('ch-progresso');if(progEl)progEl.innerHTML=projs.slice(0,6).map(p=>`<div class="prog-proj-row"><div class="prog-proj-hdr"><div class="prog-proj-name" title="${p.nome}">${p.nome}</div><div class="prog-proj-pct">${p.pct}%</div></div><div class="prog-track"><div class="prog-fill-anim" style="width:${p.pct}%;background:${p.cor}"></div></div><div class="prog-proj-meta"><span class="ftag ${FT[p.fi]}" style="font-size:7px;padding:1px 5px">${FN[p.fi]}</span><span style="${p.urg==='urgent'?'color:var(--y);font-weight:700':p.urg==='soon'?'color:var(--am)':'color:var(--t3)'}">${p.dias>0?p.dias+'d':p.dias===0?'hoje':'vencido'}</span></div></div>`).join('')||'<div style="font-family:var(--mono);font-size:11px;color:var(--t4)">Nenhum projeto</div>';
+  const progEl=document.getElementById('ch-progresso');if(progEl)progEl.innerHTML=projs.slice(0,6).map(p=>`<div class="prog-proj-row"><div class="prog-proj-hdr"><div class="prog-proj-name" title="${p.nome}">${p.nome}</div><div class="prog-proj-pct">${p.pct}%</div></div><div class="prog-track"><div class="prog-fill-anim" style="width:${p.pct}%;background:${p.cor}"></div></div><div class="prog-proj-meta"><span class="ftag ${FT[p.fi]}" style="font-size:11px;padding:1px 5px">${FN[p.fi]}</span><span style="${p.urg==='urgent'?'color:var(--y);font-weight:700':p.urg==='soon'?'color:var(--am)':'color:var(--t3)'}">${p.dias>0?p.dias+'d':p.dias===0?'hoje':'vencido'}</span></div></div>`).join('')||'<div style="font-family:var(--mono);font-size:11px;color:var(--t4)">Nenhum projeto</div>';
 }
 
 // ── NOTIFICAÇÕES ──────────────────────────────────────
@@ -5188,7 +5200,7 @@ function openRPGComHistorico_unused(id){
       <div style="font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-weight:600">Histórico de projetos concluídos</div>
       ${hist.map(h => `
         <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--e1)">
-          <span style="font-size:18px">${h.emoji||'🎯'}</span>
+          <span style="font-size:var(--fs-xl)">${h.emoji||'🎯'}</span>
           <div style="flex:1">
             <div style="font-size:12px;font-weight:600;color:var(--t1)">${h.projeto}</div>
             <div style="font-family:var(--mono);font-size:11px;color:var(--t3)">${h.data} · ${h.ciclos} ciclo${h.ciclos>1?'s':''} · ${h.revisoes} revisão${h.revisoes>1?'ões':''}</div>
@@ -5665,7 +5677,7 @@ function pipeDrop(e, colId){
   overlay.innerHTML=`
     <div style="background:var(--s2);border:1px solid var(--e3);border-radius:var(--radius-xl);width:100%;max-width:580px;overflow:hidden;box-shadow:var(--sh5)">
       <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--e1)">
-        <span style="font-size:18px;opacity:.5">🔍</span>
+        <span style="font-size:var(--fs-xl);opacity:.5">🔍</span>
         <input id="busca-input" placeholder="Buscar projetos, clientes, ferramentas, templates..."
           style="flex:1;background:transparent;border:none;outline:none;font-size:15px;color:var(--t1);font-family:var(--sans)" oninput="renderBusca()">
         <span style="font-family:var(--mono);font-size:11px;color:var(--t4);background:var(--s4);padding:2px 7px;border-radius:4px;cursor:pointer" onclick="fecharBusca()">ESC</span>
@@ -5735,22 +5747,22 @@ function verProjsDoCliente(nomeCliente){
   const overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)';
   overlay.innerHTML=`
-    <div style="background:var(--s2);border:1px solid var(--e3);border-radius:var(--radius-xl);padding:40px;max-width:500px;width:100%;text-align:center;box-shadow:var(--sh5)">
+    <div class="card" style="padding:40px;max-width:500px;width:100%;text-align:center;box-shadow:var(--sh5);border-color:var(--e3);border-radius:var(--radius-xl)">
       <div style="font-size:48px;margin-bottom:16px">✦</div>
       <div style="font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:8px">Bem-vindo ao paulosá.hub</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:28px;line-height:1.6">Sistema operacional para o seu estúdio criativo.<br>Gerencie projetos, clientes e finanças em um só lugar.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px">
-        <div style="background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-md);padding:16px;text-align:center">
+        <div class="card" style="text-align:center">
           <div style="font-size:24px;margin-bottom:8px">📁</div>
           <div style="font-size:12px;font-weight:600;color:var(--t1)">Projetos</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:4px">Metodologia em 6 fases com XP</div>
         </div>
-        <div style="background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-md);padding:16px;text-align:center">
+        <div class="card" style="text-align:center">
           <div style="font-size:24px;margin-bottom:8px">👤</div>
           <div style="font-size:12px;font-weight:600;color:var(--t1)">Clientes</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:4px">CRM com ficha RPG de relacionamento</div>
         </div>
-        <div style="background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-md);padding:16px;text-align:center">
+        <div class="card" style="text-align:center">
           <div style="font-size:24px;margin-bottom:8px">💰</div>
           <div style="font-size:12px;font-weight:600;color:var(--t1)">Finanças</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:4px">Controle de entradas e saídas</div>
@@ -5760,7 +5772,7 @@ function verProjsDoCliente(nomeCliente){
         <button class="btn-p" style="width:100%;height:44px;font-size:14px" onclick="onboardingStart()">Começar agora →</button>
         <button class="btn-g" style="width:100%" onclick="onboardingSkip()">Já conheço, pular</button>
       </div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--t4);margin-top:16px">Dica: use <kbd style="background:var(--s4);padding:1px 5px;border-radius:3px;font-size:10px">⌘K</kbd> para busca rápida</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--t4);margin-top:16px">Dica: use <kbd style="background:var(--s4);padding:1px 5px;border-radius:3px;font-size:11px">⌘K</kbd> para busca rápida</div>
     </div>`;
   document.body.appendChild(overlay);
   window._onboardingOverlay = overlay;
@@ -5885,7 +5897,7 @@ setTimeout(()=>{
       </select>
     </div>
     <textarea id="qn-text" rows="3" placeholder="Capture uma ideia, insight ou referência..." style="width:100%;background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-sm);padding:8px 10px;font-size:13px;color:var(--t1);font-family:var(--sans);resize:vertical;outline:none;box-sizing:border-box;transition:border-color .12s" onfocus="this.style.borderColor='var(--y)'" onblur="this.style.borderColor='var(--e2)'" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter')salvarNota()"></textarea>
-    <button class="btn-p" style="width:100%;margin-top:8px;font-size:12px" onclick="salvarNota()">Salvar nota <span style="opacity:.6;font-size:10px">⌘↵</span></button>
+    <button class="btn-p" style="width:100%;margin-top:8px;font-size:12px" onclick="salvarNota()">Salvar nota <span style="opacity:.6;font-size:11px">⌘↵</span></button>
   </div>
   <div class="qn-list" id="qn-list"></div>
 </div>
