@@ -2275,6 +2275,12 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div class="fg"><label class="flbl">LinkedIn</label><input class="fi" id="ep-li" placeholder="linkedin.com/in/seu-perfil"></div>
     <div class="fg"><label class="flbl">Behance</label><input class="fi" id="ep-be" placeholder="behance.net/seu-perfil"></div>
     <div class="fg"><label class="flbl">Twitter / X</label><input class="fi" id="ep-tw" placeholder="@seu_usuario"></div>
+    <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 8px;font-weight:500">Habilidades <span style="color:var(--t4);font-weight:400">(máx. 8)</span></div>
+    <div id="ep-skills-list"></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input class="fi" id="ep-skill-new" placeholder="Nova habilidade..." style="height:32px;font-size:var(--fs-xs)">
+      <button class="btn-mini" onclick="addSkillField()" style="white-space:nowrap">+ Adicionar</button>
+    </div>
     <div class="modal-footer">
       <button class="btn-g" onclick="closeM('m-edit-perfil')">Cancelar</button>
       <button class="btn-p" onclick="salvarPerfil()">Salvar perfil</button>
@@ -2455,7 +2461,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v6.0.1</span>
+      <span class="version-txt" id="version-label">v6.1.0</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3161,11 +3167,7 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div class="g2" style="gap:14px">
         <div>
           <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:11px;font-weight:500">Habilidades criativas</div>
-          <div class="sk-row"><span class="sk-name">Identidade Visual</span><div class="sk-track"><div class="sk-fill" style="width:95%;background:var(--y)"></div></div><span class="sk-val">95%</span></div>
-          <div class="sk-row"><span class="sk-name">Estratégia de Marca</span><div class="sk-track"><div class="sk-fill" style="width:80%;background:var(--am)"></div></div><span class="sk-val">80%</span></div>
-          <div class="sk-row"><span class="sk-name">Social Media Design</span><div class="sk-track"><div class="sk-fill" style="width:75%;background:var(--pu)"></div></div><span class="sk-val">75%</span></div>
-          <div class="sk-row"><span class="sk-name">Gestão de Projetos</span><div class="sk-track"><div class="sk-fill" style="width:70%;background:var(--gr)"></div></div><span class="sk-val">70%</span></div>
-          <div class="sk-row"><span class="sk-name">Apresentações</span><div class="sk-track"><div class="sk-fill" style="width:65%;background:var(--bl)"></div></div><span class="sk-val">65%</span></div>
+          <div id="perfil-skills"></div>
           <!-- Meta financeira no perfil -->
           <div id="perfil-meta-widget" class="card" style="margin-top:16px"></div>
         </div>
@@ -3259,7 +3261,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v6.0.1';
+const APP_VERSION='v6.1.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4079,6 +4081,7 @@ function renderPerfilDinamico(){
       <div class="conq-name">${c.n}</div>
     </div>
   `).join('');
+  renderSkills();
 }
 
 // Override renderFin para incluir meta
@@ -4772,6 +4775,58 @@ function getPerfilData(){
 }
 function savePerfilData(p){ localStorage.setItem('ph4-perfil', JSON.stringify(p)); }
 
+// ── HABILIDADES EDITÁVEIS (OS-025) ──────────────────
+const DEFAULT_SKILLS=[{n:'Identidade Visual',v:50},{n:'Estratégia de Marca',v:40},{n:'Social Media',v:35},{n:'Gestão de Projetos',v:30},{n:'Apresentações',v:25}];
+const SK_COLORS=['var(--y)','var(--am)','var(--pu)','var(--gr)','var(--bl)','var(--pk)','var(--rd)','#60A5FA'];
+// Mapping de tipo de projeto → habilidade beneficiada
+const SKILL_BOOST_MAP={'Identidade Visual':'Identidade Visual','Redesign de Marca':'Identidade Visual','Social Media':'Social Media','Estratégia de Marca':'Estratégia de Marca','Apresentação':'Apresentações','Site':'Site','Landing Page':'Landing Page'};
+
+function getSkills(){const p=getPerfilData();return p.skills||DEFAULT_SKILLS.map(s=>({...s}));}
+function saveSkills(skills){const p=getPerfilData();p.skills=skills;savePerfilData(p);}
+
+function renderSkills(){
+  const el=document.getElementById('perfil-skills');if(!el)return;
+  const skills=getSkills();
+  const boosts=JSON.parse(localStorage.getItem('ph4-skill-boosts')||'{}');
+  el.innerHTML=skills.map((s,i)=>{
+    const total=Math.min(100,s.v+(boosts[s.n]||0));
+    const boost=boosts[s.n]||0;
+    const trend=boost>0?`<span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--gr);margin-left:4px">↑ +${boost}%</span>`:'';
+    return `<div class="sk-row"><span class="sk-name">${s.n}</span><div class="sk-track"><div class="sk-fill" style="width:${total}%;background:${SK_COLORS[i%SK_COLORS.length]};transition:width .6s ease"></div></div><span class="sk-val">${total}%${trend}</span></div>`;
+  }).join('');
+}
+
+function renderSkillsEditor(){
+  const el=document.getElementById('ep-skills-list');if(!el)return;
+  const skills=getSkills();
+  el.innerHTML=skills.map((s,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+    <input class="fi" value="${s.n}" style="height:30px;font-size:var(--fs-xs);flex:1" onchange="window._epSkills[${i}].n=this.value">
+    <input type="range" min="0" max="100" value="${s.v}" style="width:80px;accent-color:var(--y)" oninput="this.nextElementSibling.textContent=this.value+'%';window._epSkills[${i}].v=parseInt(this.value)">
+    <span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t2);min-width:30px">${s.v}%</span>
+    <span style="cursor:pointer;color:var(--t4);font-size:var(--fs-xs)" onclick="window._epSkills.splice(${i},1);renderSkillsEditor()" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'">×</span>
+  </div>`).join('');
+  window._epSkills=skills;
+}
+
+function addSkillField(){
+  const input=document.getElementById('ep-skill-new');
+  const name=input.value.trim();if(!name)return;
+  const skills=window._epSkills||getSkills();
+  if(skills.length>=8){toast('Máximo de 8 habilidades','var(--am)');return;}
+  if(skills.some(s=>s.n.toLowerCase()===name.toLowerCase())){toast('Habilidade já existe','var(--am)');return;}
+  skills.push({n:name,v:30});
+  window._epSkills=skills;
+  input.value='';
+  renderSkillsEditor();
+}
+
+function boostSkillForType(tipo){
+  const skillName=SKILL_BOOST_MAP[tipo];if(!skillName)return;
+  const boosts=JSON.parse(localStorage.getItem('ph4-skill-boosts')||'{}');
+  const current=boosts[skillName]||0;
+  if(current<15){boosts[skillName]=Math.min(15,current+3);localStorage.setItem('ph4-skill-boosts',JSON.stringify(boosts));}
+}
+
 // Atualiza sidebar com os dados do perfil
 function atualizarSidebar(){
   const p = getPerfilData();
@@ -4818,11 +4873,13 @@ function salvarPerfil(){
   const eli=document.getElementById('ep-li'); if(eli) p.li=eli.value.trim();
   const ebe=document.getElementById('ep-be'); if(ebe) p.be=ebe.value.trim();
   const etw=document.getElementById('ep-tw'); if(etw) p.tw=etw.value.trim();
+  if(window._epSkills) p.skills=window._epSkills;
   savePerfilData(p);
   closeM('m-edit-perfil');
   atualizarSidebar();
   atualizarPaginaPerfil();
   if(typeof renderPerfilDinamico==='function') renderPerfilDinamico();
+  renderSkills();
   toast('Perfil atualizado! ✓');
 }
 
@@ -4842,6 +4899,7 @@ function salvarPerfil(){
       const eli=document.getElementById('ep-li'); if(eli) eli.value=p.li||'';
       const ebe=document.getElementById('ep-be'); if(ebe) ebe.value=p.be||'';
       const etw=document.getElementById('ep-tw'); if(etw) etw.value=p.tw||'';
+      renderSkillsEditor();
     }
   };
 })();
@@ -5236,6 +5294,7 @@ function finalizarComo(tipo){
 
   projs = projs.filter(x => x.id !== p.id);
   curProjId = projs[0]?.id || null;
+  boostSkillForType(p.tipo);
 
   saveExtra(); save();
   closeM('m-finalizar');
