@@ -1710,6 +1710,8 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="type-opt" onclick="selT(this,'Social Media')"><div style="margin-bottom:3px"><i data-lucide="layout-grid" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Social Media</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Kit e peças</div></div>
         <div class="type-opt" onclick="selT(this,'Estratégia de Marca')"><div style="margin-bottom:3px"><i data-lucide="compass" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Estratégia</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Consultoria</div></div>
         <div class="type-opt" onclick="selT(this,'Apresentação')"><div style="margin-bottom:3px"><i data-lucide="presentation" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Apresentação</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Pitch deck</div></div>
+        <div class="type-opt" onclick="selT(this,'Site')"><div style="margin-bottom:3px"><i data-lucide="globe" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Site</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Design & desenvolvimento</div></div>
+        <div class="type-opt" onclick="selT(this,'Landing Page')"><div style="margin-bottom:3px"><i data-lucide="mouse-pointer-click" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Landing Page</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Página de conversão</div></div>
         <div class="type-opt" onclick="selT(this,'Outros')"><div style="margin-bottom:3px"><i data-lucide="shapes" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Outros</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Personalizado</div></div>
       </div>
       <div id="np-outros-wrap" style="display:none;margin-top:8px">
@@ -2187,7 +2189,8 @@ button:active{transform:scale(.97);transition:transform .08s}
       <select class="fse" id="prop-servico" onchange="togglePropOutros(this)">
         <option>Identidade Visual</option><option>Redesign de Marca</option>
         <option>Social Media</option><option>Estratégia de Marca</option>
-        <option>Apresentação</option><option>Outros</option>
+        <option>Apresentação</option><option>Site</option>
+        <option>Landing Page</option><option>Outros</option>
       </select>
       <div id="prop-outros-wrap" style="display:none;margin-top:8px">
         <input class="fi" id="prop-outros-txt" placeholder="Qual serviço é esse? Ex: Naming, Embalagem, Motion...">
@@ -2452,7 +2455,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v6.0.0</span>
+      <span class="version-txt" id="version-label">v6.0.1</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3256,7 +3259,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v6.0.0';
+const APP_VERSION='v6.0.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3758,7 +3761,7 @@ function criarProjeto(){
   const dias=Math.round(([0,14,21,30][c2]+(f-1)*3)*1.3);
   const ini=document.getElementById('np-ini').value||new Date().toISOString().split('T')[0];
   const ed=new Date(ini);ed.setDate(ed.getDate()+dias);
-  const cores={'Identidade Visual':'#D4A017','Redesign de Marca':'#A78BFA','Social Media':'#F59E0B','Estratégia de Marca':'#22C55E','Apresentação':'#60A5FA','Outros':'#9E9B92'};
+  const cores={'Identidade Visual':'#D4A017','Redesign de Marca':'#A78BFA','Social Media':'#F59E0B','Estratégia de Marca':'#22C55E','Apresentação':'#60A5FA','Site':'#3B82F6','Landing Page':'#EC4899','Outros':'#9E9B92'};
   const np={id:Date.now(),nome,cli,tipo:selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#D4A017',urg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(30).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[]};
   projs.unshift(np);
   if(document.getElementById('np-gcal').checked){const d=new Date(ini),gs=d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Kickoff: '+nome)}&dates=${gs}/${gs}&details=${encodeURIComponent('paulosa.studio')}` ,'_blank');}
@@ -4402,6 +4405,14 @@ const TASK_TEMPLATES = {
     ['Protótipo clicável das páginas principais','Teste de usabilidade e navegação','Validar em dispositivos reais','Apresentar ao cliente e colher feedback','Ajustes de UX e interface'],
     ['Revisão final de textos e imagens','Otimização SEO básica (meta tags, alt)','Entrega dos arquivos fonte','Publicação e testes de funcionamento','Instruções de atualização para o cliente'],
     ['Captura de telas finais do site','Relatório de métricas iniciais','Publicar case de criação','Coletar depoimento do cliente','Divulgar lançamento do site']
+  ],
+  'Landing Page': [
+    ['Reunião de briefing e objetivo da LP','Pesquisa do público e persona','Análise de LPs concorrentes','Mapear estrutura de seções','Definir oferta e CTA principal'],
+    ['Wireframe da página completa','Hierarquia de informação e copy','Definir prova social e gatilhos','Aprovar estrutura com o cliente','Definir estilo visual e cores'],
+    ['Design da hero section e CTA','Seções de benefícios e prova social','Formulário e integrações','Responsividade mobile','Revisão de copy e persuasão'],
+    ['Protótipo navegável da LP','Teste de carregamento e performance','Validar em dispositivos reais','Apresentar ao cliente','Ajustes de conversão e UX'],
+    ['Otimização SEO e meta tags','Configurar analytics e tracking','Publicação e testes finais','Entrega de acessos ao cliente','Documentação de manutenção'],
+    ['Captura de telas e métricas','Relatório de conversão inicial','Montar case para portfólio','Coletar depoimento do cliente','Divulgar nos canais']
   ]
 };
 
@@ -4410,6 +4421,7 @@ const DESC_TEMPLATES = {
   'Estratégia de Marca': ['Workshop de imersão e pesquisa aprofundada.','Defina posicionamento, valores e proposta de valor.','Construa a plataforma de marca completa.','Apresente, valide e ajuste a estratégia.','Entregue o brand book e o plano de ativação.','Acompanhe a implementação e monte o case.'],
   'Apresentação': ['Entenda o objetivo e colete todo o conteúdo.','Defina narrativa, estrutura e fluxo de slides.','Desenvolva o design e os infográficos.','Apresente o rascunho e colete feedback.','Entregue PDF e editável com orientações.','Registre o impacto e monte o case.'],
   'Site': ['Entenda objetivos, mapeie páginas e referências.','Wireframe, arquitetura da informação e aprovação.','Design das páginas, mobile e interações.','Protótipo clicável, usabilidade e ajustes.','Publicação, SEO básico e entrega dos arquivos.','Registre métricas iniciais e monte o case.'],
+  'Landing Page': ['Briefing, persona e análise de LPs concorrentes.','Wireframe, hierarquia e copy persuasivo.','Design da hero, seções e formulário responsivo.','Protótipo, performance e validação com cliente.','Publicação, tracking e entrega de acessos.','Métricas de conversão e case para portfólio.'],
   'Redesign de Marca': ['Analise a identidade atual e a percepção do mercado.','Defina o que preservar e a direção de evolução.','Crie variações e refine o sistema visual.','Compare versões, colete feedback e ajuste.','Entregue arquivos, guia de transição e checklist.','Documente a transformação e monte o case.']
 };
 
