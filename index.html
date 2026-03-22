@@ -618,7 +618,7 @@ html,body{
   display:flex;align-items:center;justify-content:center;
   font-size:var(--fs-md);font-weight:var(--fw-black);flex-shrink:0;
 }
-.crm-name{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--t1)}
+.crm-name{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .crm-seg{font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-top:2px}
 .crm-meta{
   display:grid;grid-template-columns:1fr 1fr;
@@ -953,9 +953,9 @@ html,body{
 .pipeline-col-title{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
 .pipeline-card{background:var(--s3);border:1px solid var(--e2);border-radius:var(--r2);padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:all .15s;box-shadow:var(--sh1)}
 .pipeline-card:hover{border-color:var(--e3);box-shadow:var(--sh2);transform:translateY(-1px)}
-.pipeline-card-name{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px}
-.pipeline-card-meta{font-family:var(--mono);font-size:11px;color:var(--t3)}
-.pipeline-card-val{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--y);margin-top:4px}
+.pipeline-card-name{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pipeline-card-meta{font-family:var(--mono);font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pipeline-card-val{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--y);margin-top:4px;white-space:nowrap}
 .pipeline-add{display:flex;align-items:center;gap:6px;padding:7px 10px;cursor:pointer;color:var(--t4);font-family:var(--mono);font-size:11px;border:1px dashed var(--e2);border-radius:var(--r2);transition:all .12s;margin-top:4px}
 .pipeline-add:hover{color:var(--y);border-color:var(--y)}
 .contrato-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:20px;font-weight:600}
@@ -1505,9 +1505,9 @@ html,body{
 
 /* ── KPI small: consistent card inner ── */
 .kpi-sm .card{padding:var(--sp-3) var(--sp-4);display:flex;flex-direction:column;gap:2px}
-.kpi-val{font-size:var(--fs-2xl);font-weight:var(--fw-black);letter-spacing:-.04em;line-height:1}
+.kpi-val{font-size:var(--fs-2xl);font-weight:var(--fw-black);letter-spacing:-.04em;line-height:1;white-space:nowrap}
 .kpi-lbl{font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);
-  text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+  text-transform:uppercase;letter-spacing:.07em;margin-top:2px;white-space:nowrap}
 
 /* ── Topbar: slightly taller, cleaner ── */
 .topbar{height:52px;min-height:52px}
@@ -2447,9 +2447,10 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="user-site" id="sb-site">paulosa.studio</div>
       </div>
     </div>
+    <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:11px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v4.0.0</span>
+      <span class="version-txt" id="version-label">v5.0.0</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -2485,9 +2486,9 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ DASHBOARD ══════ -->
   <div class="page active" id="page-dashboard">
 
-    <!-- ── GREETING ── -->
+    <!-- ── ZONA A: NORTH STAR ── -->
     <div class="greeting-hero">
-      <div>
+      <div style="flex:1;min-width:0">
         <div class="greeting-name" id="greeting">Bom dia, Paulo.</div>
         <div class="greeting-sub" id="greeting-sub">paulosa.studio · carregando...</div>
       </div>
@@ -2497,6 +2498,18 @@ button:active{transform:scale(.97);transition:transform .08s}
           <div class="greeting-badge-val" id="prazo-urg">—</div>
         </div>
         <button class="btn-g" style="font-size:11px;border-color:rgba(212,160,23,.3);color:var(--y);display:inline-flex;align-items:center;gap:5px" onclick="gerarRelatorio()"><i data-lucide="bar-chart-2" style="width:13px;height:13px"></i>Relatório do mês</button>
+      </div>
+    </div>
+    <!-- North Star Card -->
+    <div id="north-star" class="card" style="margin-bottom:16px;display:none">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div id="ns-icon" style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--yb);border:1.5px solid rgba(212,160,23,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="alert-triangle" style="width:20px;height:20px;color:var(--y)"></i></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px" id="ns-label">Precisa de atenção</div>
+          <div style="font-size:14px;font-weight:700;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="ns-title" title="">—</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:2px" id="ns-meta">—</div>
+        </div>
+        <button class="btn-p" style="font-size:12px;flex-shrink:0;padding:6px 14px" id="ns-action" onclick="">Abrir</button>
       </div>
     </div>
 
@@ -3101,6 +3114,12 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="card-title">Projetos ativos — progresso</div>
         <div id="ch-progresso"></div>
       </div>
+
+      <!-- OS-017: Evolução mensal -->
+      <div class="card" style="grid-column:1/-1">
+        <div class="card-title">Evolução — últimos 6 meses</div>
+        <div id="ch-evolucao"></div>
+      </div>
     </div>
 
   </div>
@@ -3235,7 +3254,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v4.0.0';
+const APP_VERSION='v5.0.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3386,6 +3405,7 @@ function openM(id){
   el.classList.add('open');
   if(id==='m-proj'){calcPrev();const d=new Date().toISOString().split('T')[0];const ini=document.getElementById('np-ini');if(ini)ini.value=d;}
   if(id==='m-edit-perfil'){const p=getPerfilData();const en=document.getElementById('ep-nome');if(en)en.value=p.nome;const ee=document.getElementById('ep-espec');if(ee)ee.value=p.espec||'';const es=document.getElementById('ep-site');if(es)es.value=p.site||'';const eb=document.getElementById('ep-bio');if(eb)eb.value=p.bio||'';const ep2=document.getElementById('ep-pass');if(ep2)ep2.value='';}
+  if(id==='m-feedback'){const ap=document.querySelector('.page.active');const fbp=document.getElementById('fb-page');if(fbp&&ap)fbp.textContent=ap.id.replace('page-','');document.querySelectorAll('.fb-type-btn').forEach(b=>b.style.background='');document.getElementById('fb-desc').value='';window._fbType=null;}
   if(id==='m-lanc'){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];}
   // Focar no campo de nome ao abrir modal de cliente
   if(id==='m-cliente'){setTimeout(()=>{
@@ -3518,6 +3538,29 @@ function renderDash(){
   setEl('greeting-sub',atv+' projetos ativos · '+(p2.site||'paulosa.studio'));
   const grEl=document.getElementById('greeting');
   if(grEl){const hr2=new Date().getHours();grEl.textContent=(hr2<12?'Bom dia':hr2<18?'Boa tarde':'Boa noite')+', '+(p2.nome||'Paulo').split(' ')[0]+'.';}
+  // North Star
+  const nsEl=document.getElementById('north-star');
+  if(nsEl){
+    const urgP=projs.filter(p=>!p.pausado&&p.fi<5).sort((a,b)=>(a.dias||999)-(b.dias||999));
+    const nearDone=projs.filter(p=>!p.pausado&&p.pct>=80&&p.fi<5).sort((a,b)=>b.pct-a.pct);
+    const star=urgP.length&&urgP[0].dias<=3?urgP[0]:nearDone.length?nearDone[0]:null;
+    if(star){
+      nsEl.style.display='block';
+      const isUrg=star.dias<=3;
+      document.getElementById('ns-label').textContent=isUrg?'Prazo urgente':'Quase pronto';
+      document.getElementById('ns-title').textContent=star.nome;
+      document.getElementById('ns-title').title=star.nome;
+      document.getElementById('ns-meta').textContent=star.cli+' · '+star.pct+'% · '+(star.dias>0?star.dias+'d restantes':star.dias===0?'entrega hoje':'prazo vencido');
+      document.getElementById('ns-action').setAttribute('onclick','openProj('+star.id+')');
+    } else if(projs.length===0){
+      nsEl.style.display='block';
+      document.getElementById('ns-label').textContent='Primeiro passo';
+      document.getElementById('ns-title').textContent='Crie seu primeiro projeto para começar';
+      document.getElementById('ns-meta').textContent='O dashboard ganha vida com seus dados reais';
+      document.getElementById('ns-action').textContent='+ Projeto';
+      document.getElementById('ns-action').setAttribute('onclick',"openM('m-proj')");
+    } else { nsEl.style.display='none'; }
+  }
   renderDashProjs();renderAgenda();renderAlertas();renderDayTasks();atualizarNotificacoes();initCriativo();
 }
 
@@ -4485,7 +4528,7 @@ function renderPipeline(){
   Object.keys(cols).forEach(k=>{
     const el=document.getElementById(mapEl[k]),cnt=document.getElementById(countEl[k]);if(!el)return;if(cnt)cnt.textContent=cols[k].length;
     const addBtn=k==='aprovado'?'<div style="font-family:var(--mono);font-size:11px;color:var(--t4);padding:8px 4px">Aprovadas — aguardando mover</div>':'<div class="pipeline-add" onclick="openM(\'m-proposta\')"><span>+</span> Adicionar</div>';
-    el.innerHTML=cols[k].map(p=>`<div class="pipeline-card" onclick="abrirProposta(${p.id})"><div class="pipeline-card-name">${p.cliente}</div><div class="pipeline-card-meta">${p.servico}</div>${p.val>0?`<div class="pipeline-card-val">${fmt(p.val)}</div>`:''}<div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px"><div style="font-family:var(--mono);font-size:11px;color:var(--t4)">${p.data||''}</div>${p.contrato==='assinado'?'<span class="contrato-badge ct-assinado">✓ Contrato</span>':''}</div></div>`).join('')+addBtn;
+    el.innerHTML=cols[k].map(p=>`<div class="pipeline-card" onclick="abrirProposta(${p.id})"><div class="pipeline-card-name" title="${p.cliente}">${p.cliente}</div><div class="pipeline-card-meta" title="${p.servico}">${p.servico}</div>${p.val>0?`<div class="pipeline-card-val">${fmt(p.val)}</div>`:''}<div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px"><div style="font-family:var(--mono);font-size:11px;color:var(--t4)">${p.data||''}</div>${p.contrato==='assinado'?'<span class="contrato-badge ct-assinado">✓ Contrato</span>':''}</div></div>`).join('')+addBtn;
   });
   const total=propostas.length,valorTotal=propostas.reduce((s,p)=>s+p.val,0);
   const aprovados=cols.aprovado.length+projsFinalizados.length;
@@ -4569,6 +4612,34 @@ function renderMetricas(){
   const saldoEl=document.getElementById('met-saldo-detalhe-v2');if(saldoEl)saldoEl.innerHTML=`<div class="saldo-hero"><div class="saldo-num" style="color:${saldoMes>=0?'var(--y)':'var(--rd)'}">${saldoMes>=0?'+':''}${fmt(saldoMes)}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:4px;text-transform:uppercase;letter-spacing:.08em">${now2.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</div></div><div class="saldo-row"><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Entradas do mês</span><span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--gr)">${fmt(entMes.reduce((s,l)=>s+l.val,0))}</span></div><div class="saldo-row"><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Saídas do mês</span><span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--am)">${fmt(saiMes.reduce((s,l)=>s+l.val,0))}</span></div><div class="saldo-row"><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Ticket médio</span><span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--y)">${ticket>0?fmt(ticket):'—'}</span></div>`;
   // Progresso
   const progEl=document.getElementById('ch-progresso');if(progEl)progEl.innerHTML=projs.slice(0,6).map(p=>`<div class="prog-proj-row"><div class="prog-proj-hdr"><div class="prog-proj-name" title="${p.nome}">${p.nome}</div><div class="prog-proj-pct">${p.pct}%</div></div><div class="prog-track"><div class="prog-fill-anim" style="width:${p.pct}%;background:${p.cor}"></div></div><div class="prog-proj-meta"><span class="ftag ${FT[p.fi]}" style="font-size:11px;padding:1px 5px">${FN[p.fi]}</span><span style="${p.urg==='urgent'?'color:var(--y);font-weight:700':p.urg==='soon'?'color:var(--am)':'color:var(--t3)'}">${p.dias>0?p.dias+'d':p.dias===0?'hoje':'vencido'}</span></div></div>`).join('')||'<div style="font-family:var(--mono);font-size:11px;color:var(--t4)">Nenhum projeto</div>';
+  // OS-017: Evolução mensal (últimos 6 meses)
+  const evoEl=document.getElementById('ch-evolucao');
+  if(evoEl){
+    const meses=[];const hj=new Date();
+    for(let i=5;i>=0;i--){const d=new Date(hj.getFullYear(),hj.getMonth()-i,1);meses.push({m:d.getMonth(),y:d.getFullYear(),label:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.','')});}
+    const dados=meses.map(mes=>{
+      const ent=lancs.filter(l=>{const d=new Date(l.data);return d.getMonth()===mes.m&&d.getFullYear()===mes.y&&l.tipo==='entrada';}).reduce((s,l)=>s+l.val,0);
+      const sai=lancs.filter(l=>{const d=new Date(l.data);return d.getMonth()===mes.m&&d.getFullYear()===mes.y&&l.tipo==='saida';}).reduce((s,l)=>s+l.val,0);
+      return{label:mes.label,ent,sai,atual:mes.m===hj.getMonth()&&mes.y===hj.getFullYear()};
+    });
+    const maxVal=Math.max(...dados.map(d=>Math.max(d.ent,d.sai)),1);
+    if(lancs.length===0){
+      evoEl.innerHTML='<div style="text-align:center;padding:24px 12px"><div style="font-size:24px;margin-bottom:8px">📊</div><div style="font-family:var(--mono);font-size:12px;color:var(--t3)">Adicione lançamentos no Financeiro para ver a evolução mensal</div></div>';
+    } else {
+      const bw=32,gap=8,gw=dados.length*(bw*2+gap+12),gh=100;
+      let bars='';dados.forEach((d,i)=>{
+        const x=i*(bw*2+gap+12)+6;
+        const hE=Math.max(2,Math.round(d.ent/maxVal*gh));
+        const hS=Math.max(2,Math.round(d.sai/maxVal*gh));
+        const cE=d.atual?'var(--y)':'var(--gr)';
+        const cS=d.atual?'var(--am)':'rgba(251,191,36,.5)';
+        bars+=`<rect x="${x}" y="${gh-hE}" width="${bw}" height="${hE}" rx="3" fill="${cE}" opacity="${d.atual?1:.7}"><title>Entradas: R$ ${d.ent.toLocaleString('pt-BR')}</title></rect>`;
+        bars+=`<rect x="${x+bw+2}" y="${gh-hS}" width="${bw}" height="${hS}" rx="3" fill="${cS}" opacity="${d.atual?1:.5}"><title>Saídas: R$ ${d.sai.toLocaleString('pt-BR')}</title></rect>`;
+        bars+=`<text x="${x+bw+1}" y="${gh+14}" text-anchor="middle" fill="${d.atual?'var(--y)':'var(--t3)'}" font-family="var(--mono)" font-size="10" font-weight="${d.atual?'700':'400'}">${d.label}</text>`;
+      });
+      evoEl.innerHTML=`<div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:2px;background:var(--gr)"></div><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Entradas</span></div><div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:2px;background:var(--am)"></div><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Saídas</span></div></div><svg viewBox="0 0 ${gw+12} ${gh+20}" style="width:100%;max-height:140px">${bars}</svg>`;
+    }
+  }
 }
 
 // ── NOTIFICAÇÕES ──────────────────────────────────────
@@ -5865,6 +5936,30 @@ setTimeout(()=>{
   }
 },200);
 
+// ─── OS-016: FEEDBACK FUNCTIONS ──────────────────────────────
+function selFbType(tipo){
+  window._fbType=tipo;
+  document.querySelectorAll('.fb-type-btn').forEach(b=>{
+    b.style.background=b.textContent.toLowerCase().includes(tipo.substring(0,3))?'var(--s4)':'';
+  });
+}
+function salvarFeedback(){
+  const desc=document.getElementById('fb-desc').value.trim();
+  if(!desc){toast('Escreva uma descrição','var(--am)');return;}
+  const page=document.getElementById('fb-page')?.textContent||'';
+  const fb={id:Date.now(),tipo:window._fbType||'sugestao',desc,page,data:new Date().toISOString(),versao:APP_VERSION};
+  const fbs=JSON.parse(localStorage.getItem('ph4-feedbacks')||'[]');
+  fbs.push(fb);localStorage.setItem('ph4-feedbacks',JSON.stringify(fbs));
+  toast('Feedback salvo! Obrigado 💛');closeM('m-feedback');
+}
+function copiarFeedback(){
+  const desc=document.getElementById('fb-desc').value.trim();
+  const page=document.getElementById('fb-page')?.textContent||'';
+  const tipo=window._fbType||'sugestao';
+  const txt=`[${tipo.toUpperCase()}] ${desc}\nPágina: ${page}\nVersão: ${APP_VERSION}\nData: ${new Date().toLocaleString('pt-BR')}`;
+  navigator.clipboard.writeText(txt).then(()=>toast('Copiado!')).catch(()=>toast('Erro ao copiar','var(--rd)'));
+}
+
 </script>
 
 <!-- ══ QUICK ACCESS HUB ══ -->
@@ -5950,6 +6045,28 @@ setTimeout(()=>{
     <div id="rel-body" style="max-height:60vh;overflow-y:auto;margin-top:14px"></div>
     <div class="modal-footer">
       <button class="btn-g" onclick="closeM('m-relatorio')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- FEEDBACK -->
+<div class="moverlay" id="m-feedback" onclick="if(event.target===this)closeM('m-feedback')">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">Enviar feedback</div>
+    <div class="modal-sub">Ajude a melhorar o hub. Seu feedback é salvo localmente.</div>
+    <div class="fg" style="margin-bottom:12px">
+      <label class="flbl">Tipo</label>
+      <div style="display:flex;gap:6px" id="fb-type-btns">
+        <button class="btn-g fb-type-btn" style="flex:1;font-size:11px" onclick="selFbType('bug')">🐛 Bug</button>
+        <button class="btn-g fb-type-btn" style="flex:1;font-size:11px" onclick="selFbType('sugestao')">💡 Sugestão</button>
+        <button class="btn-g fb-type-btn" style="flex:1;font-size:11px" onclick="selFbType('elogio')">⭐ Elogio</button>
+      </div>
+    </div>
+    <div class="fg"><label class="flbl">Descrição *</label><textarea class="fta" id="fb-desc" rows="4" placeholder="Descreva o que aconteceu ou sua ideia..."></textarea></div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--t4);margin:8px 0">Página: <span id="fb-page">dashboard</span></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn-g" style="flex:1" onclick="copiarFeedback()">Copiar</button>
+      <button class="btn-p" style="flex:1" onclick="salvarFeedback()">Salvar feedback</button>
     </div>
   </div>
 </div>
