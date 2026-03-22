@@ -1695,9 +1695,6 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div class="fg"><label class="flbl">Cliente *</label>
       <select class="fse" id="np-cli">
         <option value="">Selecione...</option>
-        <option>Zangão Studio</option><option>JVD Metais</option>
-        <option>Dias Catalisadores</option><option>Mayara</option>
-        <option>Apis 3</option><option>CREIO EL SHADAY</option>
         <option value="_novo">+ Novo cliente</option>
       </select>
     </div>
@@ -2450,7 +2447,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:11px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v5.1.0</span>
+      <span class="version-txt" id="version-label">v5.1.1</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3254,7 +3251,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v5.1.0';
+const APP_VERSION='v5.1.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3403,7 +3400,7 @@ function toast(m,c){const t=document.getElementById('toast');if(!t)return;t.text
 function openM(id){
   const el=document.getElementById(id);if(!el)return;
   el.classList.add('open');
-  if(id==='m-proj'){calcPrev();const d=new Date().toISOString().split('T')[0];const ini=document.getElementById('np-ini');if(ini)ini.value=d;}
+  if(id==='m-proj'){populateNpCli();calcPrev();const d=new Date().toISOString().split('T')[0];const ini=document.getElementById('np-ini');if(ini)ini.value=d;}
   if(id==='m-edit-perfil'){const p=getPerfilData();const en=document.getElementById('ep-nome');if(en)en.value=p.nome;const ee=document.getElementById('ep-espec');if(ee)ee.value=p.espec||'';const es=document.getElementById('ep-site');if(es)es.value=p.site||'';const eb=document.getElementById('ep-bio');if(eb)eb.value=p.bio||'';const ep2=document.getElementById('ep-pass');if(ep2)ep2.value='';}
   if(id==='m-feedback'){const ap=document.querySelector('.page.active');const fbp=document.getElementById('fb-page');if(fbp&&ap)fbp.textContent=ap.id.replace('page-','');document.querySelectorAll('.fb-type-btn').forEach(b=>b.style.background='');document.getElementById('fb-desc').value='';window._fbType=null;}
   if(id==='m-lanc'){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];}
@@ -4473,6 +4470,8 @@ function removeFileLink(i){const p=projs.find(x=>x.id===curProjId);if(!p||!p.fil
 // ── FINANCEIRO ────────────────────────────────────────
 function openLanc(){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];openM('m-lanc');}
 function populateLancProj(){const fp=document.getElementById('fl-proj');if(fp)fp.innerHTML='<option value="">Nenhum</option>'+projs.map(p=>`<option>${p.nome}</option>`).join('');}
+function populateNpCli(){const sel=document.getElementById('np-cli');if(!sel)return;let html='<option value="">Selecione...</option>';clients.forEach(c=>{html+=`<option value="${c.nome}">${c.nome}</option>`;});html+='<option value="_novo">+ Novo cliente</option>';sel.innerHTML=html;sel.onchange=function(){if(this.value==='_novo'){this.value='';openM('m-cliente');}};}
+
 function addLanc(){
   const desc=document.getElementById('fl-desc').value.trim(),val=parseFloat(document.getElementById('fl-val').value)||0,data=document.getElementById('fl-data').value;
   if(!desc||!val||!data){toast('Preencha todos os campos!','var(--am)');return;}
