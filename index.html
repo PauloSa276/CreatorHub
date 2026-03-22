@@ -3248,43 +3248,18 @@ const FASES=[
 const FN=['Imersão','Definição','Desenvolv.','Protótipo','Entrega','Florescimento'];
 const FT=['f-briefing','f-conceito','f-producao','f-revisao','f-entrega','f-fechado'];
 
-// ── CLIENTES REAIS (Notion) ──────────────────────────────
-const DC=[
-  {id:1,nome:'Zangão Studio',av:'ZS',cor:'#E8B800',seg:'Serviços',resp:'',wpp:'',email:'',origem:'Indicação',serv:'Identidade Visual + Branding',escopo:'Projeto completo de identidade visual e branding',pgto:'50% + 50% na entrega',val:0,status:'ativo',crit:'media',tempo:21,notas:''},
-  {id:2,nome:'JVD Metais',av:'JV',cor:'#60A5FA',seg:'Varejo',resp:'',wpp:'',email:'',origem:'Indicação',serv:'Identidade Visual',escopo:'Identidade visual completa',pgto:'50% + 50% na entrega',val:0,status:'ativo',crit:'media',tempo:21,notas:''},
-  {id:3,nome:'Apis 3',av:'A3',cor:'#F59E0B',seg:'Outros',resp:'',wpp:'',email:'',origem:'Indicação',serv:'Apresentação Conceitual',escopo:'Apresentação conceitual de identidade visual',pgto:'50% + 50% na entrega',val:0,status:'ativo',crit:'media',tempo:14,notas:''},
-  {id:4,nome:'Dias Catalisadores',av:'DC',cor:'#A78BFA',seg:'Serviços',resp:'',wpp:'',email:'',origem:'Indicação',serv:'Identidade Visual',escopo:'Identidade visual — fase de revisão urgente',pgto:'50% + 50% na entrega',val:0,status:'ativo',crit:'alta',tempo:21,notas:'Em fase de revisão — urgente'},
-  {id:5,nome:'Mayara',av:'MY',cor:'#EC4899',seg:'Serviços',resp:'Mayara',wpp:'',email:'',origem:'Indicação',serv:'Personal Brand',escopo:'Identidade visual + branding pessoal completo',pgto:'50% + 50% na entrega',val:0,status:'ativo',crit:'media',tempo:28,notas:''},
-  {id:6,nome:'CREIO EL SHADAY',av:'CE',cor:'#22C55E',seg:'Ministério',resp:'',wpp:'',email:'',origem:'Indicação',serv:'Conteúdo Digital',escopo:'Produção de conteúdo digital para ministério',pgto:'A combinar',val:0,status:'proposta',crit:'baixa',tempo:0,notas:''},
-];
-
-// ── PROJETOS REAIS (Notion) ──────────────────────────────
-function mkTasks(fi){const t=new Array(30).fill(false);for(let f=0;f<fi;f++)for(let k=0;k<5;k++)t[f*5+k]=true;return t;}
-const DP=[
-  {id:1,nome:'Zangão — Identidade Visual',cli:'Zangão Studio',tipo:'Identidade Visual',fi:2,pct:65,prazo:'2026-03-28',dias:8,cor:'#E8B800',urg:'soon',st:'Em andamento',pausado:false,pMot:'',pObs:'',nid:'PRJ-1',tasks:mkTasks(2),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[]},
-  {id:2,nome:'Dias Catalisadores — IDV',cli:'Dias Catalisadores',tipo:'Identidade Visual',fi:3,pct:90,prazo:'2026-03-22',dias:2,cor:'#A78BFA',urg:'urgent',st:'Em revisão',pausado:false,pMot:'',pObs:'',nid:'PRJ-2',tasks:mkTasks(3),revisoes:1,maxRevisoes:2,revisaoHist:[{data:'18 Mar',motivo:'Ajuste na tipografia'}],fileLinks:[]},
-  {id:3,nome:'Mayara — Personal Brand',cli:'Mayara',tipo:'Identidade Visual',fi:1,pct:40,prazo:'2026-04-10',dias:21,cor:'#EC4899',urg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',nid:'PRJ-3',tasks:mkTasks(1),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[]},
-  {id:4,nome:'Apis 3 — Entrega',cli:'Apis 3',tipo:'Apresentação',fi:4,pct:95,prazo:'2026-03-20',dias:0,cor:'#F59E0B',urg:'urgent',st:'Em andamento',pausado:false,pMot:'',pObs:'',nid:'PRJ-4',tasks:mkTasks(4),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[]},
-  {id:5,nome:'JVD Metais — IDV',cli:'JVD Metais',tipo:'Identidade Visual',fi:2,pct:70,prazo:'',dias:14,cor:'#60A5FA',urg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',nid:'PRJ-5',tasks:mkTasks(2),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[]},
-];
-
-// ── STATE ──────────────────────────────────────────────
-let projs=JSON.parse(localStorage.getItem('ph4-projs')||'null')||DP;
-let clients=JSON.parse(localStorage.getItem('ph4-cli')||'null')||DC;
-let calEvs=JSON.parse(localStorage.getItem('ph4-cal')||'null')||[
-  {nome:'Revisão — Dias Catalisadores',data:'2026-03-20',proj:'Dias Catalisadores — IDV',tipo:'y'},
-  {nome:'Entrega — Apis 3',data:'2026-03-20',proj:'Apis 3 — Entrega',tipo:'g'},
-  {nome:'Prazo — Zangão',data:'2026-03-28',proj:'Zangão — Identidade Visual',tipo:'a'},
-  {nome:'Prazo — Mayara',data:'2026-04-10',proj:'Mayara — Personal Brand',tipo:'p'},
-];
-let lancs=JSON.parse(localStorage.getItem('ph4-fin')||'null')||[];
-let dayTasks=JSON.parse(localStorage.getItem('ph4-day')||'null')||[];
+// ── STATE (sem dados mockados — localStorage puro) ────────────
+let projs=JSON.parse(localStorage.getItem('ph4-projs')||'[]');
+let clients=JSON.parse(localStorage.getItem('ph4-cli')||'[]');
+let calEvs=JSON.parse(localStorage.getItem('ph4-cal')||'[]');
+let lancs=JSON.parse(localStorage.getItem('ph4-fin')||'[]');
+let dayTasks=JSON.parse(localStorage.getItem('ph4-day')||'[]');
 let projsFinalizados=JSON.parse(localStorage.getItem('ph4-finalizados')||'[]');
 let cases=JSON.parse(localStorage.getItem('ph4-cases')||'[]');
 let propostas=JSON.parse(localStorage.getItem('ph4-propostas')||'[]');
 let hubData=JSON.parse(localStorage.getItem('ph4-hub')||'null')||DEF_HUB_DATA();
-let xpTotal=parseInt(localStorage.getItem('ph4-xp')||'740');
-let curProjId=projs[0]?.id||1;
+let xpTotal=parseInt(localStorage.getItem('ph4-xp')||'0');
+let curProjId=projs[0]?.id||null;
 let selTipoV='';
 let propAtualId=null;
 let rpgClientId=null;
@@ -3612,6 +3587,7 @@ function renderProjs(){
   setEl('pm-rev',projs.filter(p=>p.st==='Em revisão').length);
   setEl('pm-pau',projs.filter(p=>p.pausado).length);
   const el=document.getElementById('proj-list');if(!el)return;
+  if(projs.length===0&&projsFinalizados.length===0){el.innerHTML='<div style="text-align:center;padding:48px 20px"><div class="empty-float" style="font-size:52px;margin-bottom:14px"><i data-lucide="folder-kanban" style="width:48px;height:48px;color:var(--t4)"></i></div><div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Nenhum projeto ainda</div><div style="font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:20px;line-height:1.5">Crie seu primeiro projeto para começar<br>a gerenciar com a metodologia de 6 fases.</div><button class="btn-p" style="font-size:13px" onclick="openM(\'m-proj\')">+ Novo projeto</button></div>';setTimeout(refreshIcons,50);return;}
   let html=projs.map((p,i)=>`<div class="card" style="cursor:pointer" onclick="openProj(${p.id})"><div style="display:flex;align-items:center;gap:11px"><div class="p-num" style="min-width:26px;font-size:12px">${String(i+1).padStart(2,'0')}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--t1)">${p.nome}${p.pausado?' <span style="color:var(--am)">⏸</span>':''}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:2px">${p.cli} · ${p.tipo}</div></div><span class="ftag ${FT[p.fi]}">${FN[p.fi]}</span><div class="p-pct">${p.pct}%</div><div class="p-days ${p.urg}">${p.dias>0?p.dias+'d ↗':p.dias===0?'hoje ↗':'— ↗'}</div></div><div class="p-prog" style="margin-top:9px"><div class="p-prog-fill" style="width:${p.pct}%;background:${p.cor}"></div></div></div>`).join('');
   if(projsFinalizados.length>0){html+=`<div class="fin-section-title" style="margin-top:16px">✓ Fora da fila — ${projsFinalizados.length}</div>`+projsFinalizados.map(p=>`<div class="proj-finalizado"><div style="display:flex;align-items:center;gap:10px"><div style="width:3px;height:34px;border-radius:2px;background:${p.cor};flex-shrink:0"></div><div style="flex:1"><div class="p-name" style="color:var(--t2)">${p.nome}</div><div class="p-meta">${p.cli} · ${p.dataFim||''}${p.tipo_fin==='case'?' · ◆ Case':''}</div></div><span class="ftag ${p.tipo_fin==='case'?'f-entrega':'f-fechado'}">${p.tipo_fin==='case'?'CASE':'ENTREGUE'}</span></div></div>`).join('');}
   el.innerHTML=html;
@@ -3800,6 +3776,7 @@ function renderCRM(){
   const stLbl={ativo:'ATIVO',proposta:'PROPOSTA',lead:'LEAD',concluido:'CONCLUÍDO'};
   const critMap={alta:'🔴 Alta — urgência máxima',media:'🟡 Média — flexível',baixa:'🟢 Baixa — ótimo relacionamento'};
   const el=document.getElementById('crm-list');if(!el)return;
+  if(clients.length===0){el.innerHTML='<div style="text-align:center;padding:48px 20px"><div class="empty-float" style="font-size:52px;margin-bottom:14px"><i data-lucide="users" style="width:48px;height:48px;color:var(--t4)"></i></div><div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Nenhum cliente cadastrado</div><div style="font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:20px;line-height:1.5">Adicione seu primeiro cliente e acompanhe<br>o relacionamento com a ficha RPG.</div><button class="btn-p" style="font-size:13px" onclick="openM(\'m-cliente\')">+ Novo cliente</button></div>';setTimeout(refreshIcons,50);return;}
   el.innerHTML=clients.map(c=>`<div class="crm-card" onclick="openCRMPopup(${c.id})"><div style="display:flex;align-items:center;gap:11px;margin-bottom:9px"><div class="crm-av" style="background:var(--yb);border-color:rgba(212,160,23,.3);color:${c.cor}">${c.av||c.nome.slice(0,2).toUpperCase()}</div><div style="flex:1"><div class="crm-name">${c.nome}</div><div class="crm-seg">${c.seg||''}${c.serv?' · '+c.serv:''}</div></div><span class="sbadge ${stMap[c.status]||'s-lead'}">${stLbl[c.status]||'—'}</span></div>${c.crit?`<div class="crit-row"><div class="crit-dot" style="background:${c.crit==='alta'?'var(--rd)':c.crit==='baixa'?'var(--gr)':'var(--am)'}"></div><span style="font-family:var(--mono);font-size:11px;color:var(--t3);font-weight:500">${critMap[c.crit]||''}</span></div>`:''}<div class="crm-meta"><div><div class="crm-ml">Origem</div><div class="crm-mv">${c.origem||'—'}</div></div><div><div class="crm-ml">Contato</div><div class="crm-mv">${c.wpp||c.email||'—'}</div></div><div><div class="crm-ml">Serviço</div><div class="crm-mv">${c.serv||'—'}</div></div><div><div class="crm-ml">Pagamento</div><div class="crm-mv">${c.pgto||'—'}</div></div>${c.val>0?`<div><div class="crm-ml">Valor</div><div class="crm-mv" style="color:var(--y);font-weight:600">${fmt(c.val)}</div></div>`:''}</div>${c.notas?`<div style="margin-top:8px;padding:7px 9px;background:var(--s4);border-radius:var(--r1);font-family:var(--mono);font-size:11px;color:var(--t2);border:1px solid var(--e1)">${c.notas}</div>`:''}<div style="display:flex;justify-content:flex-end;margin-top:10px;padding-top:8px;border-top:1px solid var(--e1)"><button class="btn-g" style="font-size:11px;color:var(--rd);border-color:rgba(239,68,68,.2)" onclick="event.stopPropagation();deletarCliente(${c.id})">Remover cliente</button></div></div>`).join('');
 }
 function criarCliente(){
@@ -4469,7 +4446,7 @@ function renderFin(){
   setEl('fin-mes',fmt(tM));setEl('fin-mes-s',enM.length+' entradas');setEl('fin-rec',fmt(arec));setEl('fin-recb',fmt(rec));
   const mg_el=document.getElementById('fin-marg');if(mg_el){mg_el.textContent=mg+'%';mg_el.className='m-val '+(mg>50?'ok':mg>20?'warn':'danger');}
   const lista=document.getElementById('fin-lista');
-  if(lista)lista.innerHTML=lancs.length===0?'<div style="font-family:var(--mono);font-size:11px;color:var(--t4);padding:11px 0">Clique em + Lançamento para começar.</div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div><span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
+  if(lista)lista.innerHTML=lancs.length===0?'<div style="text-align:center;padding:32px 16px"><div class="empty-float" style="margin-bottom:10px"><i data-lucide="bar-chart-2" style="width:36px;height:36px;color:var(--t4)"></i></div><div style="font-size:14px;font-weight:600;color:var(--t2);margin-bottom:4px">Sem lançamentos</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">Registre entradas e saídas para controlar suas finanças.</div></div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div><span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
   const ppEl=document.getElementById('fin-proj');if(ppEl){const bp={};ent.filter(l=>l.proj).forEach(l=>{if(!bp[l.proj])bp[l.proj]={t:0,r:0};bp[l.proj].t+=l.val;if(l.st==='recebido')bp[l.proj].r+=l.val;});ppEl.innerHTML=Object.keys(bp).length===0?'<div style="font-family:var(--mono);font-size:11px;color:var(--t4)">Nenhum lançamento</div>':Object.entries(bp).map(([proj,d])=>`<div style="padding:7px 0;border-bottom:1px solid var(--e1)"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-size:13px;color:var(--t2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${proj}</div><div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--y)">${fmt(d.t)}</div></div><div class="xtg"><div class="xfg" style="width:${Math.round(d.r/d.t*100)}%"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:2px">${Math.round(d.r/d.t*100)}% recebido</div></div>`).join('');}
   const distEl=document.getElementById('fin-dist');if(distEl)distEl.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Entradas</span><span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--gr)">${fmt(tE)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Saídas</span><span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--am)">${fmt(tS)}</span></div><div style="height:1px;background:var(--e1);margin:7px 0"></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--mono);font-size:11px;color:var(--t3)">Margem líquida</span><span style="font-size:20px;font-weight:900;letter-spacing:-.05em;color:var(--y)">${mg}%</span></div><div class="xts" style="margin-top:5px"><div class="xfs" style="width:${mg}%"></div></div>`;
 }
@@ -5654,8 +5631,10 @@ function pipeDrop(e, colId){
     if(projFiltroAtual==='andamento') lista = projs.filter(p=>p.st==='Em andamento'&&!p.pausado);
     else if(projFiltroAtual==='revisao') lista = projs.filter(p=>p.st==='Em revisão');
     else if(projFiltroAtual==='pausado') lista = projs.filter(p=>p.pausado);
-    // Label do filtro ativo
+    // Empty state para novo usuário
     const el=document.getElementById('proj-list'); if(!el) return;
+    if(projs.length===0&&projsFinalizados.length===0){el.innerHTML='<div style="text-align:center;padding:48px 20px"><div class="empty-float" style="font-size:52px;margin-bottom:14px"><i data-lucide="folder-kanban" style="width:48px;height:48px;color:var(--t4)"></i></div><div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Nenhum projeto ainda</div><div style="font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:20px;line-height:1.5">Crie seu primeiro projeto para começar<br>a gerenciar com a metodologia de 6 fases.</div><button class="btn-p" style="font-size:13px" onclick="openM(\'m-proj\')">+ Novo projeto</button></div>';setTimeout(refreshIcons,50);return;}
+    // Label do filtro ativo
     const filtroLabel = projFiltroAtual!=='todos'?`<div style="grid-column:1/-1;font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:4px;display:inline-flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:var(--y);flex-shrink:0;display:inline-block"></span>${projFiltroAtual === 'andamento' ? 'Em andamento' : projFiltroAtual === 'revisao' ? 'Em revisão' : 'Pausados'} <span style="cursor:pointer;color:var(--t4);font-size:13px;line-height:1;margin-left:2px" onclick="projFiltroAtual='todos';renderProjs()">✕</span></div>`:'';
     let html=filtroLabel+lista.map((p,i)=>`<div class="card" style="cursor:pointer" onclick="openProj(${p.id})"><div style="display:flex;align-items:center;gap:11px"><div class="p-num" style="min-width:26px;font-size:12px">${String(i+1).padStart(2,'0')}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--t1)">${p.nome}${p.pausado?' <span style="color:var(--am)">⏸</span>':''}</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:2px">${p.cli} · ${p.tipo}</div></div><span class="ftag ${FT[p.fi]}">${FN[p.fi]}</span><div class="p-pct">${p.pct}%</div><div class="p-days ${p.urg}">${p.dias>0?p.dias+'d ↗':p.dias===0?'hoje ↗':'— ↗'}</div></div><div class="p-prog" style="margin-top:9px"><div class="p-prog-fill" style="width:${p.pct}%;background:${p.cor}"></div></div></div>`).join('');
     if(lista.length===0&&projFiltroAtual!=='todos') html+=`<div style="text-align:center;padding:32px 0;color:var(--t4);font-family:var(--mono);font-size:12px">Nenhum projeto nesta categoria</div>`;
@@ -5741,52 +5720,86 @@ function verProjsDoCliente(nomeCliente){
 
 // Botão "Ver projetos" adicionado diretamente no HTML da ficha RPG
 
-// ─── P3: ONBOARDING DE PRIMEIRO ACESSO ───────────────────────
+// ─── ONBOARDING DE PRIMEIRO ACESSO (3 passos) ───────────────
+let _obStep=1;
+function _obRender(){
+  const ov=document.getElementById('ob-overlay');if(!ov)return;
+  const dots='<div style="display:flex;gap:6px;justify-content:center;margin-bottom:24px">'+[1,2,3].map(i=>'<div style="width:8px;height:8px;border-radius:50%;background:'+(_obStep===i?'var(--y)':'var(--e3)')+'"></div>').join('')+'</div>';
+  const stepLabel='<div style="font-family:var(--mono);font-size:11px;color:var(--t4);margin-bottom:16px">PASSO '+_obStep+' DE 3</div>';
+  let content='';
+  if(_obStep===1){
+    content=`${stepLabel}${dots}
+      <div style="font-size:48px;margin-bottom:16px">✦</div>
+      <div style="font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:6px">Configure seu estúdio</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:24px;line-height:1.6">Personalize o hub com os dados do seu negócio.</div>
+      <div style="text-align:left;display:flex;flex-direction:column;gap:12px">
+        <div class="fg"><label class="flbl">Nome do estúdio *</label><input class="fi" id="ob-studio" placeholder="Ex: paulosá.studio" value="${localStorage.getItem('ph4-studio')||''}"></div>
+        <div class="fg"><label class="flbl">Especialidade *</label><input class="fi" id="ob-espec" placeholder="Ex: Branding & Identidade Visual" value="${localStorage.getItem('ph4-espec')||''}"></div>
+        <div class="fg"><label class="flbl">Site</label><input class="fi" id="ob-site" placeholder="Ex: meuestudio.com" value="${localStorage.getItem('ph4-site')||''}"></div>
+      </div>
+      <button class="btn-p" style="width:100%;height:44px;font-size:14px;margin-top:20px" onclick="_obNext1()">Continuar →</button>`;
+  } else if(_obStep===2){
+    content=`${stepLabel}${dots}
+      <div style="font-size:48px;margin-bottom:16px">👤</div>
+      <div style="font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:6px">Adicione seu primeiro cliente</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:24px;line-height:1.6">Opcional — você pode adicionar depois pelo CRM.</div>
+      <div style="text-align:left;display:flex;flex-direction:column;gap:12px">
+        <div class="fg"><label class="flbl">Nome do cliente</label><input class="fi" id="ob-cli-nome" placeholder="Ex: Empresa X"></div>
+        <div class="fg"><label class="flbl">Serviço</label><input class="fi" id="ob-cli-serv" placeholder="Ex: Identidade Visual"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:20px">
+        <button class="btn-g" style="flex:1" onclick="_obStep=3;_obRender()">Pular</button>
+        <button class="btn-p" style="flex:1" onclick="_obNext2()">Adicionar →</button>
+      </div>`;
+  } else {
+    content=`${stepLabel}${dots}
+      <div style="font-size:48px;margin-bottom:16px">📁</div>
+      <div style="font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:6px">Crie seu primeiro projeto</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:24px;line-height:1.6">Opcional — comece quando estiver pronto.</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn-g" style="flex:1" onclick="_obFinish()">Entrar no hub</button>
+        <button class="btn-p" style="flex:1" onclick="_obFinish();setTimeout(()=>openM('m-proj'),300)">Criar projeto →</button>
+      </div>`;
+  }
+  ov.querySelector('.ob-content').innerHTML=content;
+}
+function _obNext1(){
+  const studio=document.getElementById('ob-studio').value.trim();
+  const espec=document.getElementById('ob-espec').value.trim();
+  if(!studio||!espec){toast('Preencha nome e especialidade!','var(--am)');return;}
+  const site=document.getElementById('ob-site').value.trim();
+  localStorage.setItem('ph4-studio',studio);
+  localStorage.setItem('ph4-espec',espec);
+  if(site)localStorage.setItem('ph4-site',site);
+  // Atualizar sidebar
+  const sn=document.getElementById('sb-role');if(sn)sn.textContent=espec;
+  const ss=document.getElementById('sb-site');if(ss)ss.textContent=site||'';
+  _obStep=2;_obRender();
+}
+function _obNext2(){
+  const nome=document.getElementById('ob-cli-nome').value.trim();
+  if(!nome){_obStep=3;_obRender();return;}
+  const serv=document.getElementById('ob-cli-serv').value.trim();
+  const ini=nome.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const cors=['#D4A017','#A78BFA','#F59E0B','#22C55E','#60A5FA','#EC4899'];
+  clients.unshift({id:Date.now(),nome,av:ini,cor:cors[0],seg:'',resp:'',wpp:'',email:'',origem:'',serv:serv,escopo:'',pgto:'',val:0,status:'ativo',crit:'media',tempo:0,notas:''});
+  save();
+  _obStep=3;_obRender();
+}
+function _obFinish(){
+  localStorage.setItem('ph4-onboarded','1');
+  const ov=document.getElementById('ob-overlay');if(ov)ov.remove();
+  renderDash();
+}
 (function(){
   if(localStorage.getItem('ph4-onboarded')) return;
   const overlay=document.createElement('div');
+  overlay.id='ob-overlay';
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)';
-  overlay.innerHTML=`
-    <div class="card" style="padding:40px;max-width:500px;width:100%;text-align:center;box-shadow:var(--sh5);border-color:var(--e3);border-radius:var(--radius-xl)">
-      <div style="font-size:48px;margin-bottom:16px">✦</div>
-      <div style="font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:8px">Bem-vindo ao paulosá.hub</div>
-      <div style="font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:28px;line-height:1.6">Sistema operacional para o seu estúdio criativo.<br>Gerencie projetos, clientes e finanças em um só lugar.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px">
-        <div class="card" style="text-align:center">
-          <div style="font-size:24px;margin-bottom:8px">📁</div>
-          <div style="font-size:12px;font-weight:600;color:var(--t1)">Projetos</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:4px">Metodologia em 6 fases com XP</div>
-        </div>
-        <div class="card" style="text-align:center">
-          <div style="font-size:24px;margin-bottom:8px">👤</div>
-          <div style="font-size:12px;font-weight:600;color:var(--t1)">Clientes</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:4px">CRM com ficha RPG de relacionamento</div>
-        </div>
-        <div class="card" style="text-align:center">
-          <div style="font-size:24px;margin-bottom:8px">💰</div>
-          <div style="font-size:12px;font-weight:600;color:var(--t1)">Finanças</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:4px">Controle de entradas e saídas</div>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <button class="btn-p" style="width:100%;height:44px;font-size:14px" onclick="onboardingStart()">Começar agora →</button>
-        <button class="btn-g" style="width:100%" onclick="onboardingSkip()">Já conheço, pular</button>
-      </div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--t4);margin-top:16px">Dica: use <kbd style="background:var(--s4);padding:1px 5px;border-radius:3px;font-size:11px">⌘K</kbd> para busca rápida</div>
-    </div>`;
+  overlay.innerHTML='<div class="card ob-content" style="padding:40px;max-width:460px;width:100%;text-align:center;box-shadow:var(--sh5);border-color:var(--e3);border-radius:var(--radius-xl)"></div>';
   document.body.appendChild(overlay);
-  window._onboardingOverlay = overlay;
+  _obRender();
 })();
-
-function onboardingSkip(){
-  localStorage.setItem('ph4-onboarded','1');
-  if(window._onboardingOverlay) window._onboardingOverlay.remove();
-}
-function onboardingStart(){
-  onboardingSkip();
-  // Leva para criar primeiro projeto
-  setTimeout(()=>openM('m-proj'),200);
-}
 
 // ─── P3: STREAK DO DESAFIO SEMANAL ───────────────────────────
 (function(){
