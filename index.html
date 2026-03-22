@@ -2450,7 +2450,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:11px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v5.0.0</span>
+      <span class="version-txt" id="version-label">v5.0.1</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3254,7 +3254,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v5.0.0';
+const APP_VERSION='v5.0.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4722,7 +4722,7 @@ function salvarConfig(){
   atualizarPaginaPerfil();
   toast('Configurações salvas! ✓');
 }
-function resetarDados(){if(!confirm('ATENÇÃO: Apagar TODOS os dados?'))return;if(!confirm('Última chance. Exportou o backup?'))return;['ph4-projs','ph4-cli','ph4-fin','ph4-propostas','ph4-finalizados','ph4-cases','ph4-hub','ph4-xp','ph4-day','ph4-cal'].forEach(k=>localStorage.removeItem(k));location.reload();}
+function resetarDados(){if(!confirm('ATENÇÃO: Apagar TODOS os dados?'))return;if(!confirm('Última chance. Exportou o backup?'))return;['ph4-projs','ph4-cli','ph4-fin','ph4-propostas','ph4-finalizados','ph4-cases','ph4-hub','ph4-xp','ph4-day','ph4-cal','ph4-onboarded','ph4-auto-backup','ph4-perfil','ph4-qnotes','ph4-feedbacks','ph4-insights','ph4-lanc','ph4-meta-fin','ph4-studio','ph4-espec','ph4-site','ph4-dose-idx','ph4-dose-date','ph4-desafio-sem','ph4-desafio-streak','ph4-criativo-open','ph4-ultimo-backup'].forEach(k=>localStorage.removeItem(k));location.reload();}
 function limparFinalizados(){if(!confirm('Apagar finalizados e cases?'))return;projsFinalizados=[];cases=[];saveExtra();toast('Removidos','var(--am)');atualizarBadgeCases();}
 
 // ── TEMPLATES ─────────────────────────────────────────
