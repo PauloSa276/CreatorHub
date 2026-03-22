@@ -1123,10 +1123,13 @@ html,body{
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 12px;
-  align-items: start;
+  align-items: stretch;
 }
-.dash-left { display: flex; flex-direction: column; gap: 12px; }
+.dash-left { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.dash-left .card:last-child { flex:1; min-height: 80px; }
 .dash-right { display: flex; flex-direction: column; gap: 12px; }
+#agenda-hoje { max-height: 120px; overflow-y: auto; }
+#alertas { max-height: 100px; overflow-y: auto; }
 
 /* Card base unificado */
 .card {
@@ -1161,6 +1164,8 @@ html,body{
   border-radius: var(--r3);
   overflow: hidden;
   box-shadow: var(--sh1);
+  max-height: 340px;
+  overflow-y: auto;
 }
 .criativo-header {
   display: flex;
@@ -2461,7 +2466,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v6.1.0</span>
+      <span class="version-txt" id="version-label">v6.2.0</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3261,7 +3266,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v6.1.0';
+const APP_VERSION='v6.2.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
