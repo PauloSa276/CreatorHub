@@ -2496,7 +2496,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v6.2.4</span>
+      <span class="version-txt" id="version-label">v6.2.5</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3296,7 +3296,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v6.2.4';
+const APP_VERSION='v6.2.5';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -6046,9 +6046,16 @@ function _obNext2(){
   _obStep=3;_obRender();
 }
 function _obFinish(){
+  // Garantir persistência de todos os dados criados no onboarding
+  save();saveExtra();
   localStorage.setItem('ph4-onboarded','1');
   const ov=document.getElementById('ob-overlay');if(ov)ov.remove();
-  renderDash();
+  renderDash();renderCRM();
+  // Atualizar badges do sidebar
+  const crmBadge=document.querySelector('[data-page="crm"] .badge');
+  if(crmBadge)crmBadge.textContent=clients.length;
+  const projBadge=document.querySelector('[data-page="projetos"] .badge');
+  if(projBadge)projBadge.textContent=projs.length;
 }
 (function(){
   if(localStorage.getItem('ph4-onboarded')) return;
