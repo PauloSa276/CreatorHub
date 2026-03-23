@@ -1772,6 +1772,20 @@ button:active{transform:scale(.97);transition:transform .08s}
   </div>
 </div>
 
+<!-- M: BRIEFING CHECKPOINT -->
+<div class="moverlay" id="m-brief-check">
+  <div class="modal" style="max-width:420px">
+    <div style="text-align:center;font-size:36px;margin-bottom:12px">📋</div>
+    <div class="modal-title" style="text-align:center">Briefing incompleto</div>
+    <div class="modal-sub" style="text-align:center">Preencher o briefing na fase de Imersão ajuda a manter o projeto alinhado com o cliente.</div>
+    <div id="brief-check-missing" style="margin:12px 0;padding:12px;background:var(--s1);border-radius:var(--r2);font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);line-height:1.7"></div>
+    <div class="modal-footer" style="flex-direction:column;gap:8px;align-items:stretch">
+      <button class="btn-p" onclick="closeM('m-brief-check');abrirBriefing()" style="width:100%;justify-content:center">Preencher briefing</button>
+      <button class="btn-g" onclick="closeM('m-brief-check');_skipBriefCheck()" style="width:100%;justify-content:center">Continuar assim</button>
+    </div>
+  </div>
+</div>
+
 <!-- M: NOVA TAREFA -->
 <div class="moverlay" id="m-task">
   <div class="modal" style="max-width:400px">
@@ -2482,7 +2496,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v6.2.3</span>
+      <span class="version-txt" id="version-label">v6.2.4</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3282,7 +3296,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v6.2.3';
+const APP_VERSION='v6.2.4';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3716,6 +3730,20 @@ function avancar(){
   const off=p.fi*5,dc=p.tasks.slice(off,off+5).filter(Boolean).length;
   if(dc<5){toast('Complete todas as tarefas antes!','var(--am)');return;}
   if(p.pausado){toast('Retome o projeto antes!','var(--am)');return;}
+  // Briefing checkpoint na fase Imersão (fi===0)
+  if(p.fi===0&&!p._briefingAvisado){
+    const b=p.briefing||{};
+    const missing=[];
+    if(!b.objetivo)missing.push('Objetivo do projeto');
+    if(!b.publico)missing.push('Público-alvo');
+    if(!b.refs)missing.push('Referências');
+    if(!b.entregas)missing.push('Entregas esperadas');
+    if(missing.length>0){
+      const el=document.getElementById('brief-check-missing');
+      if(el)el.innerHTML='Campos pendentes:<br>'+missing.map(m=>'• '+m).join('<br>');
+      openM('m-brief-check');return;
+    }
+  }
   const fase=FASES[p.fi];
   // Fase 4 = Entrega: revelar seção de Lançamento ao invés de avançar fase
   if(p.fi===4){
@@ -3733,6 +3761,10 @@ function avancar(){
   if(p.fi>=5){abrirModalFinalizar(p);return;}
   p.fi++;p.pct=Math.round(p.tasks.filter(Boolean).length/(FASES.length*5)*100);
   save();celebrar(fase.n,fase.xp);setTimeout(()=>{renderGestao();renderDash();},300);
+}
+function _skipBriefCheck(){
+  const p=projs.find(x=>x.id===curProjId);if(!p)return;
+  p._briefingAvisado=true;save();avancar();
 }
 
 function abrirPausa(){openM('m-pausa');}
@@ -5985,7 +6017,7 @@ function _obRender(){
       <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:24px;line-height:1.6">Opcional — comece quando estiver pronto.</div>
       <div style="display:flex;gap:8px;margin-top:8px">
         <button class="btn-g" style="flex:1" onclick="_obFinish()">Entrar no hub</button>
-        <button class="btn-p" style="flex:1" onclick="_obFinish();setTimeout(()=>openM('m-proj'),300)">Criar projeto →</button>
+        <button class="btn-p" style="flex:1" onclick="_obFinish();setTimeout(()=>{openM('m-proj');if(clients.length){const s=document.getElementById('np-cli');if(s)s.value=clients[0].nome;}},300)">Criar projeto →</button>
       </div>`;
   }
   ov.querySelector('.ob-content').innerHTML=content;
