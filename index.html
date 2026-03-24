@@ -101,37 +101,37 @@
 }
 /* ── LIGHT ── */
 [data-theme="light"]{
-  --bg:#ECEAE3;
-  --s1:#F4F2EC;
-  --s2:#FAFAF7;
-  --s3:#F0EEE8;
-  --s4:#E8E6E0;
-  --s5:#DEDAD3;
-  --s6:#D0CEC7;
-  --e1:rgba(0,0,0,0.06);
-  --e2:rgba(0,0,0,0.10);
-  --e3:rgba(0,0,0,0.16);
-  --e4:rgba(0,0,0,0.24);
-  --t1:#1A1916;
-  --t2:#4A4844;
-  --t3:#7A7872;
-  --t4:#AAA89E;
-  --t5:#C8C6BE;
-  --sh1:0 1px 2px rgba(0,0,0,0.06);
-  --sh2:0 2px 8px rgba(0,0,0,0.08);
-  --sh3:0 4px 16px rgba(0,0,0,0.10);
-  --sh4:0 8px 28px rgba(0,0,0,0.12);
-  --sh5:0 16px 48px rgba(0,0,0,0.14);
-  --gly:0 0 24px rgba(212,160,23,0.12);
-  --yb:rgba(212,160,23,0.10);
-  --gb:rgba(34,197,94,0.10);
-  --ab:rgba(245,158,11,0.10);
-  --pb:rgba(139,92,246,0.08);
-  --bb:rgba(59,130,246,0.08);
-  --rb:rgba(239,68,68,0.08);
-  --pkb:rgba(236,72,153,0.08);
-  --ib:#F4F2EC;
-  --nab:rgba(212,160,23,0.07);
+  --bg:#F0EDE6;
+  --s1:#F7F5F0;
+  --s2:#FFFFFF;
+  --s3:#EBE8E1;
+  --s4:#E3E0D8;
+  --s5:#D6D3CB;
+  --s6:#C5C2BA;
+  --e1:rgba(0,0,0,0.08);
+  --e2:rgba(0,0,0,0.13);
+  --e3:rgba(0,0,0,0.20);
+  --e4:rgba(0,0,0,0.30);
+  --t1:#161412;
+  --t2:#3D3A36;
+  --t3:#6B6760;
+  --t4:#948F86;
+  --t5:#B8B3AA;
+  --sh1:0 1px 3px rgba(0,0,0,0.08);
+  --sh2:0 2px 8px rgba(0,0,0,0.10);
+  --sh3:0 4px 16px rgba(0,0,0,0.12);
+  --sh4:0 8px 28px rgba(0,0,0,0.14);
+  --sh5:0 16px 48px rgba(0,0,0,0.16);
+  --gly:0 0 24px rgba(180,140,20,0.15);
+  --yb:rgba(180,140,20,0.12);
+  --gb:rgba(22,163,74,0.12);
+  --ab:rgba(217,119,6,0.12);
+  --pb:rgba(109,40,217,0.10);
+  --bb:rgba(37,99,235,0.10);
+  --rb:rgba(220,38,38,0.10);
+  --pkb:rgba(219,39,119,0.10);
+  --ib:#F7F5F0;
+  --nab:rgba(180,140,20,0.09);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1812,7 +1812,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div class="modal-sub">Ficha completa — CRM paulosá.</div>
     <div class="g2" style="gap:11px">
       <div class="fg"><label class="flbl">Nome / empresa *</label><input class="fi" id="nc-nome" placeholder="Ex: Zangão Studio"></div>
-      <div class="fg"><label class="flbl">Segmento</label><select class="fse" id="nc-seg"><option>Serviços</option><option>Saúde</option><option>Educação</option><option>Tech</option><option>Varejo</option><option>Ministério</option><option>Outros</option></select></div>
+      <div class="fg"><label class="flbl">Segmento</label><select class="fse" id="nc-seg" onchange="toggleSegOutros(this)"><option>Serviços</option><option>Saúde</option><option>Educação</option><option>Tech</option><option>Varejo</option><option>Ministério</option><option>Outros</option></select><div id="nc-seg-outros-wrap" style="display:none;margin-top:6px"><input class="fi" id="nc-seg-outros" placeholder="Qual segmento?"></div></div>
     </div>
     <div class="g2" style="gap:11px">
       <div class="fg"><label class="flbl">Responsável</label><input class="fi" id="nc-resp" placeholder="Nome do contato"></div>
@@ -1877,7 +1877,7 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div class="fg" style="margin-bottom:0"><label class="flbl">Data *</label><input class="fi" id="fl-data" type="date"></div>
     </div>
     <div class="fg" style="margin-top:13px"><label class="flbl">Projeto</label><select class="fse" id="fl-proj"><option value="">Nenhum</option></select></div>
-    <div class="fg"><label class="flbl">Status</label><select class="fse" id="fl-status"><option value="recebido">Recebido / Pago</option><option value="pendente">Pendente</option><option value="atrasado">Atrasado</option></select></div>
+    <div class="fg"><label class="flbl">Status</label><select class="fse" id="fl-status"><option value="recebido">Recebido / Pago</option><option value="pendente">Pendente</option><option value="atrasado">Atrasado</option><option value="recusado">Recusado</option><option value="perdido">Perdido</option></select></div>
     <div class="modal-footer"><button class="btn-g" onclick="closeM('m-lanc')">Cancelar</button><button class="btn-p" onclick="addLanc()">Registrar</button></div>
   </div>
 </div>
@@ -2501,7 +2501,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v7.0.2</span>
+      <span class="version-txt" id="version-label">v7.1.0</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3307,7 +3307,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v7.0.2';
+const APP_VERSION='v7.1.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3909,7 +3909,8 @@ function criarCliente(){
   const nome=document.getElementById('nc-nome').value.trim();if(!nome){toast('Preencha o nome!','var(--am)');return;}
   const ini=nome.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const cors=['#D4A017','#A78BFA','#F59E0B','#22C55E','#60A5FA','#EC4899'];
-  const c={id:Date.now(),nome,av:ini,cor:cors[clients.length%cors.length],seg:document.getElementById('nc-seg').value,resp:document.getElementById('nc-resp').value,wpp:document.getElementById('nc-wpp').value,email:document.getElementById('nc-email').value,origem:document.getElementById('nc-origem').value,serv:document.getElementById('nc-serv').value,escopo:document.getElementById('nc-escopo').value,pgto:document.getElementById('nc-pgto').value,val:parseFloat(document.getElementById('nc-val').value)||0,status:document.getElementById('nc-status').value,crit:document.getElementById('nc-crit').value,tempo:parseInt(document.getElementById('nc-tempo').value)||0,notas:document.getElementById('nc-notas').value};
+  const segVal=document.getElementById('nc-seg').value;const segFinal=segVal==='Outros'?(document.getElementById('nc-seg-outros')?.value.trim()||'Outros'):segVal;
+  const c={id:Date.now(),nome,av:ini,cor:cors[clients.length%cors.length],seg:segFinal,resp:document.getElementById('nc-resp').value,wpp:document.getElementById('nc-wpp').value,email:document.getElementById('nc-email').value,origem:document.getElementById('nc-origem').value,serv:document.getElementById('nc-serv').value,escopo:document.getElementById('nc-escopo').value,pgto:document.getElementById('nc-pgto').value,val:parseFloat(document.getElementById('nc-val').value)||0,status:document.getElementById('nc-status').value,crit:document.getElementById('nc-crit').value,tempo:parseInt(document.getElementById('nc-tempo').value)||0,notas:document.getElementById('nc-notas').value};
   clients.unshift(c);save();closeM('m-cliente');renderCRM();addXP(30);toast('Cliente adicionado! +30 XP');
 }
 
@@ -4345,7 +4346,7 @@ function gerarRelatorio(){
   const mNomes=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const perEl=document.getElementById('rel-periodo');
   if(perEl)perEl.textContent=`${mNomes[m]} de ${y}`;
-  const lancMes=lancs.filter(l=>{const d=new Date(l.data);return d.getMonth()===m&&d.getFullYear()===y;});
+  const lancMes=lancs.filter(l=>{const d=new Date(l.data);return d.getMonth()===m&&d.getFullYear()===y&&!_isRejected(l);});
   const entMes=lancMes.filter(l=>l.tipo==='entrada');
   const saiMes=lancMes.filter(l=>l.tipo==='saida');
   const totalEnt=entMes.reduce((s,l)=>s+l.val,0);
@@ -4574,9 +4575,10 @@ function addLanc(){
   lancs.unshift({id:Date.now(),tipo:document.getElementById('fl-tipo').value,desc,proj:document.getElementById('fl-proj').value,val,data,st:document.getElementById('fl-status').value});
   save();closeM('m-lanc');document.getElementById('fl-desc').value='';document.getElementById('fl-val').value='';renderFin();toast('Lançamento registrado!');
 }
+function _isRejected(l){return l.st==='recusado'||l.st==='perdido';}
 function renderFin(){
   const n=new Date(),m=n.getMonth(),y=n.getFullYear();
-  const ent=lancs.filter(l=>l.tipo==='entrada'),sai=lancs.filter(l=>l.tipo==='saida');
+  const ent=lancs.filter(l=>l.tipo==='entrada'&&!_isRejected(l)),sai=lancs.filter(l=>l.tipo==='saida'&&!_isRejected(l));
   const rec=ent.filter(l=>l.st==='recebido').reduce((s,l)=>s+l.val,0),arec=ent.filter(l=>l.st!=='recebido').reduce((s,l)=>s+l.val,0);
   const enM=ent.filter(l=>{const d=new Date(l.data);return d.getMonth()===m&&d.getFullYear()===y;});
   const tM=enM.reduce((s,l)=>s+l.val,0),tE=ent.reduce((s,l)=>s+l.val,0),tS=sai.reduce((s,l)=>s+l.val,0);
@@ -4584,7 +4586,7 @@ function renderFin(){
   setEl('fin-mes',fmt(tM));setEl('fin-mes-s',enM.length+' entradas');setEl('fin-rec',fmt(arec));setEl('fin-recb',fmt(rec));
   const mg_el=document.getElementById('fin-marg');if(mg_el){mg_el.textContent=mg+'%';mg_el.className='m-val '+(mg>50?'ok':mg>20?'warn':'danger');}
   const lista=document.getElementById('fin-lista');
-  if(lista)lista.innerHTML=lancs.length===0?'<div class="empty-state"><div class="empty-icon empty-float">💰</div><div class="empty-title">Sem lançamentos</div><div class="empty-desc">Registre entradas e saídas para acompanhar a saúde financeira do estúdio.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-lanc\')">+ Novo lançamento</button></div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div><span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
+  if(lista)lista.innerHTML=lancs.length===0?'<div class="empty-state"><div class="empty-icon empty-float">💰</div><div class="empty-title">Sem lançamentos</div><div class="empty-desc">Registre entradas e saídas para acompanhar a saúde financeira do estúdio.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-lanc\')">+ Novo lançamento</button></div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp','recusado':'vp','perdido':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO','recusado':'RECUSADO','perdido':'PERDIDO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div><span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
   const ppEl=document.getElementById('fin-proj');if(ppEl){const bp={};ent.filter(l=>l.proj).forEach(l=>{if(!bp[l.proj])bp[l.proj]={t:0,r:0};bp[l.proj].t+=l.val;if(l.st==='recebido')bp[l.proj].r+=l.val;});ppEl.innerHTML=Object.keys(bp).length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Nenhum lançamento</div>':Object.entries(bp).map(([proj,d])=>`<div style="padding:7px 0;border-bottom:1px solid var(--e1)"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-size:var(--fs-sm);color:var(--t2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${proj}</div><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--y)">${fmt(d.t)}</div></div><div class="xtg"><div class="xfg" style="width:${Math.round(d.r/d.t*100)}%"></div></div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${Math.round(d.r/d.t*100)}% recebido</div></div>`).join('');}
   const distEl=document.getElementById('fin-dist');if(distEl)distEl.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Entradas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--gr)">${fmt(tE)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Saídas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--am)">${fmt(tS)}</span></div><div style="height:1px;background:var(--e1);margin:7px 0"></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Margem líquida</span><span style="font-size:20px;font-weight:900;letter-spacing:-.05em;color:var(--y)">${mg}%</span></div><div class="xts" style="margin-top:5px"><div class="xfs" style="width:${mg}%"></div></div>`;
 }
@@ -4596,6 +4598,13 @@ function togglePropNovoLead(sel){
   const txt=document.getElementById('prop-novo-lead-nome');
   if(!wrap)return;
   if(sel.value==='_novo'){wrap.style.display='block';if(txt)txt.focus();}
+  else{wrap.style.display='none';if(txt)txt.value='';}
+}
+function toggleSegOutros(sel){
+  const wrap=document.getElementById('nc-seg-outros-wrap');
+  const txt=document.getElementById('nc-seg-outros');
+  if(!wrap)return;
+  if(sel.value==='Outros'){wrap.style.display='block';if(txt)txt.focus();}
   else{wrap.style.display='none';if(txt)txt.value='';}
 }
 function togglePropOutros(sel){
@@ -4717,8 +4726,8 @@ function renderMetricas(){
     const meses=[];const hj=new Date();
     for(let i=5;i>=0;i--){const d=new Date(hj.getFullYear(),hj.getMonth()-i,1);meses.push({m:d.getMonth(),y:d.getFullYear(),label:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.','')});}
     const dados=meses.map(mes=>{
-      const ent=lancs.filter(l=>{const d=new Date(l.data);return d.getMonth()===mes.m&&d.getFullYear()===mes.y&&l.tipo==='entrada';}).reduce((s,l)=>s+l.val,0);
-      const sai=lancs.filter(l=>{const d=new Date(l.data);return d.getMonth()===mes.m&&d.getFullYear()===mes.y&&l.tipo==='saida';}).reduce((s,l)=>s+l.val,0);
+      const ent=lancs.filter(l=>{const d=new Date(l.data);return d.getMonth()===mes.m&&d.getFullYear()===mes.y&&l.tipo==='entrada'&&!_isRejected(l);}).reduce((s,l)=>s+l.val,0);
+      const sai=lancs.filter(l=>{const d=new Date(l.data);return d.getMonth()===mes.m&&d.getFullYear()===mes.y&&l.tipo==='saida'&&!_isRejected(l);}).reduce((s,l)=>s+l.val,0);
       return{label:mes.label,ent,sai,atual:mes.m===hj.getMonth()&&mes.y===hj.getFullYear()};
     });
     const maxVal=Math.max(...dados.map(d=>Math.max(d.ent,d.sai)),1);
@@ -4826,7 +4835,7 @@ function limparFinalizados(){if(!confirm('Apagar finalizados e cases?'))return;p
 
 // ── TEMPLATES ─────────────────────────────────────────
 const TPLS={pb:'[PROPOSTA — IDENTIDADE VISUAL]\npaulosa.studio\n\nOlá, [Nome]!\n\nESCOPO\n• Pesquisa e imersão de marca\n• Naming e conceito visual\n• Logotipo e variações\n• Paleta de cores e tipografia\n• Manual de identidade\n\nPRAZO: [X] dias\nINVESTIMENTO: R$ [valor]\nPAGAMENTO: 50% na assinatura + 50% na entrega\n\nPaulo | paulosa.studio',ps:'[PROPOSTA — SOCIAL KIT]\npaulosa.studio\n\nOlá, [Nome]!\n\nESCOPO\n• [X] posts feed · [X] stories\n• Arquivo editável (Canva/Figma)\n\nPRAZO: [X] dias\nINVESTIMENTO: R$ [valor]\n\nPaulo | paulosa.studio',pe:'[PROPOSTA — ESTRATÉGIA DE MARCA]\npaulosa.studio\n\nOlá, [Nome]!\n\nENTREGÁVEIS\n• Diagnóstico de marca · Posicionamento\n• Público-alvo e persona · Tom de voz\n\nPRAZO: [X] dias\nINVESTIMENTO: R$ [valor]\n\nPaulo | paulosa.studio',br:'[BRIEFING — paulosa.studio]\n\n1. Nome do negócio?\n2. O que vende ou oferece?\n3. Público-alvo?\n4. 3 principais concorrentes?\n5. Como quer ser sentido pela marca?\n6. 3 marcas que admira visualmente?\n7. Cores/estilos que NÃO quer?\n8. Prazo ideal?\n9. Orçamento aproximado?',fb:'Olá, [Nome]!\n\nSegue o material para avaliação:\n🔗 [link]\n\n✅ O que você amou?\n🔄 O que gostaria de ajustar?\n❌ Algo que não funcionou?\n\nPrazo para feedback: [data].\nPaulo | paulosa.studio',en:'Olá, [Nome]!\n\nProjeto finalizado! 🎉\n\nARQUIVOS: [link]\n\n• Logotipo (AI, PDF, PNG, SVG)\n• Manual de uso\n\nPaulo | paulosa.studio',dep:'Olá, [Nome]!\n\nFoi incrível trabalhar no projeto da [marca]!\n\nUm depoimento rápido me ajudaria muito.\n\nPaulo | paulosa.studio'};
-function cpTpl(el,k){navigator.clipboard.writeText(TPLS[k]||'').then(()=>{toast('Template copiado!');const prev=el.style.borderColor;el.style.borderColor='var(--y)';setTimeout(()=>el.style.borderColor=prev,1500);});}
+function cpTpl(el,k){navigator.clipboard.writeText(TPLS[k]||'').then(()=>{toast('Template copiado! ✓','var(--gr)');el.style.borderColor='var(--gr)';el.style.transform='scale(.97)';setTimeout(()=>{el.style.transform='';},150);setTimeout(()=>{el.style.borderColor='var(--e2)';},1500);});}
 
 // ── CALC PRAZO ────────────────────────────────────────
 function calcPrazo(){const f=parseInt(document.getElementById('r-fila').value),c=parseInt(document.getElementById('r-comp').value),g=parseInt(document.getElementById('r-folga').value);setEl('e-fila',f);setEl('e-comp',['','Baixa','Média','Alta'][c]);setEl('e-folga',g+'%');setEl('e-res',Math.round(([0,14,21,30][c]+(f-1)*3)*(1+g/100))+' dias');}
@@ -6033,6 +6042,7 @@ function _obRender(){
       <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:24px;line-height:1.6">Opcional — você pode adicionar depois pelo CRM.</div>
       <div style="text-align:left;display:flex;flex-direction:column;gap:12px">
         <div class="fg"><label class="flbl">Nome do cliente</label><input class="fi" id="ob-cli-nome" placeholder="Ex: Empresa X"></div>
+        <div class="fg"><label class="flbl">Segmento</label><select class="fse" id="ob-cli-seg"><option value="">Selecione...</option><option>Serviços</option><option>Saúde</option><option>Educação</option><option>Tech</option><option>Varejo</option><option>Ministério</option><option>Outros</option></select></div>
         <div class="fg"><label class="flbl">Serviço</label><input class="fi" id="ob-cli-serv" placeholder="Ex: Identidade Visual"></div>
       </div>
       <div style="display:flex;gap:8px;margin-top:20px">
@@ -6068,9 +6078,11 @@ function _obNext2(){
   const nome=document.getElementById('ob-cli-nome').value.trim();
   if(!nome){_obStep=3;_obRender();return;}
   const serv=document.getElementById('ob-cli-serv').value.trim();
+  const segEl=document.getElementById('ob-cli-seg');
+  const seg=segEl?segEl.value:'';
   const ini=nome.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const cors=['#D4A017','#A78BFA','#F59E0B','#22C55E','#60A5FA','#EC4899'];
-  clients.unshift({id:Date.now(),nome,av:ini,cor:cors[0],seg:'',resp:'',wpp:'',email:'',origem:'',serv:serv,escopo:'',pgto:'',val:0,status:'ativo',crit:'media',tempo:0,notas:''});
+  clients.unshift({id:Date.now(),nome,av:ini,cor:cors[0],seg:seg,resp:'',wpp:'',email:'',origem:'',serv:serv,escopo:'',pgto:'',val:0,status:'ativo',crit:'media',tempo:0,notas:''});
   save();
   _obStep=3;_obRender();
 }
