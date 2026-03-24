@@ -2486,22 +2486,22 @@ button:active{transform:scale(.97);transition:transform .08s}
   </div>
   <div class="sb-bot">
     <div class="xp-row">
-      <span class="xp-lv" id="xp-lv">Nível 4 — Sênior</span>
-      <span class="xp-num" id="xp-num">740/1000</span>
+      <span class="xp-lv" id="xp-lv"></span>
+      <span class="xp-num" id="xp-num"></span>
     </div>
-    <div class="xp-track"><div class="xp-fill" id="xp-bar" style="width:74%"></div></div>
+    <div class="xp-track"><div class="xp-fill" id="xp-bar" style="width:0%"></div></div>
     <div class="user-card" onclick="nav('perfil',null)" style="position:relative">
       <div class="user-av" id="sb-av">P</div>
       <div style="flex:1;min-width:0">
-        <div class="user-name" id="sb-name">Paulo Oliveira</div>
-        <div class="user-role" id="sb-role">Designer · Branding</div>
-        <div class="user-site" id="sb-site">paulosa.studio</div>
+        <div class="user-name" id="sb-name"></div>
+        <div class="user-role" id="sb-role"></div>
+        <div class="user-site" id="sb-site"></div>
       </div>
     </div>
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v7.0.1</span>
+      <span class="version-txt" id="version-label">v7.0.2</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3307,7 +3307,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v7.0.1';
+const APP_VERSION='v7.0.2';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3478,12 +3478,21 @@ function closeM(id){const el=document.getElementById(id);if(el)el.classList.remo
 document.querySelectorAll('.moverlay').forEach(el=>el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 
 // ── XP ────────────────────────────────────────────────
-function addXP(v){
-  xpTotal=Math.min(xpTotal+v,1000);
+function _xpLabel(xp){
+  if(xp<200) return 'Nível 1 — Iniciante';
+  if(xp<400) return 'Nível 2 — Júnior';
+  if(xp<600) return 'Nível 3 — Pleno';
+  if(xp<800) return 'Nível 4 — Sênior';
+  return 'Nível 5 — Mestre';
+}
+function renderXP(){
   const bar=document.getElementById('xp-bar');if(bar)bar.style.width=(xpTotal/10)+'%';
   const num=document.getElementById('xp-num');if(num)num.textContent=xpTotal+'/1000';
-  const lv=xpTotal<200?'Iniciante':xpTotal<400?'Júnior':xpTotal<600?'Pleno':xpTotal<800?'Sênior':'Mestre';
-  const lvEl=document.getElementById('xp-lv');if(lvEl)lvEl.textContent='Nível '+lv;
+  const lvEl=document.getElementById('xp-lv');if(lvEl)lvEl.textContent=_xpLabel(xpTotal);
+}
+function addXP(v){
+  xpTotal=Math.min(xpTotal+v,1000);
+  renderXP();
   save();
 }
 
@@ -4036,7 +4045,7 @@ function carregarFoto(input){
 function renderPerfilDinamico(){
   const p=getPerfilData();
   const xp=xpTotal||0;
-  const lv=xp<200?'Iniciante':xp<400?'Júnior':xp<600?'Pleno':xp<800?'Sênior':'Mestre';
+  const lv=_xpLabel(xp);
   const totalProjs=projs.length+projsFinalizados.length;
   const florescimentos=projsFinalizados.length;
 
@@ -4369,7 +4378,7 @@ function gerarRelatorio(){
     <div class="report-section">
       <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📈 Crescimento</div>
       <div class="report-stat"><span class="report-key">XP total</span><span class="report-val" style="color:var(--y)">${xpTotal} XP</span></div>
-      <div class="report-stat"><span class="report-key">Nível</span><span class="report-val">${xpTotal<200?'Iniciante':xpTotal<400?'Júnior':xpTotal<600?'Pleno':xpTotal<800?'Sênior':'Mestre'}</span></div>
+      <div class="report-stat"><span class="report-key">Nível</span><span class="report-val">${_xpLabel(xpTotal)}</span></div>
       <div class="report-stat"><span class="report-key">Clientes ativos</span><span class="report-val">${clients.filter(c=>c.status==='ativo').length}</span></div>
       <div class="report-stat"><span class="report-key">Cases criados</span><span class="report-val">${projsFinalizados.filter(p=>p.tipo_fin==='case').length}</span></div>
     </div>
@@ -4836,10 +4845,10 @@ setInterval(()=>{localStorage.setItem('ph4-auto-backup',JSON.stringify({v:'auto'
 
 function getPerfilData(){
   return JSON.parse(localStorage.getItem('ph4-perfil') || 'null') || {
-    nome: 'Paulo Oliveira',
-    espec: 'Designer · Branding',
-    site: 'paulosa.studio',
-    bio: 'Designer criativo especializado em identidade visual e estratégia de marca.'
+    nome: '',
+    espec: '',
+    site: '',
+    bio: ''
   };
 }
 function savePerfilData(p){ localStorage.setItem('ph4-perfil', JSON.stringify(p)); }
@@ -4899,14 +4908,17 @@ function boostSkillForType(tipo){
 // Atualiza sidebar com os dados do perfil
 function atualizarSidebar(){
   const p = getPerfilData();
+  const nome = p.nome || localStorage.getItem('ph4-studio') || '';
+  const espec = p.espec || localStorage.getItem('ph4-espec') || '';
+  const site = p.site || localStorage.getItem('ph4-site') || '';
   const sbName = document.getElementById('sb-name');
   const sbAv   = document.getElementById('sb-av');
   const sbRole = document.getElementById('sb-role');
   const sbSite = document.getElementById('sb-site');
-  if(sbName) sbName.textContent = p.nome;
-  if(sbAv)   sbAv.textContent   = p.nome.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  if(sbRole) sbRole.textContent = p.espec || 'Designer · Branding';
-  if(sbSite) sbSite.textContent = p.site  || 'paulosa.studio';
+  if(sbName) sbName.textContent = nome;
+  if(sbAv)   sbAv.textContent   = nome ? nome.split(' ').map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase() : '';
+  if(sbRole) sbRole.textContent = espec;
+  if(sbSite) sbSite.textContent = site;
 }
 
 // Atualiza a página Meu Perfil
@@ -4973,9 +4985,10 @@ function salvarPerfil(){
   };
 })();
 
-// Inicializar perfil ao carregar
+// Inicializar perfil e XP ao carregar
 atualizarSidebar();
 atualizarPaginaPerfil();
+renderXP();
 
 // ═══════════════════════════════════════════
 // DELETAR CLIENTE (com verificação de dependências)
@@ -6066,7 +6079,7 @@ function _obFinish(){
   save();saveExtra();
   localStorage.setItem('ph4-onboarded','1');
   const ov=document.getElementById('ob-overlay');if(ov)ov.remove();
-  renderDash();renderCRM();
+  renderDash();renderCRM();atualizarSidebar();
   // Atualizar badges do sidebar
   const crmBadge=document.querySelector('[data-page="crm"] .badge');
   if(crmBadge)crmBadge.textContent=clients.length;
