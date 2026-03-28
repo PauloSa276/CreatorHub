@@ -1777,6 +1777,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="prazo-res" style="margin-top:11px"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:rgba(0,0,0,.5);text-transform:uppercase;letter-spacing:.08em">Prazo sugerido</div><div style="font-size:17px;font-weight:800;letter-spacing:-.03em;color:#0C0C0E" id="np-prazo">28 dias</div></div>
     <div class="fg" style="margin-top:13px"><label class="flbl">Data de início</label><input class="fi" id="np-ini" type="date"></div>
+    <div class="fg"><label class="flbl">Data de entrega (combinada com cliente)</label><input class="fi" id="np-data-entrega" type="date"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-top:3px">Opcional — se não informar, usa o prazo estimado</div></div>
     <div class="fg"><label class="flbl">Valor do projeto (R$)</label><input class="fi" id="np-val" type="number" placeholder="0" oninput="calcUrgencia()"></div>
     <!-- OS-056: Urgência -->
     <div class="fg">
@@ -2722,7 +2723,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v10.0.3</span>
+      <span class="version-txt" id="version-label">v10.0.4</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3618,7 +3619,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v10.0.3';
+const APP_VERSION='v10.0.4';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3930,13 +3931,13 @@ function renderDash(){
   const atv=projs.filter(p=>!p.pausado&&p.fi<5).length;
   const urg=projs.filter(p=>p.urg==='urgent'&&!p.pausado);
   setEl('m-ativos',atv);
-  setEl('m-critico',urg.length?urg[0].dias+'d':'OK');
+  setEl('m-critico',urg.length?getDiasRestantes(urg[0])+'d':'OK');
   const mc=document.getElementById('m-critico');if(mc)mc.className='kpi-val '+(urg.length?'danger':'ok');
   setEl('m-critico-s',urg.length?urg[0].nome.split('—')[0].trim():'tudo certo');
   setEl('m-aguard',projs.filter(p=>p.st==='Em revisão'||p.st==='Aguardando cliente').length);
   setEl('m-flor',projs.filter(p=>p.fi>=5).length);
   setEl('b-proj',projs.length);
-  setEl('prazo-urg',urg.length?urg[0].nome.split('—')[0].trim()+' · '+urg[0].dias+'d':'Tudo em dia');
+  setEl('prazo-urg',urg.length?urg[0].nome.split('—')[0].trim()+' · '+getDiasRestantes(urg[0])+'d':'Tudo em dia');
   const p2 = getPerfilData();
   setEl('greeting-sub',atv+' projetos ativos · '+(p2.site||'paulosa.studio'));
   const grEl=document.getElementById('greeting');
@@ -3944,19 +3945,20 @@ function renderDash(){
   // North Star
   const nsEl=document.getElementById('north-star');
   if(nsEl){
-    const urgP=projs.filter(p=>!p.pausado&&p.fi<5).sort((a,b)=>(a.dias||999)-(b.dias||999));
+    const urgP=projs.filter(p=>!p.pausado&&p.fi<5).sort((a,b)=>getDiasRestantes(a)-getDiasRestantes(b));
     const nearDone=projs.filter(p=>!p.pausado&&p.pct>=80&&p.fi<5).sort((a,b)=>b.pct-a.pct);
-    const star=urgP.length&&urgP[0].dias<=3?urgP[0]:nearDone.length?nearDone[0]:null;
+    const star=urgP.length&&getDiasRestantes(urgP[0])<=3?urgP[0]:nearDone.length?nearDone[0]:null;
     if(star){
       nsEl.style.display='block';
       nsEl.style.cursor='pointer';
       nsEl.onclick=()=>{curProjId=star.id;nav('gestao');};
-      const isUrg=star.dias<=3;
+      const _starDias=getDiasRestantes(star);
+      const isUrg=_starDias<=3;
       nsEl.classList.toggle('ns-pulse',isUrg);
       document.getElementById('ns-label').textContent=isUrg?'Prazo urgente':'Quase pronto';
       document.getElementById('ns-title').textContent=star.nome;
       document.getElementById('ns-title').title=star.nome;
-      document.getElementById('ns-meta').textContent=star.cli+' · '+star.pct+'% · '+(star.dias>0?star.dias+'d restantes':star.dias===0?'entrega hoje':'prazo vencido');
+      document.getElementById('ns-meta').textContent=star.cli+' · '+star.pct+'% · '+(_starDias>0?_starDias+'d restantes':_starDias===0?'entrega hoje':'prazo vencido');
       document.getElementById('ns-action').setAttribute('onclick','openProj('+star.id+')');
     } else if(projs.length===0){
       nsEl.style.display='block';nsEl.style.cursor='default';nsEl.onclick=null;
@@ -3985,7 +3987,7 @@ function renderDashProjs(){
       </div>
       <span class="ftag ${FT[p.fi]||'f-briefing'}">${FN[p.fi]||'—'}</span>
       <div class="p-pct">${p.pct}%</div>
-      <div class="p-days ${p.urg}">${p.dias>0?p.dias+'d':p.dias===0?'hoje':'—'}</div>
+      <div class="p-days ${p.urg}">${(()=>{const _d=getDiasRestantes(p);return _d>0?_d+'d':_d===0?'hoje':'—';})()}</div>
     </div>`).join('');
 }
 
@@ -3999,7 +4001,7 @@ function renderAgenda(){
 function renderAlertas(){
   const el=document.getElementById('alertas');if(!el)return;
   const alerts=[];
-  projs.filter(p=>p.urg==='urgent').forEach(p=>alerts.push({c:'var(--y)',t:'<strong>'+p.nome+'</strong> — entrega em '+p.dias+'d',s:'URGENTE'}));
+  projs.filter(p=>p.urg==='urgent').forEach(p=>alerts.push({c:'var(--y)',t:'<strong>'+p.nome+'</strong> — entrega em '+getDiasRestantes(p)+'d',s:'URGENTE'}));
   projs.filter(p=>p.st==='Em revisão').forEach(p=>alerts.push({c:'var(--am)',t:'<strong>'+p.nome+'</strong> — aguardando aprovação',s:'PENDENTE'}));
   projs.filter(p=>p.pausado).forEach(p=>alerts.push({c:'var(--rd)',t:'<strong>'+p.nome+'</strong> — pausado: '+p.pMot,s:'PAUSADO'}));
   el.innerHTML=alerts.length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:7px 0">Tudo em dia</div>':alerts.slice(0,4).map(a=>`<div class="alert-row"><div class="alert-bar" style="background:${a.c}"></div><div><div class="alert-txt">${a.t}</div><div class="alert-time">${a.s}</div></div></div>`).join('');
@@ -4050,7 +4052,13 @@ function renderGestao(){
   const p=projs.find(x=>x.id===curProjId);
   if(!p){setEl('g-title','Selecione um projeto');return;}
   setEl('g-title',p.nome+(p.pausado?'':''));
-  const gm=document.getElementById('g-meta');if(gm)gm.innerHTML=`<span>${p.cli}</span><span>·</span><span>${p.tipo}</span><span>·</span><span style="color:${p.urg==='urgent'?'var(--y)':'var(--t3)'}">${p.prazo?'Entrega: '+new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR'):''}</span>`;
+  const gm=document.getElementById('g-meta');if(gm){
+    const _dr=getDiasRestantes(p);const _dCor=_dr<=2?'var(--rd)':_dr<=5?'var(--am)':'var(--gr)';
+    const _dRef=p.dataEntrega||p.prazo;const _dFmt=_dRef?new Date(_dRef+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):'';
+    const _dLbl=_dFmt?'Entrega: '+_dFmt+' · '+(_dr>0?_dr+'d restantes':_dr===0?'hoje':'vencido'):'';
+    const _dTag=p.dataEntrega?'<span style="font-family:var(--mono);font-size:var(--fs-2xs);background:var(--s4);padding:1px 5px;border-radius:4px;margin-left:4px">combinada</span>':'';
+    gm.innerHTML=`<span>${p.cli}</span><span>·</span><span>${p.tipo}</span><span>·</span><span style="color:${_dCor};font-weight:600">${_dLbl}${_dTag}</span><span style="cursor:pointer;color:var(--t4);font-size:var(--fs-2xs)" onclick="editarDataEntrega()" title="Alterar data de entrega">✏️</span>`;
+  }
   const ga=document.getElementById('g-actions');if(ga)ga.innerHTML=`<div style="display:flex;align-items:center;gap:8px">${!p.pausado?`<button class="pause-btn" onclick="abrirPausa()" style="display:inline-flex;align-items:center;gap:4px"><i data-lucide="pause-circle" style="width:13px;height:13px"></i>Pausar</button>`:`<button class="pause-btn" style="background:var(--gb);color:var(--gr);border-color:rgba(34,197,94,.28);display:inline-flex;align-items:center;gap:4px" onclick="retomar()"><i data-lucide="play-circle" style="width:13px;height:13px"></i>Retomar</button>`}</div><div style="text-align:right"><div style="font-size:var(--fs-2xl);font-weight:900;letter-spacing:-.05em;color:var(--y)">${p.pct}%</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">CONCLUÍDO</div></div>`;
   const bn=document.getElementById('g-pausa-banner');if(bn)bn.innerHTML=p.pausado?`<div class="pausa-banner"><i data-lucide="pause-circle" style="width:16px;height:16px;color:var(--am);flex-shrink:0"></i><div><div style="font-size:var(--fs-xs);font-weight:600;color:var(--am)">Projeto pausado</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t2)">${p.pMot}${p.pObs?' — '+p.pObs:''}</div></div></div>`:'';
   const _gFases=p.modo==='rapido'?FASES_RAPIDO:FASES;
@@ -4170,6 +4178,23 @@ function selT(el,v){
   renderBriefFields();
 }
 function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
+function getDiasRestantes(p){
+  const ref=p.dataEntrega||p.prazo;
+  if(!ref)return p.dias||0;
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const alvo=new Date(ref+'T12:00');
+  return Math.ceil((alvo-hoje)/(1000*60*60*24));
+}
+function editarDataEntrega(){
+  const p=projs.find(x=>x.id===curProjId);if(!p)return;
+  const atual=p.dataEntrega||p.prazo||'';
+  const nova=prompt('Data de entrega combinada (AAAA-MM-DD):',atual);
+  if(nova===null)return;
+  if(nova===''){p.dataEntrega=undefined;toast('Data de entrega removida — usando prazo estimado');}
+  else if(/^\d{4}-\d{2}-\d{2}$/.test(nova)){p.dataEntrega=nova;toast('Data de entrega atualizada!');}
+  else{toast('Formato inválido — use AAAA-MM-DD','var(--am)');return;}
+  save();renderGestao();setTimeout(refreshIcons,60);
+}
 function updateFilaAuto(){const projAtivos=projs.filter(p=>!p.pausado&&p.fi<5).length;const el=document.getElementById('np-fila-auto');if(!el)return;el.textContent=projAtivos+' projeto'+(projAtivos!==1?'s':'')+' ativo'+(projAtivos!==1?'s':'')+' agora';el.style.color=projAtivos>=4?'var(--rd)':projAtivos>=3?'var(--am)':'var(--t3)';}
 function criarProjeto(){
   const nome=document.getElementById('np-nome').value.trim(),cli=document.getElementById('np-cli').value;
@@ -4191,11 +4216,12 @@ function criarProjeto(){
   const cores={'Identidade Visual':'#D4A017','Redesign de Marca':'#A78BFA','Social Media':'#F59E0B','Estratégia de Marca':'#22C55E','Apresentação':'#60A5FA','Site':'#3B82F6','Landing Page':'#EC4899','Outros':'#9E9B92'};
   const modo=_npModo||'completo';
   const numTasks=modo==='rapido'?15:30;
-  const np={id:Date.now(),nome,cli,tipo:selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#D4A017',urg:_npUrg!=='normal'?_npUrg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(numTasks).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo,briefing:getBriefData()};
+  const deVal=document.getElementById('np-data-entrega')?.value||'';
+  const np={id:Date.now(),nome,cli,tipo:selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#D4A017',urg:_npUrg!=='normal'?_npUrg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(numTasks).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo,briefing:getBriefData(),dataEntrega:deVal||undefined};
   projs.unshift(np);
   if(document.getElementById('np-gcal').checked){const d=new Date(ini),gs=d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Kickoff: '+nome)}&dates=${gs}/${gs}&details=${encodeURIComponent('paulosa.studio')}` ,'_blank');}
   save();closeM('m-proj');
-  document.getElementById('np-nome').value='';const bv=document.getElementById('np-brief');if(bv)bv.value='';const vv=document.getElementById('np-val');if(vv)vv.value='';
+  document.getElementById('np-nome').value='';const bv=document.getElementById('np-brief');if(bv)bv.value='';const vv=document.getElementById('np-val');if(vv)vv.value='';const deEl=document.getElementById('np-data-entrega');if(deEl)deEl.value='';
   selTipoV='';_npModo='completo';_npUrg='normal';document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));
   const bfEl=document.getElementById('np-brief-fields');if(bfEl)bfEl.innerHTML='';
   addXP(50);toast('Projeto criado! +50 XP 🎉');curProjId=np.id;renderDash();openProj(np.id);
