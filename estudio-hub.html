@@ -2687,7 +2687,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v10.0.0</span>
+      <span class="version-txt" id="version-label">v10.0.1</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3583,7 +3583,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v10.0.0';
+const APP_VERSION='v10.0.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3914,6 +3914,8 @@ function renderDash(){
     const star=urgP.length&&urgP[0].dias<=3?urgP[0]:nearDone.length?nearDone[0]:null;
     if(star){
       nsEl.style.display='block';
+      nsEl.style.cursor='pointer';
+      nsEl.onclick=()=>{openProj(star.id);};
       const isUrg=star.dias<=3;
       nsEl.classList.toggle('ns-pulse',isUrg);
       document.getElementById('ns-label').textContent=isUrg?'Prazo urgente':'Quase pronto';
@@ -3922,13 +3924,13 @@ function renderDash(){
       document.getElementById('ns-meta').textContent=star.cli+' · '+star.pct+'% · '+(star.dias>0?star.dias+'d restantes':star.dias===0?'entrega hoje':'prazo vencido');
       document.getElementById('ns-action').setAttribute('onclick','openProj('+star.id+')');
     } else if(projs.length===0){
-      nsEl.style.display='block';
+      nsEl.style.display='block';nsEl.style.cursor='default';nsEl.onclick=null;
       document.getElementById('ns-label').textContent='Primeiro passo';
       document.getElementById('ns-title').textContent='Crie seu primeiro projeto para começar';
       document.getElementById('ns-meta').textContent='O dashboard ganha vida com seus dados reais';
       document.getElementById('ns-action').textContent='+ Projeto';
       document.getElementById('ns-action').setAttribute('onclick',"openM('m-proj')");
-    } else { nsEl.style.display='none'; }
+    } else { nsEl.style.display='none';nsEl.style.cursor='default';nsEl.onclick=null; }
   }
   renderDashProjs();renderAgenda();renderAlertas();renderDayTasks();atualizarNotificacoes();initCriativo();renderCarga();
 }
@@ -4274,13 +4276,20 @@ function openRPG(id){
   const clProjs=projs.filter(p=>p.cli===cl.nome);
   const plEl=document.getElementById('rpg-projs-list');if(plEl)plEl.innerHTML=clProjs.length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Nenhum projeto registrado</div>':clProjs.map(p=>`<div class="client-proj-row" onclick="closeRPG();openProj(${p.id})"><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--t1)">${p.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${p.tipo} · ${p.pct}%</div></div><span class="ftag ${FT[p.fi]}">${FN[p.fi]}</span></div>`).join('');
 
-  // Histórico de projetos concluídos
+  // Histórico de projetos concluídos (union projs finalizados + cl.historicoProjetos)
   const histCl = clients.find(x => x.id === id);
-  if(histCl && histCl.historicoProjetos && histCl.historicoProjetos.length > 0){
-    const projs_el = document.getElementById('rpg-projs-list');
-    if(projs_el){
-      const hist = histCl.historicoProjetos;
-      projs_el.innerHTML += `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--e1)"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-weight:600">Histórico concluídos</div>${hist.map(h=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--e1)"><span style="font-size:var(--fs-xl)">${h.emoji||'🎯'}</span><div style="flex:1"><div style="font-size:var(--fs-xs);font-weight:600;color:var(--t1)">${h.projeto}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${h.data} · ${h.ciclos} ciclo${h.ciclos>1?'s':''} · ${h.revisoes} rev.</div></div><div style="text-align:right"><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--y)">${h.nota.toFixed(1)} ★</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${h.medalha}</div></div></div>`).join('')}</div>`;
+  if(histCl){
+    const concluidos=getHistoricoCompleto(histCl.nome).filter(p=>p._st==='concluido');
+    if(concluidos.length>0){
+      const projs_el = document.getElementById('rpg-projs-list');
+      if(projs_el){
+        projs_el.innerHTML += `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--e1)"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-weight:600">Histórico concluídos</div>${concluidos.map(p=>{
+          const rpg=p._rpg;
+          if(rpg) return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--e1)"><span style="font-size:var(--fs-xl)">${rpg.emoji||'🎯'}</span><div style="flex:1"><div style="font-size:var(--fs-xs);font-weight:600;color:var(--t1)">${rpg.projeto}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${rpg.data} · ${rpg.ciclos} ciclo${rpg.ciclos>1?'s':''} · ${rpg.revisoes} rev.</div></div><div style="text-align:right"><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--y)">${rpg.nota.toFixed(1)} ★</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${rpg.medalha}</div></div></div>`;
+          const d=p.prazo?new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase():'';
+          return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--e1)"><span style="font-size:var(--fs-xl)">✅</span><div style="flex:1"><div style="font-size:var(--fs-xs);font-weight:600;color:var(--t1)">${p.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${p.tipo} · ${d}</div></div>${p.val?`<div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--y)">${fmt(p.val)}</div>`:''}</div>`;
+        }).join('')}</div>`;
+      }
     }
   }
   document.getElementById('rpg-overlay').classList.add('open');document.body.style.overflow='hidden';
@@ -4312,16 +4321,24 @@ function openCRMPopup(id){
   renderCpopDocs(cl);
   document.getElementById('crm-popup-ov').classList.add('open');document.body.style.overflow='hidden';
 }
+function getHistoricoCompleto(cliNome){
+  const cl=clients.find(x=>x.nome===cliNome);
+  const ativos=projs.filter(p=>p.cli===cliNome);
+  const fins=(projsFinalizados||[]).filter(p=>p.cli===cliNome);
+  const rpgHist=(cl&&cl.historicoProjetos||[]);
+  // Union finalizados + rpgHist sem duplicatas (por nome do projeto)
+  const nomesFins=new Set(fins.map(p=>p.nome));
+  const rpgExtras=rpgHist.filter(h=>!nomesFins.has(h.projeto)).map(h=>({nome:h.projeto,tipo:h.projeto,cli:cliNome,prazo:h.data||'',val:0,pct:100,fi:5,_rpg:h}));
+  return [...ativos.map(p=>({...p,_st:'andamento'})),...fins.map(p=>({...p,_st:'concluido'})),...rpgExtras.map(p=>({...p,_st:'concluido'}))];
+}
 function renderCpopHist(cliNome){
   const histEl=document.getElementById('cpop-hist');if(!histEl)return;
-  const ativos=projs.filter(p=>p.cli===cliNome);
-  const finalizados=(projsFinalizados||[]).filter(p=>p.cli===cliNome);
-  const all=[...ativos.map(p=>({...p,_st:'andamento'})),...finalizados.map(p=>({...p,_st:'concluido'}))];
+  const all=getHistoricoCompleto(cliNome);
   if(all.length===0){histEl.innerHTML='<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:8px 0">Nenhum serviço registrado</div>';return;}
   histEl.innerHTML=all.map(p=>{
     const cor=p._st==='concluido'?'var(--gr)':'var(--am)';
     const stLbl=p._st==='concluido'?'Concluído':'Em andamento';
-    const d=p.prazo?new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase():'';
+    let dDate=null;if(p.prazo){if(p.prazo.includes('/')){const pts=p.prazo.split('/');dDate=new Date(pts[2],pts[1]-1,pts[0]);}else{dDate=new Date(p.prazo+'T12:00');}}const d=dDate&&!isNaN(dDate)?dDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase():'';
     return `<div class="card" style="min-width:180px;max-width:220px;flex-shrink:0;cursor:${p._st==='andamento'?'pointer':'default'};padding:10px 12px" ${p._st==='andamento'?`onclick="closeCRMPopup();openProj(${p.id})"`:''}><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><div style="width:6px;height:6px;border-radius:50%;background:${cor}"></div><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:${cor};font-weight:600">${stLbl}</span></div><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.tipo||p.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${p.nome}</div><div style="display:flex;justify-content:space-between;margin-top:6px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">${d}</span>${p.val?`<span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--y);font-weight:600">${fmt(p.val)}</span>`:''}</div></div>`;
   }).join('');
 }
