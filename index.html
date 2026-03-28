@@ -2341,6 +2341,83 @@ button:active{transform:scale(.97);transition:transform .08s}
 
 
 
+<!-- ═══ MODAL NOVO ORÇAMENTO ═══ -->
+<div class="moverlay" id="m-orcamento">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-title" id="orc-modal-title">Novo orçamento</div>
+    <div class="modal-sub">Detalhe itens, valores e horas para enviar ao cliente</div>
+    <input type="hidden" id="orc-edit-id" value="">
+    <div class="fg"><label class="flbl">Cliente *</label>
+      <select class="fse" id="orc-cli"></select>
+    </div>
+    <div class="fg"><label class="flbl">Título do orçamento *</label>
+      <input class="fi" id="orc-titulo" placeholder="Ex: Identidade Visual — Marca X">
+    </div>
+    <div class="fg">
+      <label class="flbl">Itens do orçamento</label>
+      <div id="orc-itens-list"></div>
+      <button class="btn-g" type="button" onclick="addOrcItem()" style="margin-top:6px;font-size:var(--fs-xs)">+ Adicionar item</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label class="flbl">Desconto global (%)</label>
+        <input class="fi" id="orc-desconto" type="number" min="0" max="100" value="0" oninput="calcOrcTotais()">
+      </div>
+      <div class="fg"><label class="flbl">Validade</label>
+        <input class="fi" id="orc-validade" type="date">
+      </div>
+    </div>
+    <div style="background:var(--s3);border-radius:var(--r2);padding:12px 14px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:var(--mono);font-size:var(--fs-xs)">
+      <div>Subtotal: <strong id="orc-subtotal" style="color:var(--t1)">R$ 0</strong></div>
+      <div>Desconto: <strong id="orc-desc-val" style="color:var(--rd)">− R$ 0</strong></div>
+      <div>Total final: <strong id="orc-total-final" style="color:var(--gr);font-size:var(--fs-sm)">R$ 0</strong></div>
+      <div>Total horas: <strong id="orc-total-horas" style="color:var(--t1)">0h</strong></div>
+    </div>
+    <div class="fg"><label class="flbl">Observações</label>
+      <textarea class="fta" id="orc-obs" style="min-height:50px" placeholder="Condições de pagamento, prazos, observações..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-g" onclick="closeM('m-orcamento')">Cancelar</button>
+      <button class="btn-p" onclick="salvarOrcamento()">Salvar orçamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL DETALHES ORÇAMENTO ═══ -->
+<div class="moverlay" id="m-orc-detail">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-title" id="od-title">Orçamento</div>
+    <div class="modal-sub" id="od-sub"></div>
+    <div id="od-itens" style="margin-bottom:12px"></div>
+    <div id="od-totais" style="background:var(--s3);border-radius:var(--r2);padding:12px 14px;margin-bottom:12px;font-family:var(--mono);font-size:var(--fs-xs)"></div>
+    <div id="od-obs" style="margin-bottom:12px;font-size:var(--fs-sm);color:var(--t3)"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="od-status-btns"></div>
+    <div id="od-aprovado-box" style="display:none;background:var(--gb);border:1px solid rgba(34,197,94,.2);border-radius:var(--r2);padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:14px;font-weight:700;color:var(--gr);margin-bottom:4px">Orçamento aprovado! 🎉</div>
+      <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">O projeto será criado automaticamente ao confirmar.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-g btn-danger" onclick="deletarOrcamento()" style="margin-right:auto">Deletar</button>
+      <button class="btn-g" onclick="editarOrcamento()"><i data-lucide="pencil" style="width:13px;height:13px"></i> Editar</button>
+      <button class="btn-g" onclick="gerarPropostaOrc()"><i data-lucide="file-text" style="width:13px;height:13px"></i> Gerar proposta</button>
+      <button class="btn-g" onclick="closeM('m-orc-detail')">Fechar</button>
+      <button class="btn-p" onclick="salvarOrcStatus()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL PROPOSTA GERADA ═══ -->
+<div class="moverlay" id="m-proposta-gerada">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-title">Proposta comercial</div>
+    <div class="modal-sub">Texto pronto para copiar e enviar ao cliente</div>
+    <div id="proposta-gerada-text" style="background:var(--s3);border-radius:var(--r2);padding:16px;font-size:var(--fs-sm);line-height:1.7;white-space:pre-wrap;max-height:400px;overflow-y:auto;color:var(--t1);font-family:var(--body)"></div>
+    <div class="modal-footer">
+      <button class="btn-g" onclick="closeM('m-proposta-gerada')">Fechar</button>
+      <button class="btn-p" onclick="copiarPropostaGerada()"><i data-lucide="copy" style="width:13px;height:13px"></i> Copiar texto</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL EDITAR PERFIL -->
 <div class="moverlay" id="m-edit-perfil">
   <div class="modal" style="max-width:460px">
@@ -2506,6 +2583,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <div class="nav-sec">
     <div class="nav-lbl">Trabalho</div>
     <div class="nav-item" onclick="nav('pipeline',this)"><span class="ni"><i data-lucide="git-branch"></i></span>Pipeline<span class="nbadge" id="b-pipeline" style="background:var(--pb);color:var(--pu)">0</span></div>
+    <div class="nav-item" onclick="nav('orcamentos',this)"><span class="ni"><i data-lucide="file-spreadsheet"></i></span>Orçamentos<span class="nbadge" id="b-orc" style="display:none">0</span></div>
     <div class="nav-item" onclick="nav('projetos',this)"><span class="ni"><i data-lucide="folder-kanban"></i></span>Projetos<span class="nbadge" id="b-proj">5</span></div>
     <div class="nav-item" onclick="nav('gestao',this)"><span class="ni"><i data-lucide="layers"></i></span>Gestão</div>
     <div class="nav-item" onclick="nav('calendario',this)"><span class="ni"><i data-lucide="calendar"></i></span>Calendário</div>
@@ -2541,7 +2619,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v8.0.1</span>
+      <span class="version-txt" id="version-label">v9.0.0</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -2864,6 +2942,42 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div id="pipe-aprovado"></div>
       </div>
     </div>
+  </div>
+
+  <!-- ══════ ORÇAMENTOS ══════ -->
+  <div class="page" id="page-orcamentos">
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">Orçamentos</div>
+        <div class="page-desc">Crie, envie e acompanhe orçamentos detalhados</div>
+      </div>
+      <button class="btn-p" onclick="openM('m-orcamento')">+ Novo orçamento</button>
+    </div>
+    <div class="kpi-sm">
+      <div class="card">
+        <div class="kpi-val" id="orc-total">0</div>
+        <div class="kpi-lbl">Orçamentos</div>
+      </div>
+      <div class="card">
+        <div class="kpi-val ok" id="orc-aprovados">0</div>
+        <div class="kpi-lbl">Aprovados</div>
+      </div>
+      <div class="card">
+        <div class="kpi-val" id="orc-valor">—</div>
+        <div class="kpi-lbl">Valor total</div>
+      </div>
+      <div class="card">
+        <div class="kpi-val" id="orc-horas">0h</div>
+        <div class="kpi-lbl">Total horas</div>
+      </div>
+    </div>
+    <div id="orc-empty" class="card empty-state" style="display:none">
+      <div class="empty-icon empty-float">📋</div>
+      <div class="empty-title">Nenhum orçamento</div>
+      <div class="empty-desc">Crie orçamentos detalhados com tabela de itens, desconto e validade.</div>
+      <button class="btn-p" style="margin-top:8px" onclick="openM('m-orcamento')">+ Novo orçamento</button>
+    </div>
+    <div id="orc-list"></div>
   </div>
 
   <!-- ══════ GESTÃO ══════ -->
@@ -3355,7 +3469,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v8.0.1';
+const APP_VERSION='v9.0.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3377,6 +3491,8 @@ let dayTasks=JSON.parse(localStorage.getItem('ph4-day')||'[]');
 let projsFinalizados=JSON.parse(localStorage.getItem('ph4-finalizados')||'[]');
 let cases=JSON.parse(localStorage.getItem('ph4-cases')||'[]');
 let propostas=JSON.parse(localStorage.getItem('ph4-propostas')||'[]');
+let orcamentos=JSON.parse(localStorage.getItem('ph4-orcamentos')||'[]');
+let orcAtualId=null;
 let hubData=JSON.parse(localStorage.getItem('ph4-hub')||'null')||DEF_HUB_DATA();
 let xpTotal=parseInt(localStorage.getItem('ph4-xp')||'0');
 let curProjId=projs[0]?.id||null;
@@ -3469,7 +3585,7 @@ function DEF_HUB_DATA(){return[
   ]},
 ];}
 
-const PG={dashboard:'Dashboard',projetos:'Projetos',gestao:'Gestão de projeto',pipeline:'Pipeline de Propostas',calendario:'Calendário',templates:'Templates',crm:'CRM · Clientes',financeiro:'Financeiro',hub:'Hub criativo',metricas:'Métricas',cases:'Cases & Portfólio',perfil:'Meu perfil',config:'Configurações'};
+const PG={dashboard:'Dashboard',projetos:'Projetos',gestao:'Gestão de projeto',pipeline:'Pipeline de Propostas',orcamentos:'Orçamentos',calendario:'Calendário',templates:'Templates',crm:'CRM · Clientes',financeiro:'Financeiro',hub:'Hub criativo',metricas:'Métricas',cases:'Cases & Portfólio',perfil:'Meu perfil',config:'Configurações'};
 
 function save(){
   localStorage.setItem('ph4-projs',JSON.stringify(projs));
@@ -3484,6 +3600,7 @@ function saveExtra(){
   localStorage.setItem('ph4-finalizados',JSON.stringify(projsFinalizados));
   localStorage.setItem('ph4-cases',JSON.stringify(cases));
   localStorage.setItem('ph4-propostas',JSON.stringify(propostas));
+  localStorage.setItem('ph4-orcamentos',JSON.stringify(orcamentos));
 }
 
 // ── THEME ─────────────────────────────────────────────
@@ -3527,8 +3644,23 @@ function openM(id){
     const m=document.querySelector('#m-cliente .modal');if(m)m.scrollTop=0;
   },100);}
   if(id==='m-proposta'){populatePropCli();}
+  if(id==='m-orcamento'){
+    populateOrcCli();
+    const editId=document.getElementById('orc-edit-id');
+    if(editId&&!editId.value){
+      document.getElementById('orc-modal-title').textContent='Novo orçamento';
+      document.getElementById('orc-cli').value='';
+      document.getElementById('orc-titulo').value='';
+      document.getElementById('orc-desconto').value='0';
+      document.getElementById('orc-validade').value='';
+      document.getElementById('orc-obs').value='';
+      document.getElementById('orc-itens-list').innerHTML='';
+      addOrcItem();
+      calcOrcTotais();
+    }
+  }
 }
-function closeM(id){const el=document.getElementById(id);if(el)el.classList.remove('open');}
+function closeM(id){const el=document.getElementById(id);if(el)el.classList.remove('open');if(id==='m-orcamento'){const eid=document.getElementById('orc-edit-id');if(eid)eid.value='';}}
 document.querySelectorAll('.moverlay').forEach(el=>el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 
 // ── XP ────────────────────────────────────────────────
@@ -3578,7 +3710,7 @@ function nav(id,el){
   document.querySelectorAll('.mob-tab').forEach(t=>t.classList.toggle('active',t.dataset.page===id));
   // Scroll main area to top on page change
   const mainEl=document.querySelector('.main');if(mainEl)mainEl.scrollTop=0;
-  const R={dashboard:renderDash,projetos:renderProjs,gestao:renderGestao,calendario:renderCal,crm:renderCRM,financeiro:renderFin,hub:renderHub,metricas:renderMetricas,cases:renderCases,pipeline:renderPipeline,perfil:renderPerfilDinamico};
+  const R={dashboard:renderDash,projetos:renderProjs,gestao:renderGestao,calendario:renderCal,crm:renderCRM,financeiro:renderFin,hub:renderHub,metricas:renderMetricas,cases:renderCases,pipeline:renderPipeline,orcamentos:renderOrcamentos,perfil:renderPerfilDinamico};
   if(R[id])R[id]();
   if(id==='config'){
     const ub=document.getElementById('ultimo-backup');if(ub)ub.textContent=localStorage.getItem('ph4-ultimo-backup')||'Nunca';
@@ -4799,6 +4931,278 @@ function setPropStatus(st){const p=propostas.find(x=>x.id===propAtualId);if(!p)r
 function salvarProposta(){const p=propostas.find(x=>x.id===propAtualId);if(!p)return;const pc=document.getElementById('pd-contrato'),pe=document.getElementById('pd-entrada');if(pc)p.contrato=pc.value;if(pe)p.entrada=pe.value;saveExtra();closeM('m-prop-detail');renderPipeline();toast('Proposta atualizada!');}
 function deletarProposta(){if(!confirm('Deletar esta proposta?'))return;propostas=propostas.filter(x=>x.id!==propAtualId);saveExtra();closeM('m-prop-detail');renderPipeline();toast('Proposta deletada','var(--am)');}
 function moverParaProducao(){const p=propostas.find(x=>x.id===propAtualId);if(!p)return;if(p.contrato!=='assinado'){toast('Assine o contrato antes!','var(--am)');return;}closeM('m-prop-detail');const nn=document.getElementById('np-nome');if(nn)nn.value=p.servico+' — '+p.cliente;const cliSel=document.getElementById('np-cli');if(cliSel)cliSel.value=p.cliente;const vv=document.getElementById('np-val');if(vv)vv.value=p.val||0;openM('m-proj');toast('Preencha os detalhes e clique em Criar projeto');}
+
+// ── ORÇAMENTOS (OS-045) ──────────────────────────────
+function populateOrcCli(){
+  const sel=document.getElementById('orc-cli');if(!sel)return;
+  sel.innerHTML='<option value="">Selecione um cliente...</option>'+clients.map(c=>`<option value="${c.nome}">${c.nome}</option>`).join('');
+}
+function addOrcItem(){
+  const list=document.getElementById('orc-itens-list');if(!list)return;
+  const idx=list.children.length;
+  const row=document.createElement('div');
+  row.style.cssText='display:grid;grid-template-columns:1fr 90px 70px 28px;gap:6px;align-items:center;margin-bottom:6px';
+  row.innerHTML=`<input class="fi" placeholder="Descrição do item" data-orc-desc="${idx}"><input class="fi" type="number" placeholder="Valor" data-orc-val="${idx}" oninput="calcOrcTotais()"><input class="fi" type="number" placeholder="Horas" data-orc-hrs="${idx}" oninput="calcOrcTotais()"><span style="cursor:pointer;color:var(--t4);font-size:16px;text-align:center" onclick="this.parentElement.remove();calcOrcTotais()">×</span>`;
+  list.appendChild(row);
+}
+function getOrcItens(){
+  const list=document.getElementById('orc-itens-list');if(!list)return[];
+  const itens=[];
+  list.querySelectorAll('[data-orc-desc]').forEach(el=>{
+    const row=el.parentElement;
+    const desc=el.value.trim();
+    const val=parseFloat(row.querySelector('[data-orc-val]')?.value)||0;
+    const hrs=parseFloat(row.querySelector('[data-orc-hrs]')?.value)||0;
+    if(desc||val||hrs)itens.push({desc,val,hrs});
+  });
+  return itens;
+}
+function calcOrcTotais(){
+  const itens=getOrcItens();
+  const subtotal=itens.reduce((s,i)=>s+i.val,0);
+  const horas=itens.reduce((s,i)=>s+i.hrs,0);
+  const descPct=parseFloat(document.getElementById('orc-desconto')?.value)||0;
+  const descVal=Math.round(subtotal*descPct/100);
+  const total=subtotal-descVal;
+  setEl('orc-subtotal',fmt(subtotal));
+  setEl('orc-desc-val','− '+fmt(descVal));
+  setEl('orc-total-final',fmt(total));
+  setEl('orc-total-horas',horas+'h');
+}
+function salvarOrcamento(){
+  const cli=document.getElementById('orc-cli').value;
+  const titulo=document.getElementById('orc-titulo').value.trim();
+  if(!cli||!titulo){toast('Preencha cliente e título!','var(--am)');return;}
+  const itens=getOrcItens();
+  if(itens.length===0){toast('Adicione pelo menos um item!','var(--am)');return;}
+  const subtotal=itens.reduce((s,i)=>s+i.val,0);
+  const horas=itens.reduce((s,i)=>s+i.hrs,0);
+  const descPct=parseFloat(document.getElementById('orc-desconto')?.value)||0;
+  const descVal=Math.round(subtotal*descPct/100);
+  const total=subtotal-descVal;
+  const validade=document.getElementById('orc-validade').value;
+  const obs=document.getElementById('orc-obs').value.trim();
+  const editId=document.getElementById('orc-edit-id').value;
+  if(editId){
+    const orc=orcamentos.find(o=>o.id===parseInt(editId));
+    if(orc){Object.assign(orc,{cliente:cli,titulo,itens,subtotal,horas,descPct,descVal,total,validade,obs});}
+  }else{
+    orcamentos.unshift({id:Date.now(),cliente:cli,titulo,itens,subtotal,horas,descPct,descVal,total,validade,obs,status:'rascunho',data:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})});
+    addXP(40);toast('Orçamento criado! +40 XP 🎉');
+  }
+  saveExtra();closeM('m-orcamento');renderOrcamentos();
+}
+function renderOrcamentos(){
+  if(!document.getElementById('page-orcamentos'))return;
+  const list=document.getElementById('orc-list'),empty=document.getElementById('orc-empty');
+  if(!list)return;
+  const total=orcamentos.length;
+  const aprovados=orcamentos.filter(o=>o.status==='aprovado').length;
+  const valorTotal=orcamentos.reduce((s,o)=>s+o.total,0);
+  const horasTotal=orcamentos.reduce((s,o)=>s+o.horas,0);
+  setEl('orc-total',total);setEl('orc-aprovados',aprovados);
+  setEl('orc-valor',valorTotal>0?fmt(valorTotal):'—');
+  setEl('orc-horas',horasTotal+'h');
+  const bOrc=document.getElementById('b-orc');if(bOrc){bOrc.textContent=total;bOrc.style.display=total>0?'':'none';}
+  if(empty)empty.style.display=total===0?'':'none';
+  if(total===0){list.innerHTML='';return;}
+  const stLabel={rascunho:'Rascunho',enviado:'Enviado',aprovado:'Aprovado',recusado:'Recusado'};
+  const stColor={rascunho:'var(--t4)',enviado:'var(--pu)',aprovado:'var(--gr)',recusado:'var(--rd)'};
+  list.innerHTML=orcamentos.map(o=>{
+    const vencido=o.validade&&new Date(o.validade)<new Date()&&o.status!=='aprovado'&&o.status!=='recusado';
+    return `<div class="card" style="margin-bottom:10px;cursor:pointer;${vencido?'border-left:3px solid var(--rd)':''}" onclick="abrirOrcamento(${o.id})">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-weight:700;color:var(--t1);font-size:var(--fs-md)">${o.titulo}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${vencido?'<span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--rd);background:rgba(239,68,68,.1);padding:2px 7px;border-radius:10px">Vencido</span>':''}
+          <span style="font-family:var(--mono);font-size:var(--fs-2xs);color:${stColor[o.status]||'var(--t4)'};background:${o.status==='aprovado'?'var(--gb)':o.status==='recusado'?'rgba(239,68,68,.1)':'var(--s4)'};padding:2px 7px;border-radius:10px">${stLabel[o.status]||o.status}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">
+        <span>${o.cliente}</span>
+        <span>${o.itens.length} ite${o.itens.length!==1?'ns':'m'}</span>
+        <span>${o.horas}h</span>
+        <span style="color:var(--gr);font-weight:600">${fmt(o.total)}</span>
+        ${o.validade?`<span>${new Date(o.validade+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function abrirOrcamento(id){
+  orcAtualId=id;const o=orcamentos.find(x=>x.id===id);if(!o)return;
+  setEl('od-title',o.titulo);setEl('od-sub',o.cliente+' · '+o.data);
+  const itEl=document.getElementById('od-itens');
+  if(itEl)itEl.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:var(--fs-xs)"><thead><tr style="border-bottom:1px solid var(--e2);text-align:left"><th style="padding:6px 8px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Item</th><th style="padding:6px 8px;text-align:right;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Valor</th><th style="padding:6px 8px;text-align:right;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Horas</th></tr></thead><tbody>'+o.itens.map(i=>`<tr style="border-bottom:1px solid var(--e1)"><td style="padding:6px 8px;color:var(--t2)">${i.desc}</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono);color:var(--t1)">${fmt(i.val)}</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono);color:var(--t3)">${i.hrs}h</td></tr>`).join('')+'</tbody></table>';
+  const totEl=document.getElementById('od-totais');
+  if(totEl)totEl.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div>Subtotal: <strong style="color:var(--t1)">${fmt(o.subtotal)}</strong></div><div>Desconto (${o.descPct}%): <strong style="color:var(--rd)">− ${fmt(o.descVal)}</strong></div><div>Total: <strong style="color:var(--gr);font-size:var(--fs-sm)">${fmt(o.total)}</strong></div><div>Horas: <strong style="color:var(--t1)">${o.horas}h</strong></div></div>`;
+  const obsEl=document.getElementById('od-obs');if(obsEl)obsEl.textContent=o.obs||'';
+  const stOpts=[{val:'rascunho',l:'Rascunho'},{val:'enviado',l:'Enviado'},{val:'aprovado',l:'Aprovado'},{val:'recusado',l:'Recusado'}];
+  const sbs=document.getElementById('od-status-btns');if(sbs)sbs.innerHTML=stOpts.map(s=>`<button class="btn-g" style="${o.status===s.val?'background:var(--y);color:#0C0C0E;border-color:var(--y)':''}" onclick="setOrcStatus('${s.val}')">${s.l}</button>`).join('');
+  const apBox=document.getElementById('od-aprovado-box');if(apBox)apBox.style.display=o.status==='aprovado'?'block':'none';
+  openM('m-orc-detail');
+}
+function setOrcStatus(st){
+  const o=orcamentos.find(x=>x.id===orcAtualId);if(!o)return;
+  const prev=o.status;o.status=st;
+  document.querySelectorAll('#od-status-btns button').forEach((btn,i)=>{const isA=['rascunho','enviado','aprovado','recusado'][i]===st;btn.style.background=isA?'var(--y)':'';btn.style.color=isA?'#0C0C0E':'';btn.style.borderColor=isA?'var(--y)':'';});
+  const apBox=document.getElementById('od-aprovado-box');if(apBox)apBox.style.display=st==='aprovado'?'block':'none';
+  // Auto-create project on approval
+  if(st==='aprovado'&&prev!=='aprovado'){
+    const dias=Math.round(21*(1+projs.length*0.15));
+    const ini=new Date().toISOString().split('T')[0];
+    const ed=new Date(ini);ed.setDate(ed.getDate()+dias);
+    const pcores={
+      'Identidade Visual':'#60A5FA','Redesign de Marca':'#F472B6','Social Media':'#34D399',
+      'Estratégia de Marca':'#FBBF24','Apresentação':'#A78BFA','Site':'#F87171',
+      'Landing Page':'#2DD4BF'
+    };
+    const tipo=o.titulo.split('—')[0]?.trim()||o.titulo;
+    projs.unshift({id:Date.now()+1,nome:o.titulo,cli:o.cliente,tipo:tipo,val:o.total,ini,prazo:ed.toISOString().split('T')[0],dias,fi:0,st:'Em andamento',pausado:false,cor:pcores[tipo]||'#60A5FA',tasks:Array.from({length:30},(_,i)=>({id:i+1,n:`Tarefa ${i+1}`,done:false}))});
+    save();renderProjs();
+    addXP(80);toast('Projeto criado automaticamente! +80 XP 🎉');
+  }
+}
+function salvarOrcStatus(){
+  saveExtra();closeM('m-orc-detail');renderOrcamentos();toast('Orçamento atualizado!');
+}
+function deletarOrcamento(){
+  if(!confirm('Deletar este orçamento?'))return;
+  orcamentos=orcamentos.filter(x=>x.id!==orcAtualId);
+  saveExtra();closeM('m-orc-detail');renderOrcamentos();toast('Orçamento deletado','var(--am)');
+}
+function editarOrcamento(){
+  const o=orcamentos.find(x=>x.id===orcAtualId);if(!o)return;
+  closeM('m-orc-detail');
+  document.getElementById('orc-edit-id').value=o.id;
+  document.getElementById('orc-modal-title').textContent='Editar orçamento';
+  populateOrcCli();
+  document.getElementById('orc-cli').value=o.cliente;
+  document.getElementById('orc-titulo').value=o.titulo;
+  document.getElementById('orc-desconto').value=o.descPct||0;
+  document.getElementById('orc-validade').value=o.validade||'';
+  document.getElementById('orc-obs').value=o.obs||'';
+  const list=document.getElementById('orc-itens-list');if(list)list.innerHTML='';
+  o.itens.forEach(item=>{
+    addOrcItem();
+    const rows=list.children;const row=rows[rows.length-1];
+    row.querySelector('[data-orc-desc]').value=item.desc;
+    row.querySelector('[data-orc-val]').value=item.val;
+    row.querySelector('[data-orc-hrs]').value=item.hrs;
+  });
+  calcOrcTotais();
+  openM('m-orcamento');
+}
+
+// ── PROPOSTA GERADA (OS-046) ─────────────────────────
+function gerarPropostaOrc(){
+  const o=orcamentos.find(x=>x.id===orcAtualId);if(!o)return;
+  const perfil=getPerfilData();
+  const studio=perfil.nome||localStorage.getItem('ph4-studio')||'Estúdio';
+  const site=perfil.site||localStorage.getItem('ph4-site')||'';
+  const espec=perfil.espec||localStorage.getItem('ph4-espec')||'';
+  const validade=o.validade?new Date(o.validade+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}):'A combinar';
+  let txt=`PROPOSTA COMERCIAL\n`;
+  txt+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+  txt+=`De: ${studio}`;
+  if(espec)txt+=` · ${espec}`;
+  txt+=`\n`;
+  if(site)txt+=`${site}\n`;
+  txt+=`Para: ${o.cliente}\n`;
+  txt+=`Data: ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}\n\n`;
+  txt+=`PROJETO: ${o.titulo}\n\n`;
+  txt+=`┌─────────────────────────────────────┐\n`;
+  txt+=`│ ESCOPO DE TRABALHO                  │\n`;
+  txt+=`├─────────────────────────────────────┤\n`;
+  o.itens.forEach(i=>{
+    txt+=`│ ${i.desc.padEnd(25)} ${fmt(i.val).padStart(10)} │\n`;
+  });
+  txt+=`├─────────────────────────────────────┤\n`;
+  txt+=`│ Subtotal:              ${fmt(o.subtotal).padStart(12)} │\n`;
+  if(o.descPct>0)txt+=`│ Desconto (${o.descPct}%):          ${('− '+fmt(o.descVal)).padStart(12)} │\n`;
+  txt+=`│ TOTAL:                 ${fmt(o.total).padStart(12)} │\n`;
+  txt+=`│ Horas estimadas:       ${(o.horas+'h').padStart(12)} │\n`;
+  txt+=`└─────────────────────────────────────┘\n\n`;
+  txt+=`Validade da proposta: ${validade}\n`;
+  if(o.obs)txt+=`\nObservações:\n${o.obs}\n`;
+  txt+=`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  txt+=`${studio}`;
+  if(site)txt+=` · ${site}`;
+  const el=document.getElementById('proposta-gerada-text');if(el)el.textContent=txt;
+  closeM('m-orc-detail');openM('m-proposta-gerada');
+}
+function copiarPropostaGerada(){
+  const el=document.getElementById('proposta-gerada-text');if(!el)return;
+  navigator.clipboard.writeText(el.textContent).then(()=>toast('Texto copiado!')).catch(()=>{
+    const r=document.createRange();r.selectNodeContents(el);const s=window.getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');toast('Texto copiado!');
+  });
+}
+
+// ── PIPELINE VENCIDAS (OS-047) ───────────────────────
+;(function(){
+  const _origRenderPipeline=renderPipeline;
+  renderPipeline=function(){
+    _origRenderPipeline();
+    // Add expired badges and actions to pipeline cards
+    const now=new Date();
+    propostas.forEach(p=>{
+      if(!p.validade||p.status==='aprovado'||p.status==='rejeitado')return;
+      const venc=new Date(p.validade);
+      if(venc>=now)return;
+      // Find the card for this proposal
+      document.querySelectorAll('.pipeline-card').forEach(card=>{
+        if(card.getAttribute('onclick')&&card.getAttribute('onclick').includes(p.id)){
+          card.style.borderLeft='3px solid var(--rd)';
+          const badge=document.createElement('div');
+          badge.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-top:6px';
+          badge.innerHTML=`<span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--rd);background:rgba(239,68,68,.1);padding:1px 6px;border-radius:8px">Vencida</span><span style="cursor:pointer;font-size:var(--fs-2xs);color:var(--t4)" onclick="event.stopPropagation();showPipeActions(${p.id},this)">...</span>`;
+          card.appendChild(badge);
+        }
+      });
+    });
+  };
+})();
+function showPipeActions(id,anchor){
+  // Remove existing menu
+  document.querySelectorAll('.pipe-action-menu').forEach(m=>m.remove());
+  const menu=document.createElement('div');
+  menu.className='pipe-action-menu';
+  menu.style.cssText='position:absolute;right:0;top:100%;background:var(--s2);border:1px solid var(--e2);border-radius:var(--r2);padding:4px 0;min-width:160px;box-shadow:var(--shadow-lg);z-index:999;font-size:var(--fs-xs)';
+  menu.innerHTML=[
+    {l:'Reenviar proposta',a:`reenviaProp(${id})`},
+    {l:'Reajustar valor',a:`reajustaProp(${id})`},
+    {l:'Follow-up',a:`followUpProp(${id})`},
+    {l:'Descartar',a:`descartaProp(${id})`}
+  ].map(o=>`<div style="padding:7px 14px;cursor:pointer;color:var(--t2);transition:background .1s" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background=''" onclick="event.stopPropagation();${o.a}">${o.l}</div>`).join('');
+  const wrap=anchor.closest('.pipeline-card');
+  if(wrap){wrap.style.position='relative';wrap.appendChild(menu);}
+  setTimeout(()=>document.addEventListener('click',function rm(){menu.remove();document.removeEventListener('click',rm);},{once:true}),10);
+}
+function reenviaProp(id){
+  const p=propostas.find(x=>x.id===id);if(!p)return;
+  p.validade=new Date(Date.now()+15*86400000).toISOString().split('T')[0];
+  p.status='aguardando';
+  saveExtra();renderPipeline();toast('Proposta reenviada — nova validade 15 dias');
+}
+function reajustaProp(id){
+  const p=propostas.find(x=>x.id===id);if(!p)return;
+  const novoVal=prompt('Novo valor (R$):',p.val);if(novoVal===null)return;
+  p.val=parseFloat(novoVal)||p.val;
+  p.validade=new Date(Date.now()+15*86400000).toISOString().split('T')[0];
+  saveExtra();renderPipeline();toast('Valor reajustado!');
+}
+function followUpProp(id){
+  const p=propostas.find(x=>x.id===id);if(!p)return;
+  const perfil=getPerfilData();
+  const studio=perfil.nome||localStorage.getItem('ph4-studio')||'Estúdio';
+  const txt=`Olá ${p.cliente}!\n\nPassando para saber se teve a chance de avaliar a proposta de ${p.servico} que enviei.\n\nFico à disposição para conversar sobre ajustes ou esclarecer qualquer dúvida.\n\nAbraço,\n${studio}`;
+  navigator.clipboard.writeText(txt).then(()=>toast('Texto de follow-up copiado!')).catch(()=>toast('Erro ao copiar','var(--am)'));
+}
+function descartaProp(id){
+  if(!confirm('Descartar esta proposta vencida?'))return;
+  const p=propostas.find(x=>x.id===id);if(!p)return;
+  p.status='rejeitado';
+  saveExtra();renderPipeline();toast('Proposta descartada','var(--am)');
+}
 
 // ── HUB ───────────────────────────────────────────────
 function renderHub(){
