@@ -2341,6 +2341,35 @@ button:active{transform:scale(.97);transition:transform .08s}
 
 
 
+<!-- ═══ MODAL CUSTO FIXO ═══ -->
+<div class="moverlay" id="m-custo-fixo">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">Novo custo fixo</div>
+    <div class="modal-sub">Registre despesas recorrentes mensais</div>
+    <div class="fg"><label class="flbl">Nome *</label>
+      <input class="fi" id="cf-nome" placeholder="Ex: Adobe Creative Cloud">
+    </div>
+    <div class="fg"><label class="flbl">Categoria</label>
+      <select class="fse" id="cf-cat">
+        <option value="Ferramentas">Ferramentas</option>
+        <option value="Infraestrutura">Infraestrutura</option>
+        <option value="Educação">Educação</option>
+        <option value="Outros">Outros</option>
+      </select>
+    </div>
+    <div class="fg"><label class="flbl">Valor mensal (R$) *</label>
+      <input class="fi" id="cf-val" type="number" placeholder="0">
+    </div>
+    <div class="fg"><label class="flbl">Observações</label>
+      <input class="fi" id="cf-obs" placeholder="Plano, vencimento...">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-g" onclick="closeM('m-custo-fixo')">Cancelar</button>
+      <button class="btn-p" onclick="addCustoFixo()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ MODAL NOVO ORÇAMENTO ═══ -->
 <div class="moverlay" id="m-orcamento">
   <div class="modal" style="max-width:600px">
@@ -2619,7 +2648,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v9.0.0</span>
+      <span class="version-txt" id="version-label">v9.1.0</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3194,6 +3223,14 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div class="kpi"><div class="kpi-label">Recebido</div><div class="kpi-val ok" id="fin-recb">R$ 0</div><div class="kpi-sub">confirmado</div></div>
       <div class="kpi"><div class="kpi-label">Margem líquida</div><div class="kpi-val" id="fin-marg">0%</div><div class="kpi-sub">entradas - saídas</div></div>
     </div>
+    <!-- SAÚDE DO MÊS (OS-049) -->
+    <div class="card" style="margin-bottom:11px" id="fin-saude-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="card-title" style="margin:0;display:flex;align-items:center;gap:6px"><i data-lucide="heart-pulse" style="width:13px;height:13px;color:var(--t3)"></i>Saúde do Mês</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Pró-labore: <input class="fi" id="fin-prolabore" type="number" placeholder="0" style="width:100px;padding:4px 8px;font-size:var(--fs-2xs)" oninput="saveProlabore();renderSaudeMes()"></div>
+      </div>
+      <div id="fin-saude-body"></div>
+    </div>
     <!-- META MENSAL -->
     <div class="card" style="margin-bottom:11px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -3207,6 +3244,18 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div style="display:flex;flex-direction:column;gap:11px">
         <div class="card"><div class="card-title">Por projeto</div><div id="fin-proj"></div></div>
         <div class="card"><div class="card-title">Distribuição</div><div id="fin-dist"></div></div>
+      </div>
+    </div>
+    <!-- CUSTOS FIXOS (OS-048) -->
+    <div class="card" style="margin-top:11px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="card-title" style="margin:0;display:flex;align-items:center;gap:6px"><i data-lucide="repeat" style="width:13px;height:13px;color:var(--t3)"></i>Custos Fixos Mensais</div>
+        <button class="btn-g" style="font-size:var(--fs-2xs)" onclick="openM('m-custo-fixo')">+ Novo custo</button>
+      </div>
+      <div id="custos-fixos-list"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--e1)">
+        <span style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3)">Total mensal</span>
+        <span style="font-family:var(--mono);font-size:var(--fs-md);font-weight:900;color:var(--am)" id="custos-fixos-total">R$ 0</span>
       </div>
     </div>
   </div>
@@ -3469,7 +3518,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v9.0.0';
+const APP_VERSION='v9.1.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3493,6 +3542,8 @@ let cases=JSON.parse(localStorage.getItem('ph4-cases')||'[]');
 let propostas=JSON.parse(localStorage.getItem('ph4-propostas')||'[]');
 let orcamentos=JSON.parse(localStorage.getItem('ph4-orcamentos')||'[]');
 let orcAtualId=null;
+let custosFixos=JSON.parse(localStorage.getItem('ph4-custos-fixos')||'[]');
+let prolabore=parseFloat(localStorage.getItem('ph4-prolabore')||'0');
 let hubData=JSON.parse(localStorage.getItem('ph4-hub')||'null')||DEF_HUB_DATA();
 let xpTotal=parseInt(localStorage.getItem('ph4-xp')||'0');
 let curProjId=projs[0]?.id||null;
@@ -4654,6 +4705,19 @@ function gerarRelatorio(){
       <div class="report-stat"><span class="report-key">Clientes ativos</span><span class="report-val">${clients.filter(c=>c.status==='ativo').length}</span></div>
       <div class="report-stat"><span class="report-key">Cases criados</span><span class="report-val">${projsFinalizados.filter(p=>p.tipo_fin==='case').length}</span></div>
     </div>
+    ${(function(){
+      const txRejeicao=lancs.length>0?Math.round(lancs.filter(l=>_isRejected(l)).length/lancs.length*100):0;
+      const projSimult=projs.filter(p=>!p.pausado).length;
+      const todosP=[...projs,...projsFinalizados];const valP=todosP.filter(p=>p.val>0);
+      const ticketReal=valP.length>0?Math.round(valP.reduce((s,p)=>s+p.val,0)/valP.length):0;
+      return '<div class="report-section"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">🏥 Saúde do Estúdio</div>'
+        +'<div class="report-stat"><span class="report-key">Projetos entregues</span><span class="report-val">'+projsMes.length+'</span></div>'
+        +'<div class="report-stat"><span class="report-key">Taxa de rejeição</span><span class="report-val" style="'+(txRejeicao>30?'color:var(--am)':'')+'">'+txRejeicao+'%'+(txRejeicao>30?' ⚠':'')+'</span></div>'
+        +'<div class="report-stat"><span class="report-key">Horas Modo Foco</span><span class="report-val" style="color:var(--y)">'+(totalTempoSecs>0?fmtTime(totalTempoSecs):'0h')+'</span></div>'
+        +'<div class="report-stat"><span class="report-key">Projetos simultâneos</span><span class="report-val" style="'+(projSimult>4?'color:var(--rd)':projSimult>3?'color:var(--am)':'')+'">'+projSimult+(projSimult>4?' 🔴':'')+'</span></div>'
+        +'<div class="report-stat"><span class="report-key">Ticket médio real</span><span class="report-val">'+fmt(ticketReal)+'</span></div>'
+        +'</div>';
+    })()}
   `;
   openM('m-relatorio');
 }
@@ -4861,6 +4925,63 @@ function renderFin(){
   const ppEl=document.getElementById('fin-proj');if(ppEl){const bp={};ent.filter(l=>l.proj).forEach(l=>{if(!bp[l.proj])bp[l.proj]={t:0,r:0};bp[l.proj].t+=l.val;if(l.st==='recebido')bp[l.proj].r+=l.val;});ppEl.innerHTML=Object.keys(bp).length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Nenhum lançamento</div>':Object.entries(bp).map(([proj,d])=>`<div style="padding:7px 0;border-bottom:1px solid var(--e1)"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-size:var(--fs-sm);color:var(--t2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${proj}</div><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--y)">${fmt(d.t)}</div></div><div class="xtg"><div class="xfg" style="width:${Math.round(d.r/d.t*100)}%"></div></div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${Math.round(d.r/d.t*100)}% recebido</div></div>`).join('');}
   const distEl=document.getElementById('fin-dist');if(distEl)distEl.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Entradas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--gr)">${fmt(tE)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Saídas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--am)">${fmt(tS)}</span></div><div style="height:1px;background:var(--e1);margin:7px 0"></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Margem líquida</span><span style="font-size:20px;font-weight:900;letter-spacing:-.05em;color:var(--y)">${mg}%</span></div><div class="xts" style="margin-top:5px"><div class="xfs" style="width:${mg}%"></div></div>`;
 }
+
+// ── CUSTOS FIXOS & SAÚDE (OS-048, OS-049) ────────────
+function saveCustosFixos(){localStorage.setItem('ph4-custos-fixos',JSON.stringify(custosFixos));}
+function saveProlabore(){prolabore=parseFloat(document.getElementById('fin-prolabore')?.value)||0;localStorage.setItem('ph4-prolabore',prolabore);}
+function addCustoFixo(){
+  const nome=document.getElementById('cf-nome').value.trim();
+  const val=parseFloat(document.getElementById('cf-val').value)||0;
+  if(!nome||!val){toast('Preencha nome e valor!','var(--am)');return;}
+  custosFixos.push({id:Date.now(),nome,cat:document.getElementById('cf-cat').value,val,obs:document.getElementById('cf-obs').value.trim()});
+  saveCustosFixos();closeM('m-custo-fixo');
+  document.getElementById('cf-nome').value='';document.getElementById('cf-val').value='';document.getElementById('cf-obs').value='';
+  renderCustosFixos();renderSaudeMes();toast('Custo fixo adicionado!');
+}
+function removeCustoFixo(id){
+  if(!confirm('Remover este custo fixo?'))return;
+  custosFixos=custosFixos.filter(c=>c.id!==id);
+  saveCustosFixos();renderCustosFixos();renderSaudeMes();toast('Removido','var(--am)');
+}
+function renderCustosFixos(){
+  const el=document.getElementById('custos-fixos-list');if(!el)return;
+  const catCor={'Ferramentas':'var(--pu)','Infraestrutura':'var(--y)','Educação':'var(--gr)','Outros':'var(--t4)'};
+  if(custosFixos.length===0){el.innerHTML='<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:8px 0">Nenhum custo fixo cadastrado.</div>';
+  }else{el.innerHTML=custosFixos.map(c=>`<div class="fin-row" style="padding:6px 0"><div style="width:3px;height:28px;border-radius:2px;background:${catCor[c.cat]||'var(--t4)'};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:var(--fs-sm);font-weight:500;color:var(--t1)">${c.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${c.cat}${c.obs?' · '+c.obs:''}</div></div><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--am);min-width:68px;text-align:right">${fmt(c.val)}</div><span style="cursor:pointer;color:var(--t4);font-size:14px;margin-left:8px" onclick="removeCustoFixo(${c.id})" title="Remover">×</span></div>`).join('');}
+  const total=custosFixos.reduce((s,c)=>s+c.val,0);
+  setEl('custos-fixos-total',fmt(total));
+}
+function renderSaudeMes(){
+  const el=document.getElementById('fin-saude-body');if(!el)return;
+  const plEl=document.getElementById('fin-prolabore');if(plEl&&!plEl.value&&prolabore)plEl.value=prolabore;
+  const n=new Date(),m=n.getMonth(),y=n.getFullYear();
+  const ent=lancs.filter(l=>l.tipo==='entrada'&&!_isRejected(l));
+  const receitaMes=ent.filter(l=>{const d=new Date(l.data);return d.getMonth()===m&&d.getFullYear()===y;}).reduce((s,l)=>s+l.val,0);
+  const totalCF=custosFixos.reduce((s,c)=>s+c.val,0);
+  const pl=prolabore||0;
+  const pontoEq=totalCF+pl;
+  const resultado=receitaMes-pontoEq;
+  const pct=pontoEq>0?Math.min(Math.round(receitaMes/pontoEq*100),100):0;
+  const corRes=resultado>pontoEq*0.15?'var(--gr)':resultado>=0?'var(--am)':'var(--rd)';
+  const lblRes=resultado>pontoEq*0.15?'Lucro':resultado>=0?'Atenção':'Prejuízo';
+  el.innerHTML=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+    <div style="text-align:center"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-bottom:3px">Receita mês</div><div style="font-size:var(--fs-md);font-weight:800;color:var(--gr)">${fmt(receitaMes)}</div></div>
+    <div style="text-align:center"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-bottom:3px">Custos fixos</div><div style="font-size:var(--fs-md);font-weight:800;color:var(--am)">${fmt(totalCF)}</div></div>
+    <div style="text-align:center"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-bottom:3px">Pró-labore</div><div style="font-size:var(--fs-md);font-weight:800;color:var(--t2)">${fmt(pl)}</div></div>
+    <div style="text-align:center"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-bottom:3px">Resultado</div><div style="font-size:var(--fs-md);font-weight:800;color:${corRes}">${resultado>=0?'+':''}${fmt(resultado)}</div></div>
+  </div>
+  <div style="margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Ponto de equilíbrio: ${fmt(pontoEq)}</span>
+    <span style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${corRes}">${lblRes} · ${pct}%</span>
+  </div>
+  <div class="xts"><div class="xfs" style="width:${pct}%;background:${corRes}"></div></div>
+  ${pontoEq>0&&receitaMes<pontoEq?`<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--am);margin-top:8px">Você precisa faturar mais ${fmt(pontoEq-receitaMes)} para cobrir tudo.</div>`:''}`;
+}
+// Hook renderFin to also render custos fixos + saúde
+;(function(){
+  const _origRenderFin=renderFin;
+  renderFin=function(){_origRenderFin();renderCustosFixos();renderSaudeMes();};
+})();
 
 // ── PIPELINE ──────────────────────────────────────────
 function populatePropCli(){const sel=document.getElementById('prop-cli');if(!sel)return;sel.innerHTML='<option value="">Selecione...</option><option value="_novo">+ Novo cliente</option>';clients.forEach(c=>sel.innerHTML+=`<option value="${c.nome}">${c.nome}</option>`);}
