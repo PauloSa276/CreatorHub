@@ -846,10 +846,10 @@ html,body{
 .client-proj-row:hover .p-name{color:var(--y)}
 
 /* ── Métricas/Charts ── */
-.bar-v-item{display:flex;flex-direction:column;align-items:center;gap:var(--sp-1);flex:1}
+.bar-v-item{display:flex;flex-direction:column;align-items:center;gap:var(--sp-1);flex:1;min-width:44px}
 .bar-v-val{font-family:var(--mono);font-size:var(--fs-xs);font-weight:var(--fw-bold);text-align:center}
 .bar-v-fill{width:100%;border-radius:2px 2px 0 0;transition:height .5s ease}
-.bar-v-lbl{font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);text-align:center;letter-spacing:.03em}
+.bar-v-lbl{font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);text-align:center;letter-spacing:.03em;white-space:nowrap}
 .bar-h-row{display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-2)}
 .bar-h-lbl{font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);min-width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
 .bar-h-track{flex:1;height:8px;background:var(--e2);border-radius:4px;overflow:hidden}
@@ -2758,7 +2758,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v10.1.0</span>
+      <span class="version-txt" id="version-label">v10.1.1</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -2958,16 +2958,16 @@ button:active{transform:scale(.97);transition:transform .08s}
           <div id="agenda-hoje"></div>
         </div>
 
-        <!-- ALERTAS -->
-        <div class="card">
+        <!-- ALERTAS — span 2 -->
+        <div class="card bento-span2">
           <div class="card-header">
             <div class="card-title">Alertas</div>
           </div>
           <div id="alertas"></div>
         </div>
 
-        <!-- CALCULADORA DE PRAZO — span 2 -->
-        <div class="card bento-span2">
+        <!-- CALCULADORA DE PRAZO -->
+        <div class="card">
           <div class="card-header">
             <div class="card-title">Calculadora de prazo</div>
           </div>
@@ -3419,7 +3419,7 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="card-title">Status atual <span id="met-status-total" style="color:var(--t4)"></span></div>
         <div style="position:relative;display:flex;align-items:center;justify-content:center;margin:4px 0 10px">
           <svg id="svg-donut" viewBox="0 0 120 120" width="120" height="120" style="transform:rotate(-90deg)">
-            <circle cx="60" cy="60" r="44" fill="none" stroke="var(--e1)" stroke-width="14"/>
+            <circle cx="60" cy="60" r="44" fill="none" stroke="var(--s4)" stroke-width="14"/>
             <circle id="d-andamento" cx="60" cy="60" r="44" fill="none" stroke="#D4A017" stroke-width="14" stroke-dasharray="0 276.46" stroke-linecap="round"/>
             <circle id="d-revisao" cx="60" cy="60" r="44" fill="none" stroke="#F472B6" stroke-width="14" stroke-dasharray="0 276.46" stroke-linecap="round"/>
             <circle id="d-pausado" cx="60" cy="60" r="44" fill="none" stroke="#F59E0B" stroke-width="14" stroke-dasharray="0 276.46" stroke-linecap="round"/>
@@ -3436,7 +3436,7 @@ button:active{transform:scale(.97);transition:transform .08s}
       <!-- Barras verticais: projetos por fase -->
       <div class="card">
         <div class="card-title">Por fase do processo</div>
-        <div id="ch-fases-v2" style="display:flex;align-items:flex-end;gap:5px;height:90px;margin:8px 0 10px;padding:0 4px"></div>
+        <div id="ch-fases-v2" style="display:flex;align-items:flex-end;gap:8px;height:90px;margin:8px 0 10px;padding:0 4px;overflow-x:auto"></div>
         <div id="ch-fases-legend" style="display:flex;flex-wrap:wrap;gap:4px"></div>
       </div>
 
@@ -3647,7 +3647,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v10.1.0';
+const APP_VERSION='v10.1.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
