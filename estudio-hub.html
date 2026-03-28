@@ -2541,7 +2541,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v8.0.0</span>
+      <span class="version-txt" id="version-label">v8.0.1</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3355,7 +3355,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v8.0.0';
+const APP_VERSION='v8.0.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3874,7 +3874,7 @@ function selT(el,v){
   }
 }
 function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
-function updateFilaAuto(){const n=projs.length;const el=document.getElementById('np-fila-auto');if(!el)return;el.textContent='Você tem '+n+' projeto'+(n!==1?'s':'')+' ativo'+(n!==1?'s':'')+' agora';el.style.color=n>=4?'var(--rd)':n>=3?'var(--am)':'var(--t2)';}
+function updateFilaAuto(){const projAtivos=projs.filter(p=>!p.pausado&&p.fi<5).length;const el=document.getElementById('np-fila-auto');if(!el)return;el.textContent=projAtivos+' projeto'+(projAtivos!==1?'s':'')+' ativo'+(projAtivos!==1?'s':'')+' agora';el.style.color=projAtivos>=4?'var(--rd)':projAtivos>=3?'var(--am)':'var(--t3)';}
 function criarProjeto(){
   const nome=document.getElementById('np-nome').value.trim(),cli=document.getElementById('np-cli').value;
   if(!nome||!cli||cli===''){toast('Preencha nome e cliente!','var(--am)');return;}
@@ -3987,7 +3987,9 @@ function criarCliente(){
     c.serv=c.serv||projTipo;
     if(!c.val&&projVal)c.val=projVal;
   }
-  save();closeM('m-cliente');renderCRM();renderDash();addXP(projTipo?80:30);toast(projTipo?'Cliente + projeto criados! +80 XP 🎉':'Cliente adicionado! +30 XP');
+  save();closeM('m-cliente');renderCRM();renderDash();
+  if(projTipo){renderProjs();if(typeof renderPipeline==='function')renderPipeline();}
+  addXP(projTipo?80:30);toast(projTipo?'Cliente + projeto criados! +80 XP 🎉':'Cliente adicionado! +30 XP');
 }
 
 // ── FICHA RPG ─────────────────────────────────────────
