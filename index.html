@@ -1822,17 +1822,10 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div class="fg"><label class="flbl">E-mail</label><input class="fi" id="nc-email" type="email" placeholder="contato@empresa.com"></div>
       <div class="fg"><label class="flbl">Origem</label><select class="fse" id="nc-origem"><option>Indicação</option><option>Instagram</option><option>LinkedIn</option><option>Site</option><option>Outros</option></select></div>
     </div>
-    <div class="g2" style="gap:11px">
-      <div class="fg"><label class="flbl">Serviço contratado</label><input class="fi" id="nc-serv" placeholder="Ex: Identidade Visual"></div>
-      <div class="fg"><label class="flbl">Valor (R$)</label><input class="fi" id="nc-val" type="number" placeholder="0"></div>
-    </div>
+    <div class="fg"><label class="flbl">Serviço contratado</label><input class="fi" id="nc-serv" placeholder="Ex: Identidade Visual"></div>
     <div class="fg"><label class="flbl">Escopo do projeto</label><textarea class="fta" id="nc-escopo" style="min-height:56px" placeholder="Descreva o escopo contratado..."></textarea></div>
     <div class="g2" style="gap:11px">
-      <div class="fg"><label class="flbl">Forma de pagamento</label><select class="fse" id="nc-pgto"><option>50% + 50% na entrega</option><option>100% antecipado</option><option>30% + 70% na entrega</option><option>Parcelado</option><option>A combinar</option></select></div>
       <div class="fg"><label class="flbl">Criticidade</label><select class="fse" id="nc-crit"><option value="alta">🔴 Alta — urgência máxima</option><option value="media" selected>🟡 Média — flexível</option><option value="baixa">🟢 Baixa — ótimo relacionamento</option></select></div>
-    </div>
-    <div class="g2" style="gap:11px">
-      <div class="fg"><label class="flbl">Tempo médio de projeto (dias)</label><input class="fi" id="nc-tempo" type="number" placeholder="Ex: 21"></div>
       <div class="fg"><label class="flbl">Status</label><select class="fse" id="nc-status"><option value="ativo">Ativo</option><option value="proposta">Em proposta</option><option value="lead">Lead</option><option value="concluido">Concluído</option></select></div>
     </div>
     <div class="fg"><label class="flbl">Notas / observações</label><textarea class="fta" id="nc-notas" style="min-height:56px" placeholder="Histórico, preferências, observações importantes..."></textarea></div>
@@ -2648,7 +2641,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v9.1.0</span>
+      <span class="version-txt" id="version-label">v9.1.1</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3518,7 +3511,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v9.1.0';
+const APP_VERSION='v9.1.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3682,7 +3675,6 @@ function openM(id){
     ['nc-nome','nc-resp','nc-wpp','nc-email','nc-serv','nc-escopo','nc-notas'].forEach(id2=>{
       const el=document.getElementById(id2);if(el)el.value='';
     });
-    ['nc-val','nc-tempo'].forEach(id2=>{const el=document.getElementById(id2);if(el)el.value='0';});
     // Reset seção B (serviço contratado)
     const projSec=document.getElementById('nc-proj-section');if(projSec)projSec.style.display='none';
     ['nc-proj-tipo','nc-proj-val','nc-proj-ini'].forEach(id2=>{const el=document.getElementById(id2);if(el)el.value='';});
@@ -4156,7 +4148,7 @@ function criarCliente(){
   const ini=nome.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const cors=['#D4A017','#A78BFA','#F59E0B','#22C55E','#60A5FA','#EC4899'];
   const segVal=document.getElementById('nc-seg').value;const segFinal=segVal==='Outros'?(document.getElementById('nc-seg-outros')?.value.trim()||'Outros'):segVal;
-  const c={id:Date.now(),nome,av:ini,cor:cors[clients.length%cors.length],seg:segFinal,resp:document.getElementById('nc-resp').value,wpp:document.getElementById('nc-wpp').value,email:document.getElementById('nc-email').value,origem:document.getElementById('nc-origem').value,serv:document.getElementById('nc-serv').value,escopo:document.getElementById('nc-escopo').value,pgto:document.getElementById('nc-pgto').value,val:parseFloat(document.getElementById('nc-val').value)||0,status:document.getElementById('nc-status').value,crit:document.getElementById('nc-crit').value,tempo:parseInt(document.getElementById('nc-tempo').value)||0,notas:document.getElementById('nc-notas').value};
+  const c={id:Date.now(),nome,av:ini,cor:cors[clients.length%cors.length],seg:segFinal,resp:document.getElementById('nc-resp').value,wpp:document.getElementById('nc-wpp').value,email:document.getElementById('nc-email').value,origem:document.getElementById('nc-origem').value,serv:document.getElementById('nc-serv').value,escopo:document.getElementById('nc-escopo').value,status:document.getElementById('nc-status').value,crit:document.getElementById('nc-crit').value,notas:document.getElementById('nc-notas').value};
   clients.unshift(c);
   // OS-040: criar projeto vinculado se Seção B preenchida
   const projTipo=document.getElementById('nc-proj-tipo')?.value;
