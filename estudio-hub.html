@@ -2859,30 +2859,13 @@ button:active{transform:scale(.97);transition:transform .08s}
     <!-- ── GRID BENTO (OS-027) ── -->
     <div class="dash-bento">
 
-        <!-- TAREFAS DE HOJE — span 2 -->
+        <!-- PROJETOS EM CURSO — span 2 (foco principal) -->
         <div class="card bento-span2">
           <div class="card-header">
-            <div class="card-title">Tarefas de hoje
-              <span id="task-count" style="color:var(--t4);font-weight:400">0/0</span>
-            </div>
-            <button class="btn-mini" onclick="openM('m-task')">+ tarefa</button>
+            <div class="card-title">Projetos em curso</div>
+            <span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--y);cursor:pointer;font-weight:600" onclick="nav('projetos',null)">ver todos</span>
           </div>
-          <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px">
-            <span style="width:5px;height:5px;border-radius:50%;background:var(--y);display:inline-block;flex-shrink:0"></span>Do calendário
-          </div>
-          <div id="cal-tasks" style="margin-bottom:10px"></div>
-          <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px">
-            <span style="width:5px;height:5px;border-radius:50%;background:var(--gr);display:inline-block;flex-shrink:0"></span>Adicionadas
-          </div>
-          <div id="day-tasks"></div>
-          <div style="margin-top:10px">
-            <div style="height:2px;background:var(--e1);border-radius:1px;overflow:hidden">
-              <div id="day-bar" style="height:100%;width:0%;background:var(--y);border-radius:1px;transition:width .4s ease"></div>
-            </div>
-            <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:4px">
-              Progresso: <span id="day-pct" style="color:var(--t1);font-weight:600">0%</span>
-            </div>
-          </div>
+          <div id="dash-projs"></div>
         </div>
 
         <!-- COMBUSTÍVEL CRIATIVO — span 1 -->
@@ -2940,17 +2923,34 @@ button:active{transform:scale(.97);transition:transform .08s}
           </div>
         </div>
 
-        <!-- PROJETOS EM CURSO — span 2 -->
-        <div class="card bento-span2">
+        <!-- TAREFAS DE HOJE — span 1 -->
+        <div class="card">
           <div class="card-header">
-            <div class="card-title">Projetos em curso</div>
-            <span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--y);cursor:pointer;font-weight:600" onclick="nav('projetos',null)">ver todos</span>
+            <div class="card-title">Tarefas de hoje
+              <span id="task-count" style="color:var(--t4);font-weight:400">0/0</span>
+            </div>
+            <button class="btn-mini" onclick="openM('m-task')">+ tarefa</button>
           </div>
-          <div id="dash-projs"></div>
+          <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px">
+            <span style="width:5px;height:5px;border-radius:50%;background:var(--y);display:inline-block;flex-shrink:0"></span>Do calendário
+          </div>
+          <div id="cal-tasks" style="margin-bottom:10px"></div>
+          <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px">
+            <span style="width:5px;height:5px;border-radius:50%;background:var(--gr);display:inline-block;flex-shrink:0"></span>Adicionadas
+          </div>
+          <div id="day-tasks"></div>
+          <div style="margin-top:10px">
+            <div style="height:2px;background:var(--e1);border-radius:1px;overflow:hidden">
+              <div id="day-bar" style="height:100%;width:0%;background:var(--y);border-radius:1px;transition:width .4s ease"></div>
+            </div>
+            <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:4px">
+              Progresso: <span id="day-pct" style="color:var(--t1);font-weight:600">0%</span>
+            </div>
+          </div>
         </div>
 
         <!-- AGENDA DE HOJE -->
-        <div class="card bento-span1">
+        <div class="card">
           <div class="card-header">
             <div class="card-title">Agenda de hoje</div>
             <a href="https://calendar.google.com" target="_blank" style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--y);text-decoration:none;font-weight:600">Cal</a>
