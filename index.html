@@ -1730,7 +1730,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="g2" style="gap:11px">
       <div class="fg" style="margin-bottom:0"><label class="flbl">Complexidade</label><select class="fse" id="np-comp" onchange="calcPrev()"><option value="1">Baixa</option><option value="2" selected>Média</option><option value="3">Alta</option></select></div>
-      <div class="fg" style="margin-bottom:0"><label class="flbl">Projetos na fila</label><select class="fse" id="np-fila" onchange="calcPrev()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="5">5+</option></select></div>
+      <div class="fg" style="margin-bottom:0"><label class="flbl">Projetos na fila</label><div class="fi" id="np-fila-auto" style="background:var(--s3);cursor:default;font-weight:600"></div></div>
     </div>
     <div class="prazo-res" style="margin-top:11px"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:rgba(0,0,0,.5);text-transform:uppercase;letter-spacing:.08em">Prazo sugerido</div><div style="font-size:17px;font-weight:800;letter-spacing:-.03em;color:#0C0C0E" id="np-prazo">28 dias</div></div>
     <div class="fg" style="margin-top:13px"><label class="flbl">Data de início</label><input class="fi" id="np-ini" type="date"></div>
@@ -1836,7 +1836,36 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div class="fg"><label class="flbl">Status</label><select class="fse" id="nc-status"><option value="ativo">Ativo</option><option value="proposta">Em proposta</option><option value="lead">Lead</option><option value="concluido">Concluído</option></select></div>
     </div>
     <div class="fg"><label class="flbl">Notas / observações</label><textarea class="fta" id="nc-notas" style="min-height:56px" placeholder="Histórico, preferências, observações importantes..."></textarea></div>
+    <div style="border-top:1px solid var(--e2);margin-top:4px;padding-top:10px">
+      <div id="nc-proj-toggle" style="cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:var(--fs-xs);color:var(--y);font-weight:600" onclick="toggleNcProj()"><i data-lucide="plus" style="width:14px;height:14px" id="nc-proj-ico"></i>Adicionar serviço contratado</div>
+      <div id="nc-proj-section" style="display:none;margin-top:12px;padding:12px;background:var(--s3);border-radius:var(--r2);border:1px solid var(--e1)">
+        <div class="fg" style="margin-bottom:8px"><label class="flbl">Tipo de serviço</label><select class="fse" id="nc-proj-tipo"><option value="">Selecione...</option><option>Identidade Visual</option><option>Redesign de Marca</option><option>Social Media</option><option>Estratégia de Marca</option><option>Apresentação</option><option>Site</option><option>Landing Page</option><option>Outros</option></select></div>
+        <div class="g2" style="gap:11px"><div class="fg" style="margin-bottom:0"><label class="flbl">Valor (R$)</label><input class="fi" id="nc-proj-val" type="number" placeholder="0"></div><div class="fg" style="margin-bottom:0"><label class="flbl">Data de início</label><input class="fi" id="nc-proj-ini" type="date"></div></div>
+      </div>
+    </div>
     <div class="modal-footer"><button class="btn-g" onclick="closeM('m-cliente')">Cancelar</button><button class="btn-p" onclick="criarCliente()">Adicionar cliente</button></div>
+  </div>
+</div>
+
+<!-- M: NOVO PARCEIRO -->
+<div class="moverlay" id="m-parceiro">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-title">Novo parceiro</div>
+    <div class="modal-sub">Fornecedores e parceiros do estúdio.</div>
+    <div class="g2" style="gap:11px">
+      <div class="fg"><label class="flbl">Nome *</label><input class="fi" id="par-nome" placeholder="Ex: Gráfica Express"></div>
+      <div class="fg"><label class="flbl">Tipo</label><select class="fse" id="par-tipo"><option>Gráfica</option><option>Fotografia</option><option>Design</option><option>Tráfego</option><option>Dev</option><option>Outro</option></select></div>
+    </div>
+    <div class="g2" style="gap:11px">
+      <div class="fg"><label class="flbl">WhatsApp</label><input class="fi" id="par-wpp" placeholder="(11) 99999-9999"></div>
+      <div class="fg"><label class="flbl">E-mail</label><input class="fi" id="par-email" type="email" placeholder="contato@parceiro.com"></div>
+    </div>
+    <div class="g2" style="gap:11px">
+      <div class="fg"><label class="flbl">Site</label><input class="fi" id="par-site" placeholder="parceiro.com"></div>
+      <div class="fg"><label class="flbl">Valor/hora (R$)</label><input class="fi" id="par-valor" type="number" placeholder="0"></div>
+    </div>
+    <div class="fg"><label class="flbl">Observações</label><textarea class="fta" id="par-obs" style="min-height:56px" placeholder="Notas sobre o parceiro..."></textarea></div>
+    <div class="modal-footer"><button class="btn-g" onclick="closeM('m-parceiro')">Cancelar</button><button class="btn-p" onclick="criarParceiro()">Adicionar</button></div>
   </div>
 </div>
 
@@ -1920,6 +1949,17 @@ button:active{transform:scale(.97);transition:transform .08s}
           <button class="cpop-st-btn" data-st="lead" onclick="setCPopSt('lead')">Lead</button>
           <button class="cpop-st-btn" data-st="concluido" onclick="setCPopSt('concluido')">Concluído</button>
         </div>
+      </div>
+      <div id="cpop-hist-section" style="margin-top:12px">
+        <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Histórico de serviços</div>
+        <div id="cpop-hist" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px"></div>
+      </div>
+      <div id="cpop-docs-section" style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);text-transform:uppercase;letter-spacing:.08em">Documentos</div>
+          <button class="btn-g" style="font-size:var(--fs-2xs);padding:3px 8px" onclick="addDocLink()">+ Adicionar link</button>
+        </div>
+        <div id="cpop-docs"></div>
       </div>
     </div>
     <div class="cpop-ft">
@@ -2501,7 +2541,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v7.1.0</span>
+      <span class="version-txt" id="version-label">v8.0.0</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3006,15 +3046,23 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="page-title">CRM</div>
         <div class="page-desc">Gestão de relacionamento com clientes</div>
       </div>
-      <button class="btn-p" onclick="openM('m-cliente')">+ Novo cliente</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-g" id="crm-tab-parceiros-btn" onclick="toggleCrmTab('parceiros')" style="font-size:var(--fs-xs)">Parceiros</button>
+        <button class="btn-p" id="crm-add-btn" onclick="openM('m-cliente')">+ Novo cliente</button>
+      </div>
     </div>
-    <div class="kpi-row">
-      <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-val" id="crm-tot">6</div></div>
-      <div class="kpi"><div class="kpi-label">Ativos</div><div class="kpi-val ok" id="crm-at">5</div></div>
-      <div class="kpi"><div class="kpi-label">Em proposta</div><div class="kpi-val warn" id="crm-pr">1</div></div>
-      <div class="kpi"><div class="kpi-label">Faturamento</div><div class="kpi-val" id="crm-fat">R$ 0</div></div>
+    <div id="crm-tab-clientes">
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-val" id="crm-tot">6</div></div>
+        <div class="kpi"><div class="kpi-label">Ativos</div><div class="kpi-val ok" id="crm-at">5</div></div>
+        <div class="kpi"><div class="kpi-label">Em proposta</div><div class="kpi-val warn" id="crm-pr">1</div></div>
+        <div class="kpi"><div class="kpi-label">Faturamento</div><div class="kpi-val" id="crm-fat">R$ 0</div></div>
+      </div>
+      <div id="crm-list"></div>
     </div>
-    <div id="crm-list"></div>
+    <div id="crm-tab-parceiros" style="display:none">
+      <div id="parceiros-list"></div>
+    </div>
   </div>
 
   <!-- ══════ FINANCEIRO ══════ -->
@@ -3307,7 +3355,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v7.1.0';
+const APP_VERSION='v8.0.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3456,7 +3504,7 @@ function toast(m,c){const t=document.getElementById('toast');if(!t)return;t.text
 function openM(id){
   const el=document.getElementById(id);if(!el)return;
   el.classList.add('open');
-  if(id==='m-proj'){populateNpCli();calcPrev();const d=new Date().toISOString().split('T')[0];const ini=document.getElementById('np-ini');if(ini)ini.value=d;}
+  if(id==='m-proj'){populateNpCli();updateFilaAuto();calcPrev();const d=new Date().toISOString().split('T')[0];const ini=document.getElementById('np-ini');if(ini)ini.value=d;}
   if(id==='m-edit-perfil'){const p=getPerfilData();const en=document.getElementById('ep-nome');if(en)en.value=p.nome;const ee=document.getElementById('ep-espec');if(ee)ee.value=p.espec||'';const es=document.getElementById('ep-site');if(es)es.value=p.site||'';const eb=document.getElementById('ep-bio');if(eb)eb.value=p.bio||'';const ep2=document.getElementById('ep-pass');if(ep2)ep2.value='';}
   if(id==='m-feedback'){const ap=document.querySelector('.page.active');const fbp=document.getElementById('fb-page');if(fbp&&ap)fbp.textContent=ap.id.replace('page-','');document.querySelectorAll('.fb-type-btn').forEach(b=>b.style.background='');document.getElementById('fb-desc').value='';window._fbType=null;}
   if(id==='m-lanc'){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];}
@@ -3467,6 +3515,12 @@ function openM(id){
       const el=document.getElementById(id2);if(el)el.value='';
     });
     ['nc-val','nc-tempo'].forEach(id2=>{const el=document.getElementById(id2);if(el)el.value='0';});
+    // Reset seção B (serviço contratado)
+    const projSec=document.getElementById('nc-proj-section');if(projSec)projSec.style.display='none';
+    ['nc-proj-tipo','nc-proj-val','nc-proj-ini'].forEach(id2=>{const el=document.getElementById(id2);if(el)el.value='';});
+    // Reset "Outros" segmento
+    const segOutrosW=document.getElementById('nc-seg-outros-wrap');if(segOutrosW)segOutrosW.style.display='none';
+    const segOutros=document.getElementById('nc-seg-outros');if(segOutros)segOutros.value='';
     // Focar no nome
     const n=document.getElementById('nc-nome');if(n)n.focus();
     // Scroll para o topo do modal
@@ -3819,7 +3873,8 @@ function selT(el,v){
     }
   }
 }
-function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=parseInt(document.getElementById('np-fila').value)||4;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
+function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
+function updateFilaAuto(){const n=projs.length;const el=document.getElementById('np-fila-auto');if(!el)return;el.textContent='Você tem '+n+' projeto'+(n!==1?'s':'')+' ativo'+(n!==1?'s':'')+' agora';el.style.color=n>=4?'var(--rd)':n>=3?'var(--am)':'var(--t2)';}
 function criarProjeto(){
   const nome=document.getElementById('np-nome').value.trim(),cli=document.getElementById('np-cli').value;
   if(!nome||!cli||cli===''){toast('Preencha nome e cliente!','var(--am)');return;}
@@ -3833,7 +3888,7 @@ function criarProjeto(){
     }
   }
   if(!selTipoV){toast('Selecione o tipo!','var(--am)');return;}
-  const c2=parseInt(document.getElementById('np-comp').value)||2,f=parseInt(document.getElementById('np-fila').value)||4;
+  const c2=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;
   const dias=Math.round(([0,14,21,30][c2]+(f-1)*3)*1.3);
   const ini=document.getElementById('np-ini').value||new Date().toISOString().split('T')[0];
   const ed=new Date(ini);ed.setDate(ed.getDate()+dias);
@@ -3905,13 +3960,34 @@ function renderCRM(){
   if(clients.length===0){el.innerHTML='<div style="text-align:center;padding:48px 20px"><div class="empty-float" style="font-size:52px;margin-bottom:14px"><i data-lucide="users" style="width:48px;height:48px;color:var(--t4)"></i></div><div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Nenhum cliente cadastrado</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:20px;line-height:1.5">Adicione seu primeiro cliente e acompanhe<br>o relacionamento com a ficha RPG.</div><button class="btn-p" style="font-size:var(--fs-sm)" onclick="openM(\'m-cliente\')">+ Novo cliente</button></div>';setTimeout(refreshIcons,50);return;}
   el.innerHTML=clients.map(c=>`<div class="crm-card" onclick="openCRMPopup(${c.id})"><div style="display:flex;align-items:center;gap:11px;margin-bottom:9px"><div class="crm-av" style="background:var(--yb);border-color:rgba(212,160,23,.3);color:${c.cor}">${c.av||c.nome.slice(0,2).toUpperCase()}</div><div style="flex:1"><div class="crm-name">${c.nome}</div><div class="crm-seg">${c.seg||''}${c.serv?' · '+c.serv:''}</div></div><span class="sbadge ${stMap[c.status]||'s-lead'}">${stLbl[c.status]||'—'}</span></div>${c.crit?`<div class="crit-row"><div class="crit-dot" style="background:${c.crit==='alta'?'var(--rd)':c.crit==='baixa'?'var(--gr)':'var(--am)'}"></div><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);font-weight:500">${critMap[c.crit]||''}</span></div>`:''}<div class="crm-meta"><div><div class="crm-ml">Origem</div><div class="crm-mv">${c.origem||'—'}</div></div><div><div class="crm-ml">Contato</div><div class="crm-mv">${c.wpp||c.email||'—'}</div></div><div><div class="crm-ml">Serviço</div><div class="crm-mv">${c.serv||'—'}</div></div><div><div class="crm-ml">Pagamento</div><div class="crm-mv">${c.pgto||'—'}</div></div>${c.val>0?`<div><div class="crm-ml">Valor</div><div class="crm-mv" style="color:var(--y);font-weight:600">${fmt(c.val)}</div></div>`:''}</div>${c.notas?`<div style="margin-top:8px;padding:7px 9px;background:var(--s4);border-radius:var(--r1);font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t2);border:1px solid var(--e1)">${c.notas}</div>`:''}<div style="display:flex;justify-content:flex-end;margin-top:10px;padding-top:8px;border-top:1px solid var(--e1)"><button class="btn-g" style="font-size:var(--fs-2xs);color:var(--rd);border-color:rgba(239,68,68,.2)" onclick="event.stopPropagation();deletarCliente(${c.id})">Remover cliente</button></div></div>`).join('');
 }
+function toggleNcProj(){
+  const sec=document.getElementById('nc-proj-section');
+  const open=sec.style.display==='none';
+  sec.style.display=open?'block':'none';
+  const ico=document.getElementById('nc-proj-ico');
+  if(ico)ico.setAttribute('data-lucide',open?'minus':'plus');
+  refreshIcons();
+}
 function criarCliente(){
   const nome=document.getElementById('nc-nome').value.trim();if(!nome){toast('Preencha o nome!','var(--am)');return;}
   const ini=nome.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const cors=['#D4A017','#A78BFA','#F59E0B','#22C55E','#60A5FA','#EC4899'];
   const segVal=document.getElementById('nc-seg').value;const segFinal=segVal==='Outros'?(document.getElementById('nc-seg-outros')?.value.trim()||'Outros'):segVal;
   const c={id:Date.now(),nome,av:ini,cor:cors[clients.length%cors.length],seg:segFinal,resp:document.getElementById('nc-resp').value,wpp:document.getElementById('nc-wpp').value,email:document.getElementById('nc-email').value,origem:document.getElementById('nc-origem').value,serv:document.getElementById('nc-serv').value,escopo:document.getElementById('nc-escopo').value,pgto:document.getElementById('nc-pgto').value,val:parseFloat(document.getElementById('nc-val').value)||0,status:document.getElementById('nc-status').value,crit:document.getElementById('nc-crit').value,tempo:parseInt(document.getElementById('nc-tempo').value)||0,notas:document.getElementById('nc-notas').value};
-  clients.unshift(c);save();closeM('m-cliente');renderCRM();addXP(30);toast('Cliente adicionado! +30 XP');
+  clients.unshift(c);
+  // OS-040: criar projeto vinculado se Seção B preenchida
+  const projTipo=document.getElementById('nc-proj-tipo')?.value;
+  if(projTipo){
+    const projIni=document.getElementById('nc-proj-ini')?.value||new Date().toISOString().split('T')[0];
+    const projVal=parseFloat(document.getElementById('nc-proj-val')?.value)||0;
+    const dias=Math.round(21*(1+projs.length*0.15));
+    const ed=new Date(projIni);ed.setDate(ed.getDate()+dias);
+    const pcores={'Identidade Visual':'#D4A017','Redesign de Marca':'#A78BFA','Social Media':'#F59E0B','Estratégia de Marca':'#22C55E','Apresentação':'#60A5FA','Site':'#3B82F6','Landing Page':'#EC4899','Outros':'#9E9B92'};
+    projs.unshift({id:Date.now()+1,nome:projTipo+' — '+nome,cli:nome,tipo:projTipo,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:pcores[projTipo]||'#D4A017',urg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:projVal,tasks:new Array(30).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[]});
+    c.serv=c.serv||projTipo;
+    if(!c.val&&projVal)c.val=projVal;
+  }
+  save();closeM('m-cliente');renderCRM();renderDash();addXP(projTipo?80:30);toast(projTipo?'Cliente + projeto criados! +80 XP 🎉':'Cliente adicionado! +30 XP');
 }
 
 // ── FICHA RPG ─────────────────────────────────────────
@@ -3966,7 +4042,42 @@ function openCRMPopup(id){
   const fields={wpp:cl.wpp||'',email:cl.email||'',resp:cl.resp||'',origem:cl.origem||'',serv:cl.serv||'',pgto:cl.pgto||'',val:cl.val||'',tempo:cl.tempo||'',notas:cl.notas||''};
   Object.entries(fields).forEach(([k,v])=>{const el=document.getElementById('cpop-'+k);if(el)el.value=v;});
   document.querySelectorAll('.cpop-st-btn').forEach(b=>b.classList.toggle('active',b.dataset.st===cl.status));
+  // OS-041: histórico de serviços
+  renderCpopHist(cl.nome);
+  // OS-042: documentos
+  renderCpopDocs(cl);
   document.getElementById('crm-popup-ov').classList.add('open');document.body.style.overflow='hidden';
+}
+function renderCpopHist(cliNome){
+  const histEl=document.getElementById('cpop-hist');if(!histEl)return;
+  const ativos=projs.filter(p=>p.cli===cliNome);
+  const finalizados=(projsFinalizados||[]).filter(p=>p.cli===cliNome);
+  const all=[...ativos.map(p=>({...p,_st:'andamento'})),...finalizados.map(p=>({...p,_st:'concluido'}))];
+  if(all.length===0){histEl.innerHTML='<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:8px 0">Nenhum serviço registrado</div>';return;}
+  histEl.innerHTML=all.map(p=>{
+    const cor=p._st==='concluido'?'var(--gr)':'var(--am)';
+    const stLbl=p._st==='concluido'?'Concluído':'Em andamento';
+    const d=p.prazo?new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase():'';
+    return `<div class="card" style="min-width:180px;max-width:220px;flex-shrink:0;cursor:${p._st==='andamento'?'pointer':'default'};padding:10px 12px" ${p._st==='andamento'?`onclick="closeCRMPopup();openProj(${p.id})"`:''}><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><div style="width:6px;height:6px;border-radius:50%;background:${cor}"></div><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:${cor};font-weight:600">${stLbl}</span></div><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.tipo||p.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${p.nome}</div><div style="display:flex;justify-content:space-between;margin-top:6px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">${d}</span>${p.val?`<span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--y);font-weight:600">${fmt(p.val)}</span>`:''}</div></div>`;
+  }).join('');
+}
+function renderCpopDocs(cl){
+  const docsEl=document.getElementById('cpop-docs');if(!docsEl)return;
+  const docs=cl.docs||[];
+  if(docs.length===0){docsEl.innerHTML='<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Nenhum documento vinculado</div>';return;}
+  docsEl.innerHTML=docs.map((d,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--e1)"><a href="${d.url}" target="_blank" style="flex:1;font-size:var(--fs-xs);color:var(--y);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.titulo}</a><button class="btn-g" style="padding:2px 6px;font-size:var(--fs-2xs);color:var(--rd);border-color:rgba(239,68,68,.2)" onclick="event.stopPropagation();removeDocLink(${i})">×</button></div>`).join('');
+}
+function addDocLink(){
+  const cl=clients.find(x=>x.id===crmPopupId);if(!cl)return;
+  const titulo=prompt('Título do documento:');if(!titulo)return;
+  const url=prompt('URL (Drive, Dropbox, Notion...):');if(!url)return;
+  if(!cl.docs)cl.docs=[];
+  cl.docs.push({titulo,url});
+  save();renderCpopDocs(cl);toast('Link adicionado!');
+}
+function removeDocLink(idx){
+  const cl=clients.find(x=>x.id===crmPopupId);if(!cl||!cl.docs)return;
+  cl.docs.splice(idx,1);save();renderCpopDocs(cl);
 }
 function closeCRMPopup(){document.getElementById('crm-popup-ov').classList.remove('open');document.body.style.overflow='';}
 function setCPopSt(st){document.querySelectorAll('.cpop-st-btn').forEach(b=>b.classList.toggle('active',b.dataset.st===st));}
@@ -3983,6 +4094,32 @@ function saveCRMPopup(){
   cl.notas=document.getElementById('cpop-notas').value;
   const activeSt=document.querySelector('.cpop-st-btn.active');if(activeSt)cl.status=activeSt.dataset.st;
   save();renderCRM();closeCRMPopup();toast('Cliente salvo!');
+}
+
+// ══ PARCEIROS / FORNECEDORES (OS-043) ══════════════════════
+let parceiros=JSON.parse(localStorage.getItem('ph4-parceiros')||'[]');
+let _crmTab='clientes';
+function saveParceiros(){localStorage.setItem('ph4-parceiros',JSON.stringify(parceiros));}
+function toggleCrmTab(tab){
+  if(tab==='parceiros'&&_crmTab==='clientes'){_crmTab='parceiros';} else {_crmTab='clientes';}
+  document.getElementById('crm-tab-clientes').style.display=_crmTab==='clientes'?'':'none';
+  document.getElementById('crm-tab-parceiros').style.display=_crmTab==='parceiros'?'':'none';
+  const btn=document.getElementById('crm-tab-parceiros-btn');
+  if(btn)btn.textContent=_crmTab==='parceiros'?'Clientes':'Parceiros';
+  const addBtn=document.getElementById('crm-add-btn');
+  if(addBtn){addBtn.textContent=_crmTab==='parceiros'?'+ Novo parceiro':'+ Novo cliente';addBtn.onclick=()=>openM(_crmTab==='parceiros'?'m-parceiro':'m-cliente');}
+  if(_crmTab==='parceiros')renderParceiros();
+}
+function criarParceiro(){
+  const nome=document.getElementById('par-nome').value.trim();if(!nome){toast('Preencha o nome!','var(--am)');return;}
+  parceiros.unshift({id:Date.now(),nome,tipo:document.getElementById('par-tipo').value,wpp:document.getElementById('par-wpp').value,email:document.getElementById('par-email').value,site:document.getElementById('par-site').value,valor:parseFloat(document.getElementById('par-valor').value)||0,obs:document.getElementById('par-obs').value});
+  saveParceiros();closeM('m-parceiro');renderParceiros();toast('Parceiro adicionado!');
+}
+function deletarParceiro(id){if(!confirm('Remover este parceiro?'))return;parceiros=parceiros.filter(p=>p.id!==id);saveParceiros();renderParceiros();}
+function renderParceiros(){
+  const el=document.getElementById('parceiros-list');if(!el)return;
+  if(parceiros.length===0){el.innerHTML='<div class="empty-state"><div class="empty-icon empty-float"><i data-lucide="handshake" style="width:48px;height:48px;color:var(--t4)"></i></div><div class="empty-title">Nenhum parceiro cadastrado</div><div class="empty-desc">Adicione gráficas, fotógrafos, devs e outros fornecedores que fazem parte do seu fluxo.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-parceiro\')">+ Novo parceiro</button></div>';setTimeout(refreshIcons,50);return;}
+  el.innerHTML=parceiros.map(p=>`<div class="crm-card"><div style="display:flex;align-items:center;gap:11px;margin-bottom:9px"><div class="crm-av" style="background:var(--pb);border-color:rgba(139,92,246,.3);color:var(--pu)">${p.nome.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}</div><div style="flex:1"><div class="crm-name">${p.nome}</div><div class="crm-seg">${p.tipo||''}</div></div></div><div class="crm-meta"><div><div class="crm-ml">WhatsApp</div><div class="crm-mv">${p.wpp||'—'}</div></div><div><div class="crm-ml">E-mail</div><div class="crm-mv">${p.email||'—'}</div></div><div><div class="crm-ml">Site</div><div class="crm-mv">${p.site?`<a href="https://${p.site.replace(/^https?:\/\//,'')}" target="_blank" style="color:var(--y)">${p.site}</a>`:'—'}</div></div>${p.valor?`<div><div class="crm-ml">Valor/hora</div><div class="crm-mv" style="color:var(--y);font-weight:600">${fmt(p.valor)}</div></div>`:''}</div>${p.obs?`<div style="margin-top:8px;padding:7px 9px;background:var(--s4);border-radius:var(--r1);font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t2);border:1px solid var(--e1)">${p.obs}</div>`:''}<div style="display:flex;justify-content:flex-end;margin-top:10px;padding-top:8px;border-top:1px solid var(--e1)"><button class="btn-g" style="font-size:var(--fs-2xs);color:var(--rd);border-color:rgba(239,68,68,.2)" onclick="event.stopPropagation();deletarParceiro(${p.id})">Remover</button></div></div>`).join('');
 }
 
 // ══ META FINANCEIRA ══════════════════════════════════════
