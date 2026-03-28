@@ -2687,7 +2687,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v10.0.1</span>
+      <span class="version-txt" id="version-label">v10.0.2</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -3583,7 +3583,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v10.0.1';
+const APP_VERSION='v10.0.2';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3915,7 +3915,7 @@ function renderDash(){
     if(star){
       nsEl.style.display='block';
       nsEl.style.cursor='pointer';
-      nsEl.onclick=()=>{openProj(star.id);};
+      nsEl.onclick=()=>{curProjId=star.id;nav('gestao');};
       const isUrg=star.dias<=3;
       nsEl.classList.toggle('ns-pulse',isUrg);
       document.getElementById('ns-label').textContent=isUrg?'Prazo urgente':'Quase pronto';
