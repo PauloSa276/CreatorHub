@@ -1706,6 +1706,14 @@ button:active{transform:scale(.97);transition:transform .08s}
   <div class="modal">
     <div class="modal-title">Novo projeto</div>
     <div class="modal-sub">Inicie o fluxo criativo — metodologia paulosá.</div>
+    <!-- OS-053: Aviso de capacidade -->
+    <div id="np-cap-aviso" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:var(--r2);padding:10px 14px;margin-bottom:12px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--rd);display:none"></div>
+    <!-- OS-052: Toggle Modo -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+      <span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Modo:</span>
+      <button class="btn-g" id="np-modo-completo" style="font-size:var(--fs-2xs);background:var(--y);color:#0C0C0E;border-color:var(--y)" onclick="setModoProj('completo')">Completo</button>
+      <button class="btn-g" id="np-modo-rapido" style="font-size:var(--fs-2xs)" onclick="setModoProj('rapido')">⚡ Rápido</button>
+    </div>
     <div class="fg"><label class="flbl">Nome do projeto *</label><input class="fi" id="np-nome" placeholder="Ex: Identidade Visual — Marca X" oninput="calcPrev()"></div>
     <div class="fg"><label class="flbl">Cliente *</label>
       <select class="fse" id="np-cli">
@@ -1734,8 +1742,22 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="prazo-res" style="margin-top:11px"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:rgba(0,0,0,.5);text-transform:uppercase;letter-spacing:.08em">Prazo sugerido</div><div style="font-size:17px;font-weight:800;letter-spacing:-.03em;color:#0C0C0E" id="np-prazo">28 dias</div></div>
     <div class="fg" style="margin-top:13px"><label class="flbl">Data de início</label><input class="fi" id="np-ini" type="date"></div>
-    <div class="fg"><label class="flbl">Valor do projeto (R$)</label><input class="fi" id="np-val" type="number" placeholder="0"></div>
-    <div class="fg"><label class="flbl">Briefing inicial</label><textarea class="fta" id="np-brief" placeholder="Objetivos, referências, observações..."></textarea></div>
+    <div class="fg"><label class="flbl">Valor do projeto (R$)</label><input class="fi" id="np-val" type="number" placeholder="0" oninput="calcUrgencia()"></div>
+    <!-- OS-056: Urgência -->
+    <div class="fg">
+      <label class="flbl">Urgência</label>
+      <div style="display:flex;gap:6px">
+        <button class="btn-g" id="np-urg-normal" style="flex:1;font-size:var(--fs-2xs);background:var(--y);color:#0C0C0E;border-color:var(--y)" onclick="setUrgProj('normal')">Normal</button>
+        <button class="btn-g" id="np-urg-urgente" style="flex:1;font-size:var(--fs-2xs)" onclick="setUrgProj('urgente')">⚡ Urgente</button>
+        <button class="btn-g" id="np-urg-critico" style="flex:1;font-size:var(--fs-2xs)" onclick="setUrgProj('critico')">🚨 Crítico</button>
+      </div>
+      <div id="np-urg-sugestao" style="display:none;margin-top:6px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--am);background:rgba(245,158,11,.08);padding:6px 10px;border-radius:var(--r2)"></div>
+    </div>
+    <!-- OS-054: Briefing dinâmico -->
+    <div class="fg"><label class="flbl">Briefing</label>
+      <div id="np-brief-fields"></div>
+      <textarea class="fta" id="np-brief" style="margin-top:6px" placeholder="Observações adicionais..."></textarea>
+    </div>
     <div class="fg"><label class="flbl" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="np-gcal" style="width:14px;height:14px;cursor:pointer;accent-color:var(--y)"><span>Criar evento de kickoff no Google Calendar</span></label></div>
     <div class="modal-footer"><button class="btn-g" onclick="closeM('m-proj')">Cancelar</button><button class="btn-p" onclick="criarProjeto()">Criar projeto</button></div>
   </div>
@@ -2334,6 +2356,30 @@ button:active{transform:scale(.97);transition:transform .08s}
 
 
 
+<!-- ═══ MODAL MEU TEMPLATE (OS-055) ═══ -->
+<div class="moverlay" id="m-meu-template">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">Criar template de projeto</div>
+    <div class="modal-sub">Salve configurações para reutilizar em novos projetos</div>
+    <div class="fg"><label class="flbl">Nome do template *</label><input class="fi" id="mt-nome" placeholder="Ex: Branding Express"></div>
+    <div class="g2" style="gap:11px">
+      <div class="fg"><label class="flbl">Tipo de demanda</label>
+        <select class="fse" id="mt-tipo"><option>Identidade Visual</option><option>Redesign de Marca</option><option>Social Media</option><option>Estratégia de Marca</option><option>Apresentação</option><option>Site</option><option>Landing Page</option><option>Outros</option></select>
+      </div>
+      <div class="fg"><label class="flbl">Modo</label>
+        <select class="fse" id="mt-modo"><option value="completo">Completo (6 fases)</option><option value="rapido">Rápido (3 fases)</option></select>
+      </div>
+    </div>
+    <div class="fg"><label class="flbl">Tarefas personalizadas (uma por linha)</label>
+      <textarea class="fta" id="mt-tarefas" style="min-height:100px" placeholder="Reunião de briefing&#10;Pesquisar referências&#10;Criar moodboard&#10;..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-g" onclick="closeM('m-meu-template')">Cancelar</button>
+      <button class="btn-p" onclick="criarMeuTemplate()">Salvar template</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ MODAL CUSTO FIXO ═══ -->
 <div class="moverlay" id="m-custo-fixo">
   <div class="modal" style="max-width:420px">
@@ -2641,7 +2687,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v9.1.1</span>
+      <span class="version-txt" id="version-label">v10.0.0</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
@@ -2726,6 +2772,15 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="kpi-val" id="m-flor">—</div>
         <div class="kpi-sub">entregues</div>
       </div>
+    </div>
+
+    <!-- OS-053: CARGA DO ESTÚDIO -->
+    <div class="card" style="margin-bottom:14px" id="dash-carga-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="card-title" style="margin:0;display:flex;align-items:center;gap:6px"><i data-lucide="gauge" style="width:13px;height:13px;color:var(--t3)"></i>Carga do Estúdio</div>
+        <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)" id="dash-carga-label">0/4 projetos</div>
+      </div>
+      <div class="xts"><div class="xfs" id="dash-carga-bar" style="width:0%;transition:width .3s"></div></div>
     </div>
 
     <!-- ── GRID PRINCIPAL ── -->
@@ -3155,8 +3210,16 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div class="page-hdr" style="margin-bottom:var(--sp-4)">
       <div>
         <div class="page-title">Templates</div>
-        <div class="page-desc">Textos prontos — clique para copiar direto</div>
+        <div class="page-desc">Textos prontos e templates de projeto</div>
       </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-g" id="tpl-tab-meus-btn" onclick="toggleTplTab('meus')">Meus Templates</button>
+        <button class="btn-g" id="tpl-tab-add-btn" onclick="openM('m-meu-template')">+ Criar template</button>
+      </div>
+    </div>
+    <!-- OS-055: Meus Templates -->
+    <div id="tpl-tab-meus" style="display:none;margin-bottom:16px">
+      <div id="meus-templates-list"></div>
     </div>
     <div class="g2" style="gap:11px">
       <div>
@@ -3489,6 +3552,15 @@ button:active{transform:scale(.97);transition:transform .08s}
       <button class="btn-p" onclick="salvarConfig()">Salvar configurações</button>
     </div>
 
+    <!-- CAPACIDADE (OS-053) -->
+    <div class="card" style="margin-bottom:11px">
+      <div class="card-title">Capacidade do estúdio</div>
+      <div class="g2" style="gap:10px">
+        <div class="fg"><label class="flbl">Máximo de projetos simultâneos</label><input class="fi" id="cfg-cap-max" type="number" min="1" max="20" value="4"></div>
+      </div>
+      <button class="btn-p" onclick="salvarCapacidade()">Salvar capacidade</button>
+    </div>
+
     <!-- LIMPAR DADOS -->
     <div class="card">
       <div class="card-title" style="color:var(--rd)">Zona de perigo</div>
@@ -3511,7 +3583,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v9.1.1';
+const APP_VERSION='v10.0.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3537,6 +3609,10 @@ let orcamentos=JSON.parse(localStorage.getItem('ph4-orcamentos')||'[]');
 let orcAtualId=null;
 let custosFixos=JSON.parse(localStorage.getItem('ph4-custos-fixos')||'[]');
 let prolabore=parseFloat(localStorage.getItem('ph4-prolabore')||'0');
+let capMax=parseInt(localStorage.getItem('ph4-capacidade-max')||'4');
+let meusTemplates=JSON.parse(localStorage.getItem('ph4-meus-templates')||'[]');
+let _npModo='completo';
+let _npUrg='normal';
 let hubData=JSON.parse(localStorage.getItem('ph4-hub')||'null')||DEF_HUB_DATA();
 let xpTotal=parseInt(localStorage.getItem('ph4-xp')||'0');
 let curProjId=projs[0]?.id||null;
@@ -3665,7 +3741,7 @@ function toast(m,c){const t=document.getElementById('toast');if(!t)return;t.text
 function openM(id){
   const el=document.getElementById(id);if(!el)return;
   el.classList.add('open');
-  if(id==='m-proj'){populateNpCli();updateFilaAuto();calcPrev();const d=new Date().toISOString().split('T')[0];const ini=document.getElementById('np-ini');if(ini)ini.value=d;}
+  if(id==='m-proj'){populateNpCli();updateFilaAuto();calcPrev();const d=new Date().toISOString().split('T')[0];const ini=document.getElementById('np-ini');if(ini)ini.value=d;checkCapAlert();setModoProj('completo');setUrgProj('normal');renderBriefFields();}
   if(id==='m-edit-perfil'){const p=getPerfilData();const en=document.getElementById('ep-nome');if(en)en.value=p.nome;const ee=document.getElementById('ep-espec');if(ee)ee.value=p.espec||'';const es=document.getElementById('ep-site');if(es)es.value=p.site||'';const eb=document.getElementById('ep-bio');if(eb)eb.value=p.bio||'';const ep2=document.getElementById('ep-pass');if(ep2)ep2.value='';}
   if(id==='m-feedback'){const ap=document.querySelector('.page.active');const fbp=document.getElementById('fb-page');if(fbp&&ap)fbp.textContent=ap.id.replace('page-','');document.querySelectorAll('.fb-type-btn').forEach(b=>b.style.background='');document.getElementById('fb-desc').value='';window._fbType=null;}
   if(id==='m-lanc'){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];}
@@ -3760,6 +3836,7 @@ function nav(id,el){
     const p=getPerfilData();
     const cn=document.getElementById('cfg-nome');if(cn)cn.value=p.nome||'';
     const cs=document.getElementById('cfg-site');if(cs)cs.value=p.site||'';
+    const cm=document.getElementById('cfg-cap-max');if(cm)cm.value=capMax;
   }
   // Animate number counters after render
   setTimeout(()=>animateCounters(pg),80);
@@ -3853,7 +3930,7 @@ function renderDash(){
       document.getElementById('ns-action').setAttribute('onclick',"openM('m-proj')");
     } else { nsEl.style.display='none'; }
   }
-  renderDashProjs();renderAgenda();renderAlertas();renderDayTasks();atualizarNotificacoes();initCriativo();
+  renderDashProjs();renderAgenda();renderAlertas();renderDayTasks();atualizarNotificacoes();initCriativo();renderCarga();
 }
 
 function setEl(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
@@ -3923,7 +4000,7 @@ function renderProjs(){
   setEl('pm-pau',projs.filter(p=>p.pausado).length);
   const el=document.getElementById('proj-list');if(!el)return;
   if(projs.length===0&&projsFinalizados.length===0){el.innerHTML='<div style="text-align:center;padding:48px 20px"><div class="empty-float" style="font-size:52px;margin-bottom:14px"><i data-lucide="folder-kanban" style="width:48px;height:48px;color:var(--t4)"></i></div><div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Nenhum projeto ainda</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:20px;line-height:1.5">Crie seu primeiro projeto para começar<br>a gerenciar com a metodologia de 6 fases.</div><button class="btn-p" style="font-size:var(--fs-sm)" onclick="openM(\'m-proj\')">+ Novo projeto</button></div>';setTimeout(refreshIcons,50);return;}
-  let html=projs.map((p,i)=>`<div class="card" style="cursor:pointer" onclick="openProj(${p.id})"><div style="display:flex;align-items:center;gap:11px"><div class="p-num" style="min-width:26px;font-size:var(--fs-xs)">${String(i+1).padStart(2,'0')}</div><div style="flex:1;min-width:0"><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t1)">${p.nome}${p.pausado?' <span style="color:var(--am)"><i data-lucide="pause" style="width:12px;height:12px"></i></span>':''}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${p.cli} · ${p.tipo}</div></div><span class="ftag ${FT[p.fi]}">${FN[p.fi]}</span><div class="p-pct">${p.pct}%</div><div class="p-days ${p.urg}">${p.dias>0?p.dias+'d':p.dias===0?'hoje':'—'}</div></div><div class="p-prog" style="margin-top:9px"><div class="p-prog-fill" style="width:${p.pct}%;background:${p.cor}"></div></div></div>`).join('');
+  let html=projs.map((p,i)=>{const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;const fn=fases.map(f=>f.n);const ft=['f-briefing','f-conceito','f-producao','f-revisao','f-entrega','f-fechado'];const urgBadge=p.urg==='urgente'?'<span style="color:var(--am);font-size:var(--fs-2xs)"> ⚡</span>':p.urg==='critico'?'<span style="color:var(--rd);font-size:var(--fs-2xs)"> 🚨</span>':'';const modoBadge=p.modo==='rapido'?'<span style="color:var(--y);font-size:var(--fs-2xs)"> ⚡</span>':'';return `<div class="card" style="cursor:pointer" onclick="openProj(${p.id})"><div style="display:flex;align-items:center;gap:11px"><div class="p-num" style="min-width:26px;font-size:var(--fs-xs)">${String(i+1).padStart(2,'0')}</div><div style="flex:1;min-width:0"><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t1)">${p.nome}${modoBadge}${urgBadge}${p.pausado?' <span style="color:var(--am)"><i data-lucide="pause" style="width:12px;height:12px"></i></span>':''}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${p.cli} · ${p.tipo}</div></div><span class="ftag ${ft[p.fi]||'f-briefing'}">${fn[p.fi]||fn[0]}</span><div class="p-pct">${p.pct}%</div><div class="p-days ${p.urg}">${p.dias>0?p.dias+'d':p.dias===0?'hoje':'—'}</div></div><div class="p-prog" style="margin-top:9px"><div class="p-prog-fill" style="width:${p.pct}%;background:${p.cor}"></div></div></div>`;}).join('');
   if(projsFinalizados.length>0){html+=`<div class="fin-section-title" style="margin-top:16px">Fora da fila — ${projsFinalizados.length}</div>`+projsFinalizados.map(p=>`<div class="proj-finalizado"><div style="display:flex;align-items:center;gap:10px"><div style="width:3px;height:34px;border-radius:2px;background:${p.cor};flex-shrink:0"></div><div style="flex:1"><div class="p-name" style="color:var(--t2)">${p.nome}</div><div class="p-meta">${p.cli} · ${p.dataFim||''}${p.tipo_fin==='case'?' · Case':''}</div></div><span class="ftag ${p.tipo_fin==='case'?'f-entrega':'f-fechado'}">${p.tipo_fin==='case'?'CASE':'ENTREGUE'}</span></div></div>`).join('');}
   el.innerHTML=html;
 }
@@ -3939,12 +4016,14 @@ function renderGestao(){
   const gm=document.getElementById('g-meta');if(gm)gm.innerHTML=`<span>${p.cli}</span><span>·</span><span>${p.tipo}</span><span>·</span><span style="color:${p.urg==='urgent'?'var(--y)':'var(--t3)'}">${p.prazo?'Entrega: '+new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR'):''}</span>`;
   const ga=document.getElementById('g-actions');if(ga)ga.innerHTML=`<div style="display:flex;align-items:center;gap:8px">${!p.pausado?`<button class="pause-btn" onclick="abrirPausa()" style="display:inline-flex;align-items:center;gap:4px"><i data-lucide="pause-circle" style="width:13px;height:13px"></i>Pausar</button>`:`<button class="pause-btn" style="background:var(--gb);color:var(--gr);border-color:rgba(34,197,94,.28);display:inline-flex;align-items:center;gap:4px" onclick="retomar()"><i data-lucide="play-circle" style="width:13px;height:13px"></i>Retomar</button>`}</div><div style="text-align:right"><div style="font-size:var(--fs-2xl);font-weight:900;letter-spacing:-.05em;color:var(--y)">${p.pct}%</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">CONCLUÍDO</div></div>`;
   const bn=document.getElementById('g-pausa-banner');if(bn)bn.innerHTML=p.pausado?`<div class="pausa-banner"><i data-lucide="pause-circle" style="width:16px;height:16px;color:var(--am);flex-shrink:0"></i><div><div style="font-size:var(--fs-xs);font-weight:600;color:var(--am)">Projeto pausado</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t2)">${p.pMot}${p.pObs?' — '+p.pObs:''}</div></div></div>`:'';
-  let pxp=0;for(let f=0;f<p.fi;f++)pxp+=FASES[f].xp;
+  const _gFases=p.modo==='rapido'?FASES_RAPIDO:FASES;
+  let pxp=0;for(let f=0;f<p.fi;f++)pxp+=(_gFases[f]||{xp:0}).xp;
+  const totalXpProj=_gFases.reduce((s,f)=>s+f.xp,0);
   setEl('g-xp-tot',pxp+' XP');
-  const xb=document.getElementById('g-xp-bar');if(xb)xb.style.width=Math.min(100,pxp/520*100)+'%';
+  const xb=document.getElementById('g-xp-bar');if(xb)xb.style.width=Math.min(100,totalXpProj>0?pxp/totalXpProj*100:0)+'%';
   setEl('g-xp-sub',p.fi+' fases concluídas');
   setEl('g-xp-b',p.fi>=5?'Completo!':p.fi>=3?'Quase lá!':p.fi>=2?'Bom ritmo!':'');
-  const tl=document.getElementById('g-tl');if(tl)tl.innerHTML=FASES.map((f,i)=>{let cls=i<p.fi?'done':i===p.fi?(p.pausado?'pau cur':'cur'):'lk';const icoHtml=i<p.fi?`<i data-lucide="check" style="width:13px;height:13px"></i>`:`<i data-lucide="${f.i}" style="width:13px;height:13px"></i>`;return `<div class="tl-ph ${cls}" onclick="clkFase(${i})"><div class="tl-i">${icoHtml}</div><div class="tl-n">${f.n}</div><div class="tl-x">${i<p.fi?'+'+f.xp+' XP':i===p.fi?'Atual':'+'+f.xp+' XP'}</div></div>`;}).join('');
+  const tl=document.getElementById('g-tl');if(tl)tl.innerHTML=_gFases.map((f,i)=>{let cls=i<p.fi?'done':i===p.fi?(p.pausado?'pau cur':'cur'):'lk';const icoHtml=i<p.fi?`<i data-lucide="check" style="width:13px;height:13px"></i>`:`<i data-lucide="${f.i}" style="width:13px;height:13px"></i>`;return `<div class="tl-ph ${cls}" onclick="clkFase(${i})"><div class="tl-i">${icoHtml}</div><div class="tl-n">${f.n}</div><div class="tl-x">${i<p.fi?'+'+f.xp+' XP':i===p.fi?'Atual':'+'+f.xp+' XP'}</div></div>`;}).join('');
   renderFase(p,p.fi);
   renderRevisoes(p);
   setTimeout(refreshIcons,50);
@@ -3953,7 +4032,8 @@ function renderGestao(){
 function clkFase(i){const p=projs.find(x=>x.id===curProjId);if(!p)return;if(i>p.fi){toast('Complete a fase atual antes','var(--am)');return;}renderFase(p,i);}
 
 function renderFase(p,fi){
-  const fase=FASES[fi],off=fi*5;
+  const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;
+  const fase=fases[fi],off=fi*5;
   const pd=p.tasks.slice(off,off+5),dc=pd.filter(Boolean).length,all=dc===5,isCur=fi===p.fi;
   const flor='';
   const gf=document.getElementById('g-fase');
@@ -3968,8 +4048,9 @@ function renderFase(p,fi){
 
 function togglePT(fi,ti){
   const p=projs.find(x=>x.id===curProjId);if(!p)return;
+  const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;
   const off=fi*5;p.tasks[off+ti]=!p.tasks[off+ti];
-  const tot=p.tasks.filter(Boolean).length;p.pct=Math.round(tot/(FASES.length*5)*100);
+  const tot=p.tasks.filter(Boolean).length;p.pct=Math.round(tot/(fases.length*5)*100);
   save();renderFase(p,fi);setTimeout(refreshIcons,50);
   const dc=p.tasks.slice(off,off+5).filter(Boolean).length;
   if(dc===5&&fi===p.fi&&!p.pausado)toast('Todas as tarefas concluídas! Clique em AVANÇAR','var(--y)');
@@ -3994,22 +4075,24 @@ function avancar(){
       openM('m-brief-check');return;
     }
   }
-  const fase=FASES[p.fi];
-  // Fase 4 = Entrega: revelar seção de Lançamento ao invés de avançar fase
-  if(p.fi===4){
-    p.fi=5;p.pct=Math.round(p.tasks.filter(Boolean).length/(FASES.length*5)*100);
+  const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;
+  const fase=fases[p.fi];
+  const lastDelivery=fases.length-2; // penúltima fase = entrega
+  const lastPhase=fases.length-1;
+  // Penúltima fase: revelar seção de Lançamento
+  if(p.fi===lastDelivery){
+    p.fi=lastPhase;p.pct=Math.round(p.tasks.filter(Boolean).length/(fases.length*5)*100);
     save();celebrar(fase.n,fase.xp);
     setTimeout(()=>{
       renderGestao();renderDash();
-      // Revelar seção de lançamento
       const gl=document.getElementById('g-lancamento');
       if(gl){gl.style.display='block';gl.scrollIntoView({behavior:'smooth',block:'start'});}
     },400);
     return;
   }
-  // Fase 5 (Florescimento — só usado internamente): abrir modal finalizar
-  if(p.fi>=5){abrirModalFinalizar(p);return;}
-  p.fi++;p.pct=Math.round(p.tasks.filter(Boolean).length/(FASES.length*5)*100);
+  // Última fase: abrir modal finalizar
+  if(p.fi>=lastPhase){abrirModalFinalizar(p);return;}
+  p.fi++;p.pct=Math.round(p.tasks.filter(Boolean).length/(fases.length*5)*100);
   save();celebrar(fase.n,fase.xp);setTimeout(()=>{renderGestao();renderDash();},300);
 }
 function _skipBriefCheck(){
@@ -4047,6 +4130,7 @@ function selT(el,v){
       if(outrosTxt) outrosTxt.value = '';
     }
   }
+  renderBriefFields();
 }
 function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
 function updateFilaAuto(){const projAtivos=projs.filter(p=>!p.pausado&&p.fi<5).length;const el=document.getElementById('np-fila-auto');if(!el)return;el.textContent=projAtivos+' projeto'+(projAtivos!==1?'s':'')+' ativo'+(projAtivos!==1?'s':'')+' agora';el.style.color=projAtivos>=4?'var(--rd)':projAtivos>=3?'var(--am)':'var(--t3)';}
@@ -4068,12 +4152,15 @@ function criarProjeto(){
   const ini=document.getElementById('np-ini').value||new Date().toISOString().split('T')[0];
   const ed=new Date(ini);ed.setDate(ed.getDate()+dias);
   const cores={'Identidade Visual':'#D4A017','Redesign de Marca':'#A78BFA','Social Media':'#F59E0B','Estratégia de Marca':'#22C55E','Apresentação':'#60A5FA','Site':'#3B82F6','Landing Page':'#EC4899','Outros':'#9E9B92'};
-  const np={id:Date.now(),nome,cli,tipo:selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#D4A017',urg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(30).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[]};
+  const modo=_npModo||'completo';
+  const numTasks=modo==='rapido'?15:30;
+  const np={id:Date.now(),nome,cli,tipo:selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#D4A017',urg:_npUrg!=='normal'?_npUrg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(numTasks).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo,briefing:getBriefData()};
   projs.unshift(np);
   if(document.getElementById('np-gcal').checked){const d=new Date(ini),gs=d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Kickoff: '+nome)}&dates=${gs}/${gs}&details=${encodeURIComponent('paulosa.studio')}` ,'_blank');}
   save();closeM('m-proj');
   document.getElementById('np-nome').value='';const bv=document.getElementById('np-brief');if(bv)bv.value='';const vv=document.getElementById('np-val');if(vv)vv.value='';
-  selTipoV='';document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));
+  selTipoV='';_npModo='completo';_npUrg='normal';document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));
+  const bfEl=document.getElementById('np-brief-fields');if(bfEl)bfEl.innerHTML='';
   addXP(50);toast('Projeto criado! +50 XP 🎉');curProjId=np.id;renderDash();openProj(np.id);
   setTimeout(()=>{const row=document.querySelector('.proj-row');if(row)row.classList.add('new-entry');},100);
 }
@@ -4553,7 +4640,7 @@ function renderBriefingCard(p){
     if(actEl&&!actEl.querySelector('.br-btn')){
       const totalSecs=p.sessions?p.sessions.reduce((s,ss)=>s+ss.secs,0):0;
       const tempoHtml=totalSecs>0?`<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);text-align:center;margin-top:2px;display:flex;align-items:center;gap:3px"><i data-lucide="clock" style="width:10px;height:10px"></i>${fmtTime(totalSecs)} investidos</div>`:'';
-      actEl.insertAdjacentHTML('afterbegin',`<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><button class="btn-g br-btn" style="font-size:var(--fs-2xs);display:inline-flex;align-items:center;gap:4px" onclick="abrirBriefing()"><i data-lucide="clipboard-list" style="width:12px;height:12px"></i>Briefing</button>${tempoHtml}</div>`);
+      actEl.insertAdjacentHTML('afterbegin',`<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><button class="btn-g br-btn" style="font-size:var(--fs-2xs);display:inline-flex;align-items:center;gap:4px" onclick="abrirBriefing()"><i data-lucide="clipboard-list" style="width:12px;height:12px"></i>Briefing</button>${tempoHtml}</div><button class="btn-g" style="font-size:var(--fs-2xs);display:inline-flex;align-items:center;gap:4px" onclick="salvarComoTemplate(${p.id})" title="Salvar como template"><i data-lucide="save" style="width:12px;height:12px"></i></button>`);
     }
     // Refresh icons after injecting
     setTimeout(refreshIcons,50);
@@ -4916,6 +5003,133 @@ function renderFin(){
   if(lista)lista.innerHTML=lancs.length===0?'<div class="empty-state"><div class="empty-icon empty-float">💰</div><div class="empty-title">Sem lançamentos</div><div class="empty-desc">Registre entradas e saídas para acompanhar a saúde financeira do estúdio.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-lanc\')">+ Novo lançamento</button></div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp','recusado':'vp','perdido':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO','recusado':'RECUSADO','perdido':'PERDIDO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div><span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
   const ppEl=document.getElementById('fin-proj');if(ppEl){const bp={};ent.filter(l=>l.proj).forEach(l=>{if(!bp[l.proj])bp[l.proj]={t:0,r:0};bp[l.proj].t+=l.val;if(l.st==='recebido')bp[l.proj].r+=l.val;});ppEl.innerHTML=Object.keys(bp).length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Nenhum lançamento</div>':Object.entries(bp).map(([proj,d])=>`<div style="padding:7px 0;border-bottom:1px solid var(--e1)"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-size:var(--fs-sm);color:var(--t2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${proj}</div><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--y)">${fmt(d.t)}</div></div><div class="xtg"><div class="xfg" style="width:${Math.round(d.r/d.t*100)}%"></div></div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${Math.round(d.r/d.t*100)}% recebido</div></div>`).join('');}
   const distEl=document.getElementById('fin-dist');if(distEl)distEl.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Entradas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--gr)">${fmt(tE)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Saídas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--am)">${fmt(tS)}</span></div><div style="height:1px;background:var(--e1);margin:7px 0"></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Margem líquida</span><span style="font-size:20px;font-weight:900;letter-spacing:-.05em;color:var(--y)">${mg}%</span></div><div class="xts" style="margin-top:5px"><div class="xfs" style="width:${mg}%"></div></div>`;
+}
+
+// ── MODO RÁPIDO (OS-052) ─────────────────────────────
+const FASES_RAPIDO=[
+  {id:'receber',n:'Receber',i:'inbox',xp:80,desc:'Receba o briefing e alinhe expectativas.',tasks:['Receber briefing do cliente','Alinhar expectativas e prazo','Coletar referências','Confirmar escopo e valor','Documentar tudo']},
+  {id:'executar',n:'Executar',i:'pencil-ruler',xp:120,desc:'Execute o projeto de forma ágil.',tasks:['Criar primeira versão','Enviar para aprovação','Aplicar ajustes do cliente','Refinar versão final','Preparar arquivos de entrega']},
+  {id:'entregar',n:'Entregar',i:'package',xp:80,desc:'Finalize e entregue.',tasks:['Exportar em todos os formatos','Organizar e nomear arquivos','Enviar pacote de entrega','Pedir feedback final','Registrar no portfólio']}
+];
+function setModoProj(modo){
+  _npModo=modo;
+  document.getElementById('np-modo-completo').style.cssText='font-size:var(--fs-2xs);'+(modo==='completo'?'background:var(--y);color:#0C0C0E;border-color:var(--y)':'');
+  document.getElementById('np-modo-rapido').style.cssText='font-size:var(--fs-2xs);'+(modo==='rapido'?'background:var(--y);color:#0C0C0E;border-color:var(--y)':'');
+  calcPrev();
+}
+
+// ── URGÊNCIA COM PREÇO (OS-056) ──────────────────────
+function setUrgProj(urg){
+  _npUrg=urg;
+  ['normal','urgente','critico'].forEach(u=>{
+    const btn=document.getElementById('np-urg-'+u);
+    if(btn)btn.style.cssText='flex:1;font-size:var(--fs-2xs);'+(u===urg?'background:var(--y);color:#0C0C0E;border-color:var(--y)':'');
+  });
+  calcUrgencia();
+}
+function calcUrgencia(){
+  const val=parseFloat(document.getElementById('np-val')?.value)||0;
+  const el=document.getElementById('np-urg-sugestao');if(!el)return;
+  if(val>0&&_npUrg!=='normal'){
+    const pct=_npUrg==='urgente'?30:50;
+    const add=Math.round(val*pct/100);
+    el.style.display='block';
+    el.textContent=`Sugestão: +${pct}% = ${fmt(add)} adicional → Total ${fmt(val+add)}`;
+  }else{el.style.display='none';}
+}
+
+// ── BRIEFING DINÂMICO (OS-054) ───────────────────────
+const BRIEFING_FIELDS={
+  'Identidade Visual':[{id:'objetivo',l:'Objetivo do projeto',ph:'O que a marca precisa comunicar?'},{id:'publico',l:'Público-alvo',ph:'Quem vai consumir essa marca?'},{id:'concorrentes',l:'Concorrentes',ph:'Quais são os principais concorrentes?'},{id:'personalidade',l:'Personalidade da marca',ph:'Moderna, clássica, ousada, minimalista...'},{id:'restricoes',l:'Restrições',ph:'Cores, formas ou elementos que devem ser evitados'},{id:'entregas',l:'Entregas esperadas',ph:'Logo, papelaria, manual, aplicações...'}],
+  'Social Media':[{id:'objetivo',l:'Objetivo',ph:'Awareness, vendas, engajamento...'},{id:'tom',l:'Tom de voz',ph:'Formal, descontraído, educativo...'},{id:'formatos',l:'Formatos',ph:'Feed, stories, reels, carrossel...'},{id:'quantidade',l:'Quantidade mensal',ph:'Ex: 12 posts + 20 stories'}],
+  'Site':[{id:'objetivo',l:'Objetivo do site',ph:'Institucional, e-commerce, portfólio...'},{id:'paginas',l:'Páginas',ph:'Home, Sobre, Serviços, Contato...'},{id:'integracoes',l:'Integrações',ph:'Analytics, WhatsApp, formulários...'},{id:'prazo',l:'Prazo desejado',ph:'Ex: 30 dias'}],
+  'Landing Page':[{id:'objetivo',l:'Objetivo da página',ph:'Captura de leads, vendas...'},{id:'paginas',l:'Seções',ph:'Hero, benefícios, depoimentos, CTA...'},{id:'integracoes',l:'Integrações',ph:'Pixel, formulários, gateway...'}],
+  '_default':[{id:'objetivo',l:'Objetivo do projeto',ph:'O que precisa ser feito?'},{id:'publico',l:'Público-alvo',ph:'Para quem é?'},{id:'refs',l:'Referências',ph:'Links, imagens, marcas que inspiram...'},{id:'entregas',l:'Entregas esperadas',ph:'O que o cliente vai receber?'}]
+};
+function renderBriefFields(){
+  const el=document.getElementById('np-brief-fields');if(!el)return;
+  const fields=BRIEFING_FIELDS[selTipoV]||BRIEFING_FIELDS['_default'];
+  el.innerHTML=fields.map(f=>`<input class="fi" id="nb-${f.id}" placeholder="${f.ph}" style="margin-bottom:6px" data-brief-field="${f.id}"><label style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-top:-4px;margin-bottom:6px;display:block">${f.l}</label>`).join('');
+}
+function getBriefData(){
+  const data={};
+  document.querySelectorAll('[data-brief-field]').forEach(el=>{
+    if(el.value.trim())data[el.dataset.briefField]=el.value.trim();
+  });
+  return data;
+}
+
+// ── CAPACIDADE & CARGA (OS-053) ──────────────────────
+function salvarCapacidade(){capMax=parseInt(document.getElementById('cfg-cap-max')?.value)||4;localStorage.setItem('ph4-capacidade-max',capMax);toast('Capacidade salva!');}
+function renderCarga(){
+  const ativos=projs.filter(p=>!p.pausado&&p.fi<5).length;
+  const pct=capMax>0?Math.min(Math.round(ativos/capMax*100),100):0;
+  const cor=pct>100?'var(--rd)':pct>75?'var(--am)':'var(--gr)';
+  const lbl=document.getElementById('dash-carga-label');if(lbl)lbl.textContent=ativos+'/'+capMax+' projetos';
+  const bar=document.getElementById('dash-carga-bar');if(bar){bar.style.width=pct+'%';bar.style.background=cor;}
+}
+function checkCapAlert(){
+  const ativos=projs.filter(p=>!p.pausado&&p.fi<5).length;
+  const el=document.getElementById('np-cap-aviso');if(!el)return;
+  if(ativos>=capMax){
+    el.style.display='block';
+    el.textContent='⚠ Capacidade máxima atingida ('+ativos+'/'+capMax+'). Considere finalizar ou pausar um projeto antes de criar um novo.';
+  }else{el.style.display='none';}
+}
+
+// ── TEMPLATES DO USUÁRIO (OS-055) ────────────────────
+function saveMeusTemplates(){localStorage.setItem('ph4-meus-templates',JSON.stringify(meusTemplates));}
+function criarMeuTemplate(){
+  const nome=document.getElementById('mt-nome').value.trim();
+  if(!nome){toast('Preencha o nome!','var(--am)');return;}
+  const tarefasTxt=document.getElementById('mt-tarefas').value.trim();
+  const tarefas=tarefasTxt?tarefasTxt.split('\n').map(t=>t.trim()).filter(Boolean):[];
+  meusTemplates.push({id:Date.now(),nome,tipo:document.getElementById('mt-tipo').value,modo:document.getElementById('mt-modo').value,tarefas});
+  saveMeusTemplates();closeM('m-meu-template');
+  document.getElementById('mt-nome').value='';document.getElementById('mt-tarefas').value='';
+  renderMeusTemplates();toast('Template salvo!');
+}
+function salvarComoTemplate(projId){
+  const p=projs.find(x=>x.id===projId);if(!p)return;
+  const modo=p.modo||'completo';
+  const fases=modo==='rapido'?FASES_RAPIDO:FASES;
+  const tarefas=fases.map(f=>f.tasks).flat();
+  meusTemplates.push({id:Date.now(),nome:p.tipo+' — Template',tipo:p.tipo,modo,tarefas});
+  saveMeusTemplates();toast('Projeto salvo como template!');
+}
+function usarMeuTemplate(id){
+  const t=meusTemplates.find(x=>x.id===id);if(!t)return;
+  openM('m-proj');
+  setTimeout(()=>{
+    _npModo=t.modo||'completo';setModoProj(_npModo);
+    selTipoV=t.tipo;
+    document.querySelectorAll('.type-opt').forEach(o=>{
+      o.classList.toggle('sel',o.getAttribute('onclick')?.includes(t.tipo));
+    });
+    renderBriefFields();
+    const nome=document.getElementById('np-nome');if(nome)nome.placeholder='Projeto usando: '+t.nome;
+  },100);
+  toast('Template carregado — preencha os campos');
+}
+function removeMeuTemplate(id){
+  if(!confirm('Remover este template?'))return;
+  meusTemplates=meusTemplates.filter(x=>x.id!==id);
+  saveMeusTemplates();renderMeusTemplates();toast('Template removido','var(--am)');
+}
+function renderMeusTemplates(){
+  const el=document.getElementById('meus-templates-list');if(!el)return;
+  if(meusTemplates.length===0){el.innerHTML='<div class="card empty-state"><div class="empty-icon empty-float">📄</div><div class="empty-title">Nenhum template salvo</div><div class="empty-desc">Crie templates ou salve a partir de projetos existentes.</div></div>';return;}
+  el.innerHTML=meusTemplates.map(t=>`<div class="card" style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:600;color:var(--t1);font-size:var(--fs-sm)">${t.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${t.tipo} · ${t.modo==='rapido'?'⚡ Rápido':'Completo'} · ${t.tarefas.length} tarefas</div></div><div style="display:flex;gap:6px"><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="usarMeuTemplate(${t.id})">Usar</button><span style="cursor:pointer;color:var(--t4);font-size:14px" onclick="removeMeuTemplate(${t.id})" title="Remover">×</span></div></div></div>`).join('');
+}
+function toggleTplTab(tab){
+  const meusEl=document.getElementById('tpl-tab-meus');
+  const btn=document.getElementById('tpl-tab-meus-btn');
+  if(tab==='meus'){
+    const show=meusEl.style.display==='none';
+    meusEl.style.display=show?'block':'none';
+    if(btn)btn.style.cssText='font-size:var(--fs-2xs);'+(show?'background:var(--y);color:#0C0C0E;border-color:var(--y)':'');
+    if(show)renderMeusTemplates();
+  }
 }
 
 // ── CUSTOS FIXOS & SAÚDE (OS-048, OS-049) ────────────
