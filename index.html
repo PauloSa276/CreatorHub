@@ -670,10 +670,10 @@ html,body{
 .crit-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
 /* ── Hub Criativo ── */
-.hub-layout{column-count:3;column-gap:12px;column-fill:balance}
-@media(max-width:768px){.hub-layout{column-count:2}}
-@media(max-width:480px){.hub-layout{column-count:1}}
-.hub-cat{break-inside:avoid;margin-bottom:12px;display:inline-block;width:100%;background:var(--s2);border:1px solid var(--e2);border-radius:var(--radius-lg);overflow:hidden}
+.hub-layout{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.hub-cat{background:var(--s2);border:1px solid var(--e2);border-radius:var(--radius-lg);overflow:hidden}
+.hub-cat.hub-main{grid-column:span 2}
+@media(max-width:768px){.hub-cat.hub-main{grid-column:span 1}}
 .hub-cat-hdr{
   display:flex;align-items:center;gap:var(--sp-2);
   padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--e2);
@@ -933,19 +933,54 @@ html,body{
 .flor-chk.done{background:var(--yr);border-color:rgba(212,160,23,.4)}
 
 /* ── Mobile ── */
+/* ── OS-027: Dashboard Bento ── */
+.dash-bento{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.dash-bento .bento-span2{grid-column:span 2}
+.dash-bento .bento-span1{grid-column:span 1}
+
+@media(max-width:1100px){
+  .dash-bento{grid-template-columns:repeat(2,1fr)}
+  .dash-bento .bento-span2{grid-column:span 2}
+}
 @media(max-width:1024px){
   .metric-row{grid-template-columns:1fr 1fr}
   .hub-layout{grid-template-columns:1fr 1fr}
   .gm{grid-template-columns:1fr}
   .sidebar{width:200px;min-width:200px}
 }
+/* ── OS-032: Mobile Responsivo ── */
 @media(max-width:768px){
   .app{flex-direction:column}
-  .sidebar{display:none}
+  /* Sidebar gaveta */
+  .sidebar{
+    position:fixed;left:-260px;top:0;bottom:0;width:240px;min-width:240px;
+    z-index:200;transition:left .25s ease;box-shadow:none;
+  }
+  .sidebar.open{left:0;box-shadow:8px 0 24px rgba(0,0,0,.4)}
+  .mob-sidebar-overlay{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+    z-index:199;
+  }
+  .mob-sidebar-overlay.open{display:block}
+  /* Hamburger */
+  .mob-hamburger{display:flex !important}
+  /* Main */
   .main{padding:var(--sp-4) var(--sp-3)}
-  .metric-row{grid-template-columns:1fr 1fr}
-  .g2,.g3{grid-template-columns:1fr}
-  .hub-layout{grid-template-columns:1fr}
+  /* Grids colapsam */
+  .metric-row,.kpi-row{grid-template-columns:1fr 1fr !important}
+  .g2,.g3,.gm,.dash-grid,.pipe-grid{grid-template-columns:1fr !important}
+  .hub-layout{column-count:1}
+  /* Bento 1 coluna */
+  .dash-bento{grid-template-columns:1fr}
+  .dash-bento .bento-span2{grid-column:span 1}
+  /* Modais bottom sheet */
+  .moverlay{align-items:flex-end;padding:0}
+  .moverlay .modal{
+    border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+    max-height:90vh;width:100%;max-width:100%;
+    animation:slideUp .25s ease !important;
+  }
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 }
 
 /* ═══ SCROLLBAR — estilo Carbon dark ═══ */
@@ -2723,15 +2758,17 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v10.0.4</span>
+      <span class="version-txt" id="version-label">v10.1.0</span>
       <span class="version-date">22 mar 2026</span>
     </div>
   </div>
 </aside>
+<div class="mob-sidebar-overlay" id="mob-sidebar-ov" onclick="toggleSidebarMobile()"></div>
 
 <!-- ═══════════ MAIN ═══════════ -->
 <div class="content">
   <div class="topbar">
+    <button class="mob-hamburger" onclick="toggleSidebarMobile()" style="display:none;align-items:center;justify-content:center;width:36px;height:36px;background:none;border:none;cursor:pointer;color:var(--t2);flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     <div class="pg-title" id="pg-title">Dashboard</div>
     <div class="tb-right">
       <div class="tb-date" id="tb-date"></div>
@@ -2819,14 +2856,11 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div class="xts"><div class="xfs" id="dash-carga-bar" style="width:0%;transition:width .3s"></div></div>
     </div>
 
-    <!-- ── GRID PRINCIPAL ── -->
-    <div class="dash-grid">
+    <!-- ── GRID BENTO (OS-027) ── -->
+    <div class="dash-bento">
 
-      <!-- COLUNA ESQUERDA -->
-      <div class="dash-left">
-
-        <!-- TAREFAS DE HOJE -->
-        <div class="card">
+        <!-- TAREFAS DE HOJE — span 2 -->
+        <div class="card bento-span2">
           <div class="card-header">
             <div class="card-title">Tarefas de hoje
               <span id="task-count" style="color:var(--t4);font-weight:400">0/0</span>
@@ -2851,21 +2885,7 @@ button:active{transform:scale(.97);transition:transform .08s}
           </div>
         </div>
 
-        <!-- PROJETOS EM CURSO -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Projetos em curso</div>
-            <span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--y);cursor:pointer;font-weight:600" onclick="nav('projetos',null)">ver todos</span>
-          </div>
-          <div id="dash-projs"></div>
-        </div>
-
-      </div>
-
-      <!-- COLUNA DIREITA -->
-      <div class="dash-right">
-
-        <!-- COMBUSTÍVEL CRIATIVO -->
+        <!-- COMBUSTÍVEL CRIATIVO — span 1 -->
         <div class="criativo-section">
           <div class="criativo-header">
             <div class="criativo-title">⚡ Combustível Criativo</div>
@@ -2920,8 +2940,17 @@ button:active{transform:scale(.97);transition:transform .08s}
           </div>
         </div>
 
+        <!-- PROJETOS EM CURSO — span 2 -->
+        <div class="card bento-span2">
+          <div class="card-header">
+            <div class="card-title">Projetos em curso</div>
+            <span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--y);cursor:pointer;font-weight:600" onclick="nav('projetos',null)">ver todos</span>
+          </div>
+          <div id="dash-projs"></div>
+        </div>
+
         <!-- AGENDA DE HOJE -->
-        <div class="card">
+        <div class="card bento-span1">
           <div class="card-header">
             <div class="card-title">Agenda de hoje</div>
             <a href="https://calendar.google.com" target="_blank" style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--y);text-decoration:none;font-weight:600">Cal</a>
@@ -2969,7 +2998,6 @@ button:active{transform:scale(.97);transition:transform .08s}
           </div>
         </div>
 
-      </div>
     </div>
   </div><!-- /page-dashboard -->
 
@@ -3619,7 +3647,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v10.0.4';
+const APP_VERSION='v10.1.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3855,6 +3883,7 @@ function closeCel(){document.getElementById('cel-ov').classList.remove('open');c
 
 // ── NAV ───────────────────────────────────────────────
 function nav(id,el){
+  closeMobileSidebar();
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const pg=document.getElementById('page-'+id);
   if(!pg){toast('Em construção','var(--am)');return;}
@@ -3920,6 +3949,17 @@ function animateCounters(scope){
 
 // ── MOBILE NAV ────────────────────────────────────────
 function toggleMobileMenu(){const d=document.getElementById('mob-drawer');if(d)d.style.display=d.style.display==='block'?'none':'block';}
+function toggleSidebarMobile(){
+  const sb=document.querySelector('.sidebar');const ov=document.getElementById('mob-sidebar-ov');
+  if(!sb)return;
+  const isOpen=sb.classList.contains('open');
+  sb.classList.toggle('open',!isOpen);
+  if(ov)ov.classList.toggle('open',!isOpen);
+}
+function closeMobileSidebar(){
+  const sb=document.querySelector('.sidebar');const ov=document.getElementById('mob-sidebar-ov');
+  if(sb)sb.classList.remove('open');if(ov)ov.classList.remove('open');
+}
 function closeMobileMenu(){const d=document.getElementById('mob-drawer');if(d)d.style.display='none';}
 function navMob(id){closeMobileMenu();nav(id,null);}
 
@@ -5612,7 +5652,8 @@ function descartaProp(id){
 // ── HUB ───────────────────────────────────────────────
 function renderHub(){
   const el=document.getElementById('hub-layout');if(!el)return;
-  el.innerHTML=hubData.map(cat=>`<div class="hub-cat"><div class="hub-cat-hdr"><span style="width:7px;height:7px;border-radius:50%;background:${cat.cor};flex-shrink:0;display:inline-block"></span><span class="hub-cat-name">${cat.n}</span></div>${cat.tools.map((t,ti)=>`<div class="hub-tool"><div style="flex:1;cursor:pointer" onclick="window.open('${t.u}','_blank')"><div class="hub-tn">${t.n}</div><div class="hub-td">${t.d||''}</div></div><div class="hub-tr"><span class="${t.v==='free'?'vf':t.v==='pago'?'vp':'vm'}">${t.v==='free'?'FREE':t.v==='pago'?'PAGO':'FREE+'}</span><span class="hub-edit" onclick="openEditT('${cat.id}',${ti})" title="Editar"><i data-lucide="pencil" style="width:12px;height:12px"></i></span><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);cursor:pointer" onclick="window.open('${t.u}','_blank')"><i data-lucide="external-link" style="width:12px;height:12px"></i></span></div></div>`).join('')}<div class="hub-add" onclick="prepAddT('${cat.id}')"><span style="font-size:14px">+</span> Adicionar</div></div>`).join('');
+  const mainCats=['inspiracao','designer'];
+  el.innerHTML=hubData.map(cat=>`<div class="hub-cat${mainCats.includes(cat.id)?' hub-main':''}"><div class="hub-cat-hdr"><span style="width:7px;height:7px;border-radius:50%;background:${cat.cor};flex-shrink:0;display:inline-block"></span><span class="hub-cat-name">${cat.n}</span></div>${cat.tools.map((t,ti)=>`<div class="hub-tool"><div style="flex:1;cursor:pointer" onclick="window.open('${t.u}','_blank')"><div class="hub-tn">${t.n}</div><div class="hub-td">${t.d||''}</div></div><div class="hub-tr"><span class="${t.v==='free'?'vf':t.v==='pago'?'vp':'vm'}">${t.v==='free'?'FREE':t.v==='pago'?'PAGO':'FREE+'}</span><span class="hub-edit" onclick="openEditT('${cat.id}',${ti})" title="Editar"><i data-lucide="pencil" style="width:12px;height:12px"></i></span><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);cursor:pointer" onclick="window.open('${t.u}','_blank')"><i data-lucide="external-link" style="width:12px;height:12px"></i></span></div></div>`).join('')}<div class="hub-add" onclick="prepAddT('${cat.id}')"><span style="font-size:14px">+</span> Adicionar</div></div>`).join('');
 }
 function prepAddT(catId){const hc=document.getElementById('ht-cat');if(hc)hc.value=catId;openM('m-add-tool');}
 function addTool(){const n=document.getElementById('ht-nome').value.trim(),u=document.getElementById('ht-url').value.trim();if(!n||!u){toast('Preencha nome e URL!','var(--am)');return;}const cat=hubData.find(c=>c.id===document.getElementById('ht-cat').value);if(cat)cat.tools.push({n,d:document.getElementById('ht-desc').value.trim()||'Ferramenta',u:u.startsWith('http')?u:'https://'+u,v:document.getElementById('ht-val').value});save();closeM('m-add-tool');renderHub();document.getElementById('ht-nome').value='';document.getElementById('ht-url').value='';document.getElementById('ht-desc').value='';toast('Ferramenta adicionada!');}
@@ -5816,12 +5857,13 @@ const SK_COLORS=['var(--y)','var(--am)','var(--pu)','var(--gr)','var(--bl)','var
 // Mapping de tipo de projeto → habilidade beneficiada
 const SKILL_BOOST_MAP={'Identidade Visual':'Identidade Visual','Redesign de Marca':'Identidade Visual','Social Media':'Social Media','Estratégia de Marca':'Estratégia de Marca','Apresentação':'Apresentações','Site':'Site','Landing Page':'Landing Page'};
 
-function getSkills(){const p=getPerfilData();return p.skills||DEFAULT_SKILLS.map(s=>({...s}));}
+function getSkills(){const p=getPerfilData();return p.skills||[];}
 function saveSkills(skills){const p=getPerfilData();p.skills=skills;savePerfilData(p);}
 
 function renderSkills(){
   const el=document.getElementById('perfil-skills');if(!el)return;
   const skills=getSkills();
+  if(skills.length===0){el.innerHTML='<div style="text-align:center;padding:16px 0"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-bottom:8px">Nenhuma habilidade cadastrada</div><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="nav(\'perfil\');setTimeout(()=>{const btn=document.querySelector(\'[onclick*=openEditPerfil]\');if(btn)btn.click();},200)">+ adicionar agora</button></div>';return;}
   const boosts=JSON.parse(localStorage.getItem('ph4-skill-boosts')||'{}');
   el.innerHTML=skills.map((s,i)=>{
     const total=Math.min(100,s.v+(boosts[s.n]||0));
