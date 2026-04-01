@@ -58,7 +58,7 @@
   --h-input:38px;
 
   /* ═══ SIDEBAR ═══ */
-  --sw:240px;
+  --sw:200px;
 
   /* ═══ COMPATIBILIDADE (aliases para não quebrar referências) ═══ */
   --r1:var(--radius-sm);--r2:var(--radius-md);
@@ -148,12 +148,18 @@
 [data-theme="light"] .sidebar{
   background:var(--sw-bg);border-right:1px solid rgba(255,255,255,0.06);
 }
+[data-theme="light"] .sb-logo{border-bottom-color:rgba(255,255,255,0.06)}
 [data-theme="light"] .logo{color:var(--sw-t1)}
 [data-theme="light"] .nav-lbl{color:var(--sw-t4)}
-[data-theme="light"] .nav-lbl::after{background:var(--sw-e1)}
 [data-theme="light"] .nav-item{color:var(--sw-t3)}
 [data-theme="light"] .nav-item:hover:not(.active){background:var(--sw-s4);color:var(--sw-t1)}
-[data-theme="light"] .nav-item.active{background:var(--yr);color:var(--y)}
+[data-theme="light"] .nav-item.active{background:var(--sw-s3);color:var(--sw-t1)}
+[data-theme="light"] .nav-item.active .nbadge{background:rgba(212,160,23,0.15);color:var(--y)}
+[data-theme="light"] .nbadge{background:rgba(255,255,255,0.08);color:var(--sw-t3)}
+[data-theme="light"] .user-card:hover{background:rgba(255,255,255,0.06)}
+[data-theme="light"] .user-name{color:var(--sw-t1)}
+[data-theme="light"] .user-role{color:var(--sw-t3)}
+[data-theme="light"] .sb-bot{border-top-color:rgba(255,255,255,0.06)}
 [data-theme="light"] .sidebar .version-txt{color:var(--sw-t4)}
 [data-theme="light"] .sidebar .btn-p{background:var(--y);color:#0C0C0E}
 [data-theme="light"] .sidebar .tt-btn{background:var(--sw-s3);border-color:var(--sw-e2)}
@@ -187,91 +193,137 @@ html,body{
 /* ── Layout ── */
 .app{display:flex;height:100vh;overflow:hidden}
 .content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
-.main{flex:1;overflow-y:auto;overflow-x:hidden;padding:var(--sp-5)}
+.main{flex:1;overflow-y:auto;overflow-x:hidden;padding:0}
+.page{padding:0}
+#page-dashboard{padding:0}
 .page{display:none}
 .page.active{display:block}
 
 /* ── Topbar ── */
 .topbar{
-  height:50px;min-height:50px;
-  background:var(--s1);border-bottom:1px solid var(--e2);
-  display:flex;align-items:center;padding:0 var(--sp-5);gap:var(--sp-4);
-  box-shadow:var(--sh1);
+  height:auto;min-height:auto;padding:10px 24px;
+  background:var(--s1);border-bottom:1px solid var(--e1);
+  display:flex;align-items:center;gap:12px;
+  box-shadow:none;flex-shrink:0;
 }
-.pg-title{
-  font-size:var(--fs-sm);font-weight:var(--fw-semi);
-  color:var(--t2);letter-spacing:.05em;text-transform:uppercase;
-  font-family:var(--mono);flex:1;
+.pg-title{display:none}
+.tb-date{display:none}
+/* Search bar central */
+.tb-search-wrap{
+  flex:1;max-width:520px;position:relative;
 }
-.tb-date{font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);letter-spacing:.06em}
+.tb-search-input{
+  width:100%;height:34px;background:var(--s2);
+  border:1px solid var(--e2);border-radius:var(--radius-md);
+  padding:0 80px 0 34px;color:var(--t1);
+  font-family:var(--sans);font-size:12.5px;outline:none;
+  transition:all .15s;
+}
+.tb-search-input::placeholder{color:var(--t3)}
+.tb-search-input:focus{border-color:rgba(212,160,23,0.35);background:var(--s3)}
+.tb-search-icon{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  color:var(--t3);font-size:13px;pointer-events:none;
+}
+.tb-search-kbd{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font-family:var(--mono);font-size:10px;color:var(--t4);
+  background:var(--s4);border:1px solid var(--e2);
+  padding:2px 6px;border-radius:var(--radius-sm);
+}
+.tb-spacer{flex:1}
+.topbar-action{
+  display:flex;align-items:center;gap:6px;
+  height:32px;padding:0 14px;
+  background:var(--s3);border:1px solid var(--e2);
+  border-radius:var(--radius-md);
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  color:var(--t2);cursor:pointer;transition:all .12s;white-space:nowrap;
+}
+.topbar-action:hover{color:var(--t1);border-color:var(--e3)}
+.topbar-action.primary{background:var(--y);border-color:var(--y);color:#0C0C0D;font-weight:700}
+.topbar-action.primary:hover{opacity:.88}
 .tt-btn{
   display:flex;align-items:center;gap:var(--sp-1);
-  background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-sm);
-  padding:0 var(--sp-2);height:var(--h-btn-sm);cursor:pointer;transition:all .14s;
+  background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-md);
+  padding:0 var(--sp-2);height:32px;width:32px;justify-content:center;cursor:pointer;transition:all .14s;
 }
 .tt-btn:hover{background:var(--s5);border-color:var(--e3)}
-.tt-lbl{font-family:var(--mono);font-size:var(--fs-2xs);font-weight:var(--fw-semi);
-  color:var(--t3);letter-spacing:.06em}
+.tt-lbl{display:none}
 
 /* ── Sidebar ── */
 .sidebar{
   width:var(--sw);min-width:var(--sw);
-  background:var(--s1);border-right:1px solid var(--e2);
+  background:var(--s1);border-right:1px solid var(--e1);
   display:flex;flex-direction:column;overflow:hidden;
 }
+.sb-logo{
+  padding:16px 16px 12px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--e1);
+}
+.sb-logo-icon{
+  width:28px;height:28px;background:var(--y);border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;color:#0C0C0D;flex-shrink:0;
+}
 .logo{
-  font-size:var(--fs-lg);font-weight:var(--fw-black);
-  letter-spacing:-.03em;color:var(--t1);
-  padding:var(--sp-4) var(--sp-4) var(--sp-2);
+  font-size:14px;font-weight:var(--fw-bold);
+  letter-spacing:-.03em;color:var(--t1);flex:1;
 }
 .logo em{color:var(--y);font-style:normal}
+.logo-sub{display:none}
 .nav-lbl{
-  font-family:var(--mono);font-size:var(--fs-2xs);font-weight:var(--fw-semi);
-  color:var(--t4);text-transform:uppercase;letter-spacing:.12em;
-  padding:var(--sp-4) var(--sp-4) var(--sp-2);margin-top:var(--sp-2);
-  display:flex;align-items:center;gap:var(--sp-2);white-space:nowrap;
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  color:var(--t4);text-transform:uppercase;letter-spacing:.1em;
+  padding:8px 8px 4px;margin-top:6px;
+  display:block;white-space:nowrap;
 }
-.nav-lbl::after{content:'';flex:1;height:1px;background:var(--e1);margin-left:2px}
+.nav-lbl::after{display:none}
 .nav-item{
-  display:flex;align-items:center;gap:var(--sp-2);
-  padding:0 var(--sp-3);height:36px;
+  display:flex;align-items:center;gap:8px;
+  padding:6px 8px;height:auto;
   border-radius:var(--radius-md);cursor:pointer;
-  font-size:var(--fs-sm);font-weight:var(--fw-medium);
-  color:var(--t3);transition:all .14s;
-  margin:1px var(--sp-2);position:relative;
+  font-size:12.5px;font-weight:500;
+  color:var(--t2);transition:all .12s ease;
+  margin:1px 0;position:relative;
 }
-.nav-item:hover:not(.active){background:var(--s4);color:var(--t1)}
+.nav-item:hover:not(.active){background:var(--e1);color:var(--t1)}
 .nav-item.active{
-  background:var(--yr);color:var(--y);
-  font-weight:var(--fw-semi);
-  box-shadow:inset 3px 0 0 var(--y);
+  background:var(--s3);color:var(--t1);
+  font-weight:600;
+  box-shadow:none;
 }
-.ni{font-size:15px;flex-shrink:0;opacity:.75}
+.ni{font-size:13px;flex-shrink:0;opacity:.7;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center}
+.nav-item.active .ni{opacity:1}
 .nbadge{
   margin-left:auto;font-family:var(--mono);
-  font-size:var(--fs-2xs);padding:1px 6px;
-  border-radius:var(--radius-pill);
-  font-weight:var(--fw-bold);
+  font-size:10px;padding:1px 6px;
+  border-radius:var(--radius-sm);
+  font-weight:500;background:var(--s4);color:var(--t3);
 }
-.nav-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:var(--sp-2)}
-.nav-scroll::-webkit-scrollbar{width:3px}
-.nav-scroll::-webkit-scrollbar-thumb{background:var(--e2);border-radius:2px}
+.nav-item.active .nbadge{
+  background:rgba(212,160,23,0.15);color:var(--y);
+}
+.nav-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 8px}
+.nav-scroll::-webkit-scrollbar{width:0}
+.nav-sec{padding:0}
 
 /* ── User card ── */
+.sb-bot{border-top:1px solid var(--e1);padding:0}
 .user-card{
-  display:flex;align-items:center;gap:var(--sp-2);
-  padding:var(--sp-3) var(--sp-4);
-  border-top:1px solid var(--e1);cursor:pointer;
-  transition:all .12s;
+  display:flex;align-items:center;gap:8px;
+  padding:6px 8px;margin:0 8px;
+  border-radius:var(--radius-md);cursor:pointer;
+  transition:background .12s;border-top:none;
 }
-.user-card:hover{background:var(--s4)}
-.version-indicator{display:flex;align-items:center;gap:6px;padding:8px 14px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)}
-.version-dot{width:6px;height:6px;border-radius:50%;background:var(--gr);flex-shrink:0;animation:vPulse 2.5s ease-in-out infinite}
+.user-card:hover{background:var(--e1)}
+.version-indicator{display:flex;align-items:center;gap:5px;padding:4px 8px;margin:0 8px;font-family:var(--mono);font-size:9px;color:var(--t4)}
+.version-dot{width:5px;height:5px;border-radius:50%;background:var(--gr);flex-shrink:0;box-shadow:0 0 6px rgba(34,197,94,0.5);animation:vPulse 2s ease-in-out infinite}
 .version-txt{color:var(--t3);font-weight:600}
 .version-date{margin-left:auto;opacity:.5}
-@keyframes vPulse{0%,100%{opacity:1;box-shadow:0 0 4px var(--gr)}50%{opacity:.4;box-shadow:0 0 8px var(--gr)}}
+@keyframes vPulse{0%,100%{opacity:1}50%{opacity:.3}}
 .user-av{
-  width:32px;height:32px;border-radius:var(--radius-md);
+  width:26px;height:26px;border-radius:50%;
   background:var(--yr);border:1.5px solid rgba(212,160,23,.3);
   display:flex;align-items:center;justify-content:center;
   font-size:var(--fs-sm);font-weight:var(--fw-bold);color:var(--y);flex-shrink:0;
@@ -946,14 +998,13 @@ html,body{
   .metric-row{grid-template-columns:1fr 1fr}
   .hub-layout{grid-template-columns:1fr 1fr}
   .gm{grid-template-columns:1fr}
-  .sidebar{width:200px;min-width:200px}
 }
 /* ── OS-032: Mobile Responsivo ── */
 @media(max-width:768px){
   .app{flex-direction:column}
   /* Sidebar gaveta */
   .sidebar{
-    position:fixed;left:-260px;top:0;bottom:0;width:240px;min-width:240px;
+    position:fixed;left:-220px;top:0;bottom:0;width:200px;min-width:200px;
     z-index:200;transition:left .25s ease;box-shadow:none;
   }
   .sidebar.open{left:0;box-shadow:8px 0 24px rgba(0,0,0,.4)}
@@ -1099,47 +1150,61 @@ html,body{
 }
 
 /* Greeting hero */
+/* ── Context Banner (aitmpl partner-banner style) ── */
 .greeting-hero {
-  background: linear-gradient(135deg, var(--s3) 0%, var(--s2) 100%);
-  border: 1px solid var(--e2);
-  border-left: 3px solid var(--y);
-  border-radius: var(--r3);
-  padding: var(--sp-5) var(--sp-6);
-  margin-bottom: var(--sp-4);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  box-shadow: var(--sh2);
+  gap: 14px;
+  padding: 12px 24px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--e1);
+  border-radius: 0;
+  border-left: none;
+  margin-bottom: 0;
+  box-shadow: none;
+}
+.greeting-hero .ctx-icon {
+  width: 38px; height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--yb);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  border: 1px solid rgba(212,160,23,0.2);
 }
 .greeting-name {
-  font-size: var(--fs-2xl);
-  font-weight: var(--fw-black);
-  letter-spacing: -.04em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--t1);
-  margin-bottom: 3px;
-  line-height: 1.1;
+  margin-bottom: 2px;
+  line-height: 1.3;
+  display: flex; align-items: center; gap: 8px;
 }
 .greeting-sub {
-  font-family: var(--mono);
-  font-size: var(--fs-xs);
-  color: var(--t3);
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--t2);
+  line-height: 1.4;
 }
 .greeting-badge {
   text-align: right;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 .greeting-badge-label {
   font-family: var(--mono);
-  font-size: var(--fs-2xs);
+  font-size: 10px;
   color: var(--t3);
   text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: .06em;
   margin-bottom: 4px;
 }
 .greeting-badge-val {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-black);
-  letter-spacing: -.03em;
-  color: var(--y);
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  padding: 4px 10px;
+  background: rgba(212,160,23,0.1); border: 1px solid rgba(212,160,23,0.2);
+  border-radius: var(--radius-sm); color: var(--y);
 }
 
 /* KPI cards */
@@ -1411,26 +1476,20 @@ html,body{
 .xp-fill { height: 100%; background: var(--y); border-radius: 2px; transition: width .6s ease; }
 
 /* Topbar — lado direito */
-.tb-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.tb-right { display: flex; align-items: center; gap: 8px; }
 
 /* Toggle de tema */
 .theme-btn {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--s3); border: 1px solid var(--e2); border-radius: var(--radius-sm);
-  padding: 0 8px; height: var(--h-btn-sm); cursor: pointer; transition: all .14s;
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  background: var(--s3); border: 1px solid var(--e2); border-radius: var(--radius-md);
+  cursor: pointer; transition: all .12s;
 }
-.theme-btn:hover { background: var(--s5); border-color: var(--e3); }
-.tt-track {
-  width: 26px; height: 14px; background: var(--s5);
-  border-radius: 7px; border: 1px solid var(--e3);
-  position: relative; flex-shrink: 0; transition: all .2s;
-}
-.tt-knob {
-  width: 10px; height: 10px; border-radius: 50%; background: var(--t3);
-  position: absolute; top: 1px; left: 1px; transition: all .2s;
-}
-[data-theme="light"] .tt-track { background: var(--y); border-color: var(--ys); }
-[data-theme="light"] .tt-knob { left: 13px; background: #fff; }
+.theme-btn:hover { background: var(--s5); border-color: var(--e3); color: var(--t1); }
+.tt-track { display:none; }
+.tt-knob { display:none; }
+[data-theme="light"] .tt-track { display:none; }
+[data-theme="light"] .tt-knob { display:none; }
 
 /* Botão celebração */
 .cel-btn {
@@ -1538,6 +1597,161 @@ html,body{
 /* ── Divider ── */
 .divider{height:1px;background:var(--e1);margin:var(--sp-3) 0}
 
+/* ── Page Header (aitmpl: ícone 56px + título) ── */
+.pg-header{
+  display:flex;align-items:center;gap:18px;
+  padding:28px 24px 24px;border-bottom:1px solid var(--e1);
+}
+.pg-header-icon{
+  width:56px;height:56px;border-radius:var(--radius-lg);
+  background:linear-gradient(135deg,rgba(212,160,23,0.2),rgba(212,160,23,0.05));
+  border:1px solid rgba(212,160,23,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;flex-shrink:0;
+}
+.pg-header-title{
+  font-size:26px;font-weight:800;letter-spacing:-0.04em;
+  color:var(--t1);margin-bottom:4px;line-height:1;
+}
+.pg-header-sub{font-size:13px;color:var(--t2);line-height:1.4}
+/* Section header (aitmpl) */
+.sec-header{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.sec-header-star{color:var(--y);font-size:14px}
+.sec-header-title{font-size:14px;font-weight:700;letter-spacing:-0.02em;color:var(--t1)}
+
+/* ── Featured Grid (aitmpl: 3 colunas horizontais) ── */
+.featured-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--e1);
+  border:1px solid var(--e2);border-radius:var(--radius-lg);
+  overflow:hidden;margin-bottom:24px;
+}
+.feat-card{
+  background:var(--s1);display:flex;align-items:center;
+  gap:14px;padding:18px 20px;cursor:pointer;
+  transition:background .12s;position:relative;
+}
+.feat-card:hover{background:var(--s2)}
+.feat-icon{
+  width:40px;height:40px;border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.feat-name{
+  font-size:13px;font-weight:700;color:var(--t1);
+  letter-spacing:-0.02em;margin-bottom:2px;
+  display:flex;align-items:center;gap:7px;
+}
+.feat-name .chip{
+  font-family:var(--mono);font-size:9px;font-weight:500;
+  padding:1px 6px;border-radius:var(--radius-sm);
+  background:var(--s4);color:var(--t3);border:1px solid var(--e2);
+  letter-spacing:0.02em;
+}
+.feat-desc{font-size:11.5px;color:var(--t3)}
+@media(max-width:900px){.featured-grid{grid-template-columns:1fr}}
+
+/* ── Cards Grid (aitmpl: project cards) ── */
+.cards-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;padding:0;
+}
+.proj-card{
+  background:var(--s1);border:1px solid var(--e2);
+  border-radius:var(--radius-lg);padding:20px;
+  cursor:pointer;transition:all .12s ease;
+  display:flex;flex-direction:column;
+}
+.proj-card:hover{
+  border-color:var(--e3);background:var(--s2);
+  transform:translateY(-1px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+.pc-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.pc-icon{
+  width:44px;height:44px;border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.pc-title{
+  font-size:14px;font-weight:700;letter-spacing:-0.025em;
+  color:var(--t1);line-height:1.3;margin-bottom:6px;
+}
+.pc-desc{
+  font-size:11.5px;color:var(--t2);line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;
+  -webkit-box-orient:vertical;overflow:hidden;
+}
+.pc-progress{height:2px;background:var(--s4);border-radius:2px;overflow:hidden;margin-bottom:14px}
+.pc-progress-fill{height:100%;border-radius:2px}
+.pc-bottom{
+  display:flex;align-items:center;gap:6px;
+  margin-top:auto;padding-top:14px;border-top:1px solid var(--e1);
+}
+.pc-tag{
+  padding:3px 8px;border-radius:var(--radius-sm);
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  border:1px solid transparent;white-space:nowrap;
+}
+.tag-y{background:rgba(212,160,23,0.1);color:var(--y);border-color:rgba(212,160,23,0.18)}
+.tag-gr{background:rgba(34,197,94,0.09);color:var(--gr);border-color:rgba(34,197,94,0.16)}
+.tag-rd{background:rgba(239,68,68,0.09);color:var(--rd);border-color:rgba(239,68,68,0.16)}
+.tag-bl{background:rgba(59,130,246,0.09);color:var(--bl);border-color:rgba(59,130,246,0.16)}
+.tag-pu{background:rgba(139,92,246,0.09);color:var(--pu);border-color:rgba(139,92,246,0.16)}
+.tag-n{background:var(--s3);color:var(--t3);border-color:var(--e2)}
+.pc-spacer{flex:1}
+.pc-count{
+  display:flex;align-items:center;gap:4px;
+  font-family:var(--mono);font-size:10.5px;color:var(--t3);
+}
+@media(max-width:1100px){.cards-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.cards-grid{grid-template-columns:1fr}}
+
+/* ── Filter Bar (aitmpl) ── */
+.filter-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:14px 24px;background:var(--s1);
+  border-bottom:1px solid var(--e1);
+  flex-shrink:0;position:sticky;top:0;z-index:5;
+}
+.filter-search{position:relative;width:280px}
+.filter-search input{
+  width:100%;height:32px;background:var(--s2);
+  border:1px solid var(--e2);border-radius:var(--radius-md);
+  padding:0 10px 0 30px;color:var(--t1);
+  font-family:var(--sans);font-size:12px;outline:none;
+}
+.filter-search input::placeholder{color:var(--t3)}
+.filter-search-icon{
+  position:absolute;left:9px;top:50%;transform:translateY(-50%);
+  color:var(--t3);font-size:12px;
+}
+.filter-dropdown{
+  height:32px;padding:0 12px;
+  background:var(--s2);border:1px solid var(--e2);
+  border-radius:var(--radius-md);
+  color:var(--t2);font-family:var(--sans);font-size:12px;
+  cursor:pointer;outline:none;
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.filter-spacer{flex:1}
+.sort-wrap{
+  display:flex;align-items:center;gap:6px;
+  font-size:11.5px;color:var(--t3);
+}
+.sort-select{
+  height:30px;padding:0 10px;
+  background:var(--s2);border:1px solid var(--e2);
+  border-radius:var(--radius-md);color:var(--t2);
+  font-family:var(--sans);font-size:12px;outline:none;cursor:pointer;
+}
+@media(max-width:768px){
+  .filter-bar{flex-wrap:wrap}
+  .filter-search{width:100%}
+}
+
 /* ── Unified Avatar system ── */
 .av{width:36px;height:36px;border-radius:var(--radius-md);
   display:flex;align-items:center;justify-content:center;
@@ -1568,16 +1782,10 @@ html,body{
 .dt-row:last-child{border-bottom:none}
 
 /* ── Sidebar: nav label refinement ── */
-.nav-lbl{
-  display:flex;align-items:center;gap:var(--sp-2);
-  white-space:nowrap;
-}
-.nav-lbl::after{
-  content:'';flex:1;height:1px;background:var(--e1);
-}
+/* (styles consolidated above) */
 
-/* ── Nav item: bigger hit area ── */
-.nav-item{height:36px;padding:0 var(--sp-3)}
+/* ── Nav item: aitmpl sizing ── */
+/* (styles consolidated above) */
 
 /* ── Page header: more presence ── */
 .page-hdr{padding-bottom:var(--sp-5);margin-bottom:var(--sp-5)}
@@ -1590,8 +1798,8 @@ html,body{
 .kpi-lbl{font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);
   text-transform:uppercase;letter-spacing:.07em;margin-top:2px;white-space:nowrap}
 
-/* ── Topbar: slightly taller, cleaner ── */
-.topbar{height:52px;min-height:52px}
+/* ── Topbar: aitmpl style ── */
+/* (consolidated above) */
 
 /* ── Focus ring: only on interactive inputs ── */
 input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--y);outline-offset:2px;border-radius:var(--radius-sm)}
@@ -1660,15 +1868,9 @@ div:focus-visible,a:focus-visible{outline:none}
 .btn-y:active,.btn-g:active,.btn-ghost:active,.btn-r:active{transform:scale(.96)!important;transition:transform .08s!important}
 button:active{transform:scale(.97);transition:transform .08s}
 
-/* ── NAV ITEM: active pill indicator ── */
+/* ── NAV ITEM: active indicator ── */
 .nav-item{overflow:hidden}
-.nav-item.active::after{
-  content:'';position:absolute;right:10px;top:50%;transform:translateY(-50%);
-  width:5px;height:5px;border-radius:50%;background:var(--y);
-  box-shadow:0 0 6px var(--y);
-  animation:dotGlow 2s ease-in-out infinite;
-}
-@keyframes dotGlow{0%,100%{opacity:1;box-shadow:0 0 4px var(--y)}50%{opacity:.6;box-shadow:0 0 10px var(--y)}}
+.nav-item.active::after{display:none}
 
 /* ── KPI numbers: pop in on render ── */
 @keyframes numPop{
@@ -2712,9 +2914,10 @@ button:active{transform:scale(.97);transition:transform .08s}
   </div>
 
   <div class="sb-logo">
+    <div class="sb-logo-icon">ch</div>
     <div class="logo">creator<em>.</em>hub</div>
-    <div class="logo-sub">sistema operacional criativo</div>
   </div>
+  <div class="nav-scroll">
   <div class="nav-sec">
     <div class="nav-lbl">Visão geral</div>
     <div class="nav-item active" onclick="nav('dashboard',this)"><span class="ni"><i data-lucide="layout-dashboard"></i></span>Dashboard</div>
@@ -2741,25 +2944,25 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div class="nav-item" onclick="nav('perfil',this)"><span class="ni"><i data-lucide="user-circle"></i></span>Meu perfil</div>
     <div class="nav-item" onclick="nav('config',this)"><span class="ni"><i data-lucide="settings"></i></span>Configurações</div>
   </div>
+  </div><!-- /nav-scroll -->
   <div class="sb-bot">
-    <div class="xp-row">
+    <div class="xp-row" style="display:none">
       <span class="xp-lv" id="xp-lv"></span>
       <span class="xp-num" id="xp-num"></span>
     </div>
-    <div class="xp-track"><div class="xp-fill" id="xp-bar" style="width:0%"></div></div>
-    <div class="user-card" onclick="nav('perfil',null)" style="position:relative">
+    <div class="xp-track" style="display:none"><div class="xp-fill" id="xp-bar" style="width:0%"></div></div>
+    <div class="user-card" onclick="nav('perfil',null)">
       <div class="user-av" id="sb-av">P</div>
       <div style="flex:1;min-width:0">
         <div class="user-name" id="sb-name"></div>
         <div class="user-role" id="sb-role"></div>
-        <div class="user-site" id="sb-site"></div>
+        <div class="user-site" id="sb-site" style="display:none"></div>
       </div>
     </div>
-    <div style="padding:4px 14px"><button class="btn-g" style="width:100%;font-size:var(--fs-2xs);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 0" onclick="openM('m-feedback')"><i data-lucide="message-square" style="width:12px;height:12px"></i>Feedback</button></div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v10.1.1</span>
-      <span class="version-date">22 mar 2026</span>
+      <span class="version-txt" id="version-label">v11.0.0</span>
+      <span class="version-date">31 mar 2026</span>
     </div>
   </div>
 </aside>
@@ -2770,24 +2973,30 @@ button:active{transform:scale(.97);transition:transform .08s}
   <div class="topbar">
     <button class="mob-hamburger" onclick="toggleSidebarMobile()" style="display:none;align-items:center;justify-content:center;width:36px;height:36px;background:none;border:none;cursor:pointer;color:var(--t2);flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     <div class="pg-title" id="pg-title">Dashboard</div>
+    <div class="tb-search-wrap">
+      <span class="tb-search-icon">⌕</span>
+      <input class="tb-search-input" placeholder="Buscar projetos, clientes, orçamentos..." id="tb-search" onfocus="this.blur();abrirBusca()" readonly>
+      <span class="tb-search-kbd">⌘K</span>
+    </div>
+    <div class="tb-spacer"></div>
     <div class="tb-right">
       <div class="tb-date" id="tb-date"></div>
-      <div class="notif-bell" onclick="toggleNotif()" id="notif-bell" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r2);cursor:pointer;transition:all .12s" onmouseenter="this.style.background='var(--s3)'" onmouseleave="this.style.background='transparent'">
+      <div class="notif-bell" onclick="toggleNotif()" id="notif-bell" style="display:none;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r2);cursor:pointer;transition:all .12s">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
         </svg>
         <div class="notif-count" id="notif-count" style="display:none">0</div>
       </div>
-      <div class="notif-panel" id="notif-panel">
+      <div class="notif-panel" id="notif-panel" style="display:none">
         <div style="padding:10px 14px;border-bottom:1px solid var(--e1);font-family:var(--mono);font-size:var(--fs-2xs);font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.1em">Alertas</div>
         <div id="notif-list"></div>
       </div>
-      <div class="theme-btn" onclick="toggleTheme()">
-        <div class="tt-track"><div class="tt-knob"></div></div>
+      <div class="theme-btn tt-btn" onclick="toggleTheme()" title="Alternar tema">
+        <span style="font-size:14px;color:var(--t2)">◑</span>
         <span class="tt-lbl" id="tt-lbl">DARK</span>
       </div>
-      <button class="btn-g btn-g-templates" onclick="nav('templates',null)" style="display:inline-flex">Templates</button>
-      <button class="btn-p" onclick="openM('m-proj')">+ Novo projeto</button>
+      <button class="btn-g btn-g-templates" onclick="nav('templates',null)" style="display:none">Templates</button>
+      <button class="topbar-action primary" onclick="openM('m-proj')">+ Novo projeto</button>
     </div>
   </div>
 
@@ -2796,31 +3005,58 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ DASHBOARD ══════ -->
   <div class="page active" id="page-dashboard">
 
-    <!-- ── ZONA A: NORTH STAR ── -->
+    <!-- ── ZONA A: CONTEXT BANNER ── -->
     <div class="greeting-hero">
+      <div class="ctx-icon">💡</div>
       <div style="flex:1;min-width:0">
         <div class="greeting-name" id="greeting">Bom dia, Paulo.</div>
         <div class="greeting-sub" id="greeting-sub">paulosa.studio · carregando...</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-        <div class="greeting-badge">
-          <div class="greeting-badge-label">Prazo urgente</div>
-          <div class="greeting-badge-val" id="prazo-urg">—</div>
-        </div>
-        <button class="btn-g" style="font-size:var(--fs-2xs);border-color:rgba(212,160,23,.3);color:var(--y);display:inline-flex;align-items:center;gap:5px" onclick="gerarRelatorio()"><i data-lucide="bar-chart-2" style="width:13px;height:13px"></i>Relatório do mês</button>
+      <div class="greeting-badge">
+        <div class="greeting-badge-label">Prazo urgente</div>
+        <div class="greeting-badge-val" id="prazo-urg">⭐ —</div>
       </div>
     </div>
-    <!-- North Star Card -->
-    <div id="north-star" class="card" style="margin-bottom:16px;display:none">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div id="ns-icon" style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--yb);border:1.5px solid rgba(212,160,23,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="alert-triangle" style="width:20px;height:20px;color:var(--y)"></i></div>
-        <div style="flex:1;min-width:0">
-          <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px" id="ns-label">Precisa de atenção</div>
-          <div style="font-size:14px;font-weight:700;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="ns-title" title="">—</div>
-          <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px" id="ns-meta">—</div>
-        </div>
-        <button class="btn-p" style="font-size:var(--fs-xs);flex-shrink:0;padding:6px 14px" id="ns-action" onclick="">Abrir</button>
+    <!-- Page Header -->
+    <div class="pg-header">
+      <div class="pg-header-icon">▣</div>
+      <div>
+        <div class="pg-header-title">Dashboard</div>
+        <div class="pg-header-sub">Visão geral do seu estúdio criativo — projetos, prazos e performance</div>
       </div>
+    </div>
+    <!-- Dashboard content -->
+    <div style="padding:24px 24px 0">
+    <!-- Featured Section (aitmpl) -->
+    <div class="section" style="padding:24px 24px 0">
+      <div class="sec-header">
+        <span class="sec-header-star">★</span>
+        <span class="sec-header-title">Em destaque agora</span>
+      </div>
+      <div id="north-star" class="featured-grid" style="display:none">
+        <div class="feat-card" id="ns-card-1">
+          <div class="feat-icon" id="ns-icon" style="background:var(--yb);border:1px solid rgba(212,160,23,0.2)">⭐</div>
+          <div>
+            <div class="feat-name" id="ns-title">—<span class="chip" id="ns-label" style="background:rgba(212,160,23,0.12);color:var(--y);border-color:rgba(212,160,23,0.2)">—</span></div>
+            <div class="feat-desc" id="ns-meta">—</div>
+          </div>
+        </div>
+        <div class="feat-card" id="ns-card-2" style="display:none">
+          <div class="feat-icon" style="background:rgba(239,68,68,0.1)">🔥</div>
+          <div>
+            <div class="feat-name" id="ns-title-2">—<span class="chip" style="background:rgba(239,68,68,0.12);color:var(--rd);border-color:rgba(239,68,68,0.2)">Urgente</span></div>
+            <div class="feat-desc" id="ns-meta-2">—</div>
+          </div>
+        </div>
+        <div class="feat-card" id="ns-card-3" style="display:none">
+          <div class="feat-icon" style="background:rgba(34,197,94,0.1)">⚡</div>
+          <div>
+            <div class="feat-name" id="ns-title-3">—<span class="chip" style="background:rgba(34,197,94,0.1);color:var(--gr);border-color:rgba(34,197,94,0.18)">Em dia</span></div>
+            <div class="feat-desc" id="ns-meta-3">—</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-p" style="font-size:var(--fs-xs);display:none" id="ns-action" onclick="">Abrir</button>
     </div>
 
     <!-- ── KPIs ── -->
@@ -2999,48 +3235,67 @@ button:active{transform:scale(.97);transition:transform .08s}
         </div>
 
     </div>
+    </div><!-- /dashboard padding -->
   </div><!-- /page-dashboard -->
 
 
   <!-- ══════ PROJETOS ══════ -->
   <div class="page" id="page-projetos">
-    <div class="page-hdr">
+    <div class="pg-header">
+      <div class="pg-header-icon">◈</div>
       <div>
-        <div class="page-title">Projetos</div>
-        <div class="page-desc">Todos os projetos ativos e finalizados</div>
-      </div>
-      <button class="btn-p" onclick="openM('m-proj')">+ Novo projeto</button>
-    </div>
-    <div class="kpi-sm">
-      <div class="card">
-        <div class="kpi-val" id="pm-tot">0</div>
-        <div class="kpi-lbl">Total</div>
-      </div>
-      <div class="card">
-        <div class="kpi-val ok" id="pm-and">0</div>
-        <div class="kpi-lbl">Em andamento</div>
-      </div>
-      <div class="card">
-        <div class="kpi-val warn" id="pm-rev">0</div>
-        <div class="kpi-lbl">Em revisão</div>
-      </div>
-      <div class="card">
-        <div class="kpi-val" id="pm-pau">0</div>
-        <div class="kpi-lbl">Pausados</div>
+        <div class="pg-header-title">Projetos</div>
+        <div class="pg-header-sub">Gerencie seu processo criativo do briefing à entrega</div>
       </div>
     </div>
+    <!-- Filter bar sticky -->
+    <div class="filter-bar" id="proj-filter-bar">
+      <div class="filter-search">
+        <span class="filter-search-icon">⌕</span>
+        <input placeholder="Buscar projetos..." id="proj-search-input" oninput="filterProjs()">
+      </div>
+      <div class="filter-dropdown" id="proj-fase-filter" onclick="toggleProjFaseFilter()">
+        Todas as fases ▾
+      </div>
+      <div class="filter-spacer"></div>
+      <div class="sort-wrap">
+        Ordenar por
+        <select class="sort-select" id="proj-sort" onchange="sortProjs()">
+          <option value="urgente">Mais urgentes</option>
+          <option value="progresso">Progresso</option>
+          <option value="cliente">Cliente</option>
+          <option value="entrega">Data de entrega</option>
+        </select>
+      </div>
+    </div>
+    <!-- Count bar -->
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 24px">
+      <span style="font-family:var(--mono);font-size:12px;color:var(--t2)" id="pm-tot-label">0 projetos</span>
+      <div class="kpi-sm" style="display:none">
+        <div class="card"><div class="kpi-val" id="pm-tot">0</div><div class="kpi-lbl">Total</div></div>
+        <div class="card"><div class="kpi-val ok" id="pm-and">0</div><div class="kpi-lbl">Em andamento</div></div>
+        <div class="card"><div class="kpi-val warn" id="pm-rev">0</div><div class="kpi-lbl">Em revisão</div></div>
+        <div class="card"><div class="kpi-val" id="pm-pau">0</div><div class="kpi-lbl">Pausados</div></div>
+      </div>
+      <div style="flex:1"></div>
+      <button class="topbar-action primary" onclick="openM('m-proj')" style="height:26px;font-size:11px;padding:0 10px">+ Novo projeto</button>
+    </div>
+    <div style="padding:0 24px 24px">
     <div id="proj-list" class="proj-grid"></div>
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ PIPELINE ══════ -->
   <div class="page" id="page-pipeline">
-    <div class="page-hdr">
+    <div class="pg-header">
+      <div class="pg-header-icon">⟶</div>
       <div>
-        <div class="page-title">Pipeline</div>
-        <div class="page-desc">Controle de propostas e negociações</div>
+        <div class="pg-header-title">Pipeline</div>
+        <div class="pg-header-sub">Controle de propostas e negociações</div>
       </div>
-      <button class="btn-p" onclick="openM('m-proposta')">+ Nova proposta</button>
     </div>
+    <div style="padding:0 24px 24px">
+    <div style="padding:16px 0 0;display:flex;justify-content:flex-end"><button class="btn-p" onclick="openM('m-proposta')">+ Nova proposta</button></div>
     <div class="kpi-sm">
       <div class="card">
         <div class="kpi-val" id="pipe-total">0</div>
@@ -3083,17 +3338,20 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div id="pipe-aprovado"></div>
       </div>
     </div>
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ ORÇAMENTOS ══════ -->
   <div class="page" id="page-orcamentos">
-    <div class="page-hdr">
+    <div class="pg-header">
+      <div class="pg-header-icon">◻</div>
       <div>
-        <div class="page-title">Orçamentos</div>
-        <div class="page-desc">Crie, envie e acompanhe orçamentos detalhados</div>
+        <div class="pg-header-title">Orçamentos</div>
+        <div class="pg-header-sub">Crie, envie e acompanhe orçamentos detalhados</div>
       </div>
-      <button class="btn-p" onclick="openM('m-orcamento')">+ Novo orçamento</button>
     </div>
+    <div style="padding:0 24px 24px">
+    <div style="padding:16px 0 0;display:flex;justify-content:flex-end"><button class="btn-p" onclick="openM('m-orcamento')">+ Novo orçamento</button></div>
     <div class="kpi-sm">
       <div class="card">
         <div class="kpi-val" id="orc-total">0</div>
@@ -3119,10 +3377,19 @@ button:active{transform:scale(.97);transition:transform .08s}
       <button class="btn-p" style="margin-top:8px" onclick="openM('m-orcamento')">+ Novo orçamento</button>
     </div>
     <div id="orc-list"></div>
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ GESTÃO ══════ -->
   <div class="page" id="page-gestao">
+    <div class="pg-header">
+      <div class="pg-header-icon">▦</div>
+      <div>
+        <div class="pg-header-title">Gestão</div>
+        <div class="pg-header-sub">Acompanhe fases, tarefas e progresso de cada projeto</div>
+      </div>
+    </div>
+    <div style="padding:0 24px 24px">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;padding-bottom:13px;border-bottom:1px solid var(--e1)">
       <div><div style="font-size:21px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:3px" id="g-title">Selecione um projeto</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);display:flex;gap:12px;flex-wrap:wrap" id="g-meta"></div></div>
       <div style="display:flex;align-items:center;gap:9px" id="g-actions">
@@ -3232,17 +3499,20 @@ button:active{transform:scale(.97);transition:transform .08s}
       </div>
     </div>
 
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ CALENDÁRIO ══════ -->
   <div class="page" id="page-calendario">
-    <div class="page-hdr">
+    <div class="pg-header">
+      <div class="pg-header-icon">⊡</div>
       <div>
-        <div class="page-title">Calendário</div>
-        <div class="page-desc">Agenda integrada — vincule eventos aos seus projetos</div>
+        <div class="pg-header-title">Calendário</div>
+        <div class="pg-header-sub">Agenda integrada — vincule eventos aos seus projetos</div>
       </div>
-      <button class="btn-p" onclick="window.open('https://calendar.google.com','_blank')">Google Calendar</button>
     </div>
+    <div style="padding:0 24px 24px">
+    <div style="padding:16px 0 0;display:flex;justify-content:flex-end"><button class="btn-p" onclick="window.open('https://calendar.google.com','_blank')">Google Calendar</button></div>
     <div class="g2" style="gap:14px">
       <div class="card">
         <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
@@ -3267,19 +3537,22 @@ button:active{transform:scale(.97);transition:transform .08s}
         </div>
       </div>
     </div>
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ TEMPLATES ══════ -->
   <div class="page" id="page-templates">
-    <div class="page-hdr" style="margin-bottom:var(--sp-4)">
+    <div class="pg-header">
+      <div class="pg-header-icon">⊟</div>
       <div>
-        <div class="page-title">Templates</div>
-        <div class="page-desc">Textos prontos e templates de projeto</div>
+        <div class="pg-header-title">Templates</div>
+        <div class="pg-header-sub">Textos prontos e templates de projeto</div>
       </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn-g" id="tpl-tab-meus-btn" onclick="toggleTplTab('meus')">Meus Templates</button>
-        <button class="btn-g" id="tpl-tab-add-btn" onclick="openM('m-meu-template')">+ Criar template</button>
-      </div>
+    </div>
+    <div style="padding:0 24px 24px">
+    <div style="padding:16px 0 0;display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn-g" id="tpl-tab-meus-btn" onclick="toggleTplTab('meus')">Meus Templates</button>
+      <button class="btn-g" id="tpl-tab-add-btn" onclick="openM('m-meu-template')">+ Criar template</button>
     </div>
     <!-- OS-055: Meus Templates -->
     <div id="tpl-tab-meus" style="display:none;margin-bottom:16px">
@@ -3300,19 +3573,22 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="card" style="cursor:pointer" onclick="cpTpl(this,'dep')" onmouseover="this.style.borderColor='var(--y)'" onmouseout="this.style.borderColor='var(--e2)'"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:var(--fs-sm);font-weight:600;color:var(--t1)">Pedido de Depoimento</span><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--y);font-weight:500">COPIAR</span></div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);line-height:1.5">Solicitação de avaliação pós-entrega.</div><span class="pill">depoimento</span></div>
       </div>
     </div>
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ CRM ══════ -->
   <div class="page" id="page-crm">
-    <div class="page-hdr">
+    <div class="pg-header">
+      <div class="pg-header-icon">◎</div>
       <div>
-        <div class="page-title">CRM</div>
-        <div class="page-desc">Gestão de relacionamento com clientes</div>
+        <div class="pg-header-title">CRM</div>
+        <div class="pg-header-sub">Gestão de relacionamento com clientes</div>
       </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn-g" id="crm-tab-parceiros-btn" onclick="toggleCrmTab('parceiros')" style="font-size:var(--fs-xs)">Parceiros</button>
-        <button class="btn-p" id="crm-add-btn" onclick="openM('m-cliente')">+ Novo cliente</button>
-      </div>
+    </div>
+    <div style="padding:0 24px 24px">
+    <div style="padding:16px 0 0;display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn-g" id="crm-tab-parceiros-btn" onclick="toggleCrmTab('parceiros')" style="font-size:var(--fs-xs)">Parceiros</button>
+      <button class="btn-p" id="crm-add-btn" onclick="openM('m-cliente')">+ Novo cliente</button>
     </div>
     <div id="crm-tab-clientes">
       <div class="kpi-row">
@@ -3326,17 +3602,20 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div id="crm-tab-parceiros" style="display:none">
       <div id="parceiros-list"></div>
     </div>
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ FINANCEIRO ══════ -->
   <div class="page" id="page-financeiro">
-    <div class="page-hdr">
+    <div class="pg-header">
+      <div class="pg-header-icon">$</div>
       <div>
-        <div class="page-title">Financeiro</div>
-        <div class="page-desc">Controle de entradas, saídas e margem do estúdio</div>
+        <div class="pg-header-title">Financeiro</div>
+        <div class="pg-header-sub">Controle de entradas, saídas e margem do estúdio</div>
       </div>
-      <button class="btn-p" onclick="openLanc()">+ Lançamento</button>
     </div>
+    <div style="padding:0 24px 24px">
+    <div style="padding:16px 0 0;display:flex;justify-content:flex-end"><button class="btn-p" onclick="openLanc()">+ Lançamento</button></div>
     <div class="kpi-row">
       <div class="kpi"><div class="kpi-label">Faturamento mês</div><div class="kpi-val ok" id="fin-mes">R$ 0</div><div class="kpi-sub" id="fin-mes-s">0 entradas</div></div>
       <div class="kpi"><div class="kpi-label">A receber</div><div class="kpi-val warn" id="fin-rec">R$ 0</div><div class="kpi-sub">pendente</div></div>
@@ -3378,28 +3657,34 @@ button:active{transform:scale(.97);transition:transform .08s}
         <span style="font-family:var(--mono);font-size:var(--fs-md);font-weight:900;color:var(--am)" id="custos-fixos-total">R$ 0</span>
       </div>
     </div>
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ HUB ══════ -->
   <div class="page" id="page-hub">
-    <div class="page-hdr">
+    <div class="pg-header">
+      <div class="pg-header-icon">✦</div>
       <div>
-        <div class="page-title">Hub Criativo</div>
-        <div class="page-desc">Ferramentas curadas para o seu fluxo de design</div>
+        <div class="pg-header-title">Hub Criativo</div>
+        <div class="pg-header-sub">Ferramentas curadas para o seu fluxo de design</div>
       </div>
-      <button class="btn-p" onclick="openM('m-add-tool')">+ Adicionar</button>
     </div>
+    <div style="padding:0 24px 24px">
+    <div style="padding:16px 0 0;display:flex;justify-content:flex-end"><button class="btn-p" onclick="openM('m-add-tool')">+ Adicionar</button></div>
     <div class="hub-layout" id="hub-layout"></div>
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ MÉTRICAS ══════ -->
   <div class="page" id="page-metricas">
-    <div class="page-hdr">
+    <div class="pg-header">
+      <div class="pg-header-icon">↗</div>
       <div>
-        <div class="page-title">Métricas</div>
-        <div class="page-desc">Performance do estúdio — projetos, finanças e gargalos</div>
+        <div class="pg-header-title">Métricas</div>
+        <div class="pg-header-sub">Performance do estúdio — projetos, finanças e gargalos</div>
       </div>
     </div>
+    <div style="padding:0 24px 24px">
 
     <!-- ROW 1: KPIs principais -->
     <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:13px" id="met-kpi-row">
@@ -3510,10 +3795,19 @@ button:active{transform:scale(.97);transition:transform .08s}
       </div>
     </div>
 
+    </div><!-- /padding wrapper -->
   </div>
 
   <!-- ══════ PERFIL ══════ -->
   <div class="page" id="page-perfil">
+    <div class="pg-header">
+      <div class="pg-header-icon">◉</div>
+      <div>
+        <div class="pg-header-title">Perfil</div>
+        <div class="pg-header-sub">Seu perfil profissional e conquistas</div>
+      </div>
+    </div>
+    <div style="padding:0 24px 24px">
     <!-- HEADER DO PERFIL -->
     <div class="card" style="margin-bottom:11px">
       <div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:18px;padding-bottom:17px;border-bottom:1px solid var(--e1)">
@@ -3554,17 +3848,20 @@ button:active{transform:scale(.97);transition:transform .08s}
         </div>
       </div>
     </div>
+    </div><!-- /padding wrapper -->
   </div>
 
 
   <!-- ══════ CASES & PORTFÓLIO ══════ -->
   <div class="page" id="page-cases">
-    <div class="page-hdr">
+    <div class="pg-header">
+      <div class="pg-header-icon">⊛</div>
       <div>
-        <div class="page-title">Cases & Portfólio</div>
-        <div class="page-desc">Projetos documentados — ao finalizar um projeto, escolha "Criar case"</div>
+        <div class="pg-header-title">Cases & Portfólio</div>
+        <div class="pg-header-sub">Projetos documentados — ao finalizar um projeto, escolha "Criar case"</div>
       </div>
     </div>
+    <div style="padding:0 24px 24px">
     <div class="kpi-row">
       <div class="kpi"><div class="kpi-label">Cases criados</div><div class="kpi-val ok" id="cases-total">0</div></div>
       <div class="kpi"><div class="kpi-label">Entregues</div><div class="kpi-val" id="fin-entregues-count">0</div></div>
@@ -3573,15 +3870,20 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div id="cases-list"></div>
     <div id="entregues-list"></div>
+    </div><!-- /padding wrapper -->
   </div>
 
 
   <!-- ══════ CONFIGURAÇÕES ══════ -->
   <div class="page" id="page-config">
-    <div style="margin-bottom:16px">
-      <div style="font-size:16px;font-weight:800;letter-spacing:-.03em;color:var(--t1);margin-bottom:4px">Configurações & Dados</div>
-      <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Gerencie seus dados, faça backup e personalize a plataforma</div>
+    <div class="pg-header">
+      <div class="pg-header-icon">⊙</div>
+      <div>
+        <div class="pg-header-title">Configurações & Dados</div>
+        <div class="pg-header-sub">Gerencie seus dados, faça backup e personalize a plataforma</div>
+      </div>
     </div>
+    <div style="padding:0 24px 24px">
 
     <!-- BACKUP -->
     <div class="card" style="margin-bottom:11px">
@@ -3634,6 +3936,7 @@ button:active{transform:scale(.97);transition:transform .08s}
       </div>
       <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:8px">Estas ações não podem ser desfeitas. Faça um backup antes.</div>
     </div>
+    </div><!-- /padding wrapper -->
   </div>
 
   </div><!-- /main -->
@@ -3647,7 +3950,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v10.1.1';
+const APP_VERSION='v11.0.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -3982,32 +4285,53 @@ function renderDash(){
   setEl('greeting-sub',atv+' projetos ativos · '+(p2.site||'paulosa.studio'));
   const grEl=document.getElementById('greeting');
   if(grEl){const hr2=new Date().getHours();grEl.textContent=(hr2<12?'Bom dia':hr2<18?'Boa tarde':'Boa noite')+', '+(p2.nome||'Paulo').split(' ')[0]+'.';}
-  // North Star
+  // Featured Cards (North Star + urgente + em dia)
   const nsEl=document.getElementById('north-star');
   if(nsEl){
     const urgP=projs.filter(p=>!p.pausado&&p.fi<5).sort((a,b)=>getDiasRestantes(a)-getDiasRestantes(b));
     const nearDone=projs.filter(p=>!p.pausado&&p.pct>=80&&p.fi<5).sort((a,b)=>b.pct-a.pct);
     const star=urgP.length&&getDiasRestantes(urgP[0])<=3?urgP[0]:nearDone.length?nearDone[0]:null;
-    if(star){
-      nsEl.style.display='block';
-      nsEl.style.cursor='pointer';
-      nsEl.onclick=()=>{curProjId=star.id;nav('gestao');};
-      const _starDias=getDiasRestantes(star);
-      const isUrg=_starDias<=3;
-      nsEl.classList.toggle('ns-pulse',isUrg);
-      document.getElementById('ns-label').textContent=isUrg?'Prazo urgente':'Quase pronto';
-      document.getElementById('ns-title').textContent=star.nome;
-      document.getElementById('ns-title').title=star.nome;
-      document.getElementById('ns-meta').textContent=star.cli+' · '+star.pct+'% · '+(_starDias>0?_starDias+'d restantes':_starDias===0?'entrega hoje':'prazo vencido');
-      document.getElementById('ns-action').setAttribute('onclick','openProj('+star.id+')');
-    } else if(projs.length===0){
-      nsEl.style.display='block';nsEl.style.cursor='default';nsEl.onclick=null;
-      document.getElementById('ns-label').textContent='Primeiro passo';
-      document.getElementById('ns-title').textContent='Crie seu primeiro projeto para começar';
-      document.getElementById('ns-meta').textContent='O dashboard ganha vida com seus dados reais';
-      document.getElementById('ns-action').textContent='+ Projeto';
-      document.getElementById('ns-action').setAttribute('onclick',"openM('m-proj')");
-    } else { nsEl.style.display='none';nsEl.style.cursor='default';nsEl.onclick=null; }
+    if(star||projs.length>0){
+      nsEl.style.display='grid';
+      // Card 1: North Star
+      const c1=document.getElementById('ns-card-1');
+      if(star){
+        const _starDias=getDiasRestantes(star);
+        const isUrg=_starDias<=3;
+        c1.style.display='flex';c1.style.cursor='pointer';
+        c1.onclick=()=>{curProjId=star.id;nav('gestao');};
+        const lbl=document.getElementById('ns-label');if(lbl)lbl.textContent=isUrg?'Urgente':'North Star';
+        const ttl=document.getElementById('ns-title');if(ttl){ttl.childNodes[0].textContent=star.nome+' ';}
+        const meta=document.getElementById('ns-meta');if(meta)meta.textContent=star.cli+' · '+star.pct+'% · '+(_starDias>0?_starDias+'d restantes':_starDias===0?'entrega hoje':'prazo vencido');
+      } else if(projs.length===0){
+        c1.style.display='flex';c1.style.cursor='pointer';
+        c1.onclick=()=>{openM('m-proj');};
+        const ttl=document.getElementById('ns-title');if(ttl){ttl.childNodes[0].textContent='Crie seu primeiro projeto ';}
+        const lbl=document.getElementById('ns-label');if(lbl)lbl.textContent='Início';
+        const meta=document.getElementById('ns-meta');if(meta)meta.textContent='O dashboard ganha vida com seus dados reais';
+      }
+      // Card 2: Most urgent (different from star)
+      const c2=document.getElementById('ns-card-2');
+      const urg2=urgP.find(p=>star?p.id!==star.id:true);
+      if(c2&&urg2){
+        c2.style.display='flex';c2.style.cursor='pointer';
+        c2.onclick=()=>{curProjId=urg2.id;nav('gestao');};
+        const d2=getDiasRestantes(urg2);
+        const t2=document.getElementById('ns-title-2');if(t2){t2.childNodes[0].textContent=urg2.nome+' ';}
+        const m2=document.getElementById('ns-meta-2');if(m2)m2.textContent=urg2.cli+' · '+urg2.pct+'% · '+(d2>0?d2+'d':'hoje');
+      } else if(c2){c2.style.display='none';}
+      // Card 3: Best progress (em dia)
+      const emDia=projs.filter(p=>!p.pausado&&p.fi<5&&getDiasRestantes(p)>5).sort((a,b)=>b.pct-a.pct);
+      const c3=document.getElementById('ns-card-3');
+      const ok3=emDia.find(p=>(star?p.id!==star.id:true)&&(urg2?p.id!==urg2.id:true));
+      if(c3&&ok3){
+        c3.style.display='flex';c3.style.cursor='pointer';
+        c3.onclick=()=>{curProjId=ok3.id;nav('gestao');};
+        const d3=getDiasRestantes(ok3);
+        const t3=document.getElementById('ns-title-3');if(t3){t3.childNodes[0].textContent=ok3.nome+' ';}
+        const m3=document.getElementById('ns-meta-3');if(m3)m3.textContent=ok3.cli+' · '+ok3.pct+'% · '+d3+'d';
+      } else if(c3){c3.style.display='none';}
+    } else { nsEl.style.display='none'; }
   }
   renderDashProjs();renderAgenda();renderAlertas();renderDayTasks();atualizarNotificacoes();initCriativo();renderCarga();
 }
@@ -4077,12 +4401,51 @@ function renderProjs(){
   setEl('pm-and',projs.filter(p=>p.st==='Em andamento').length);
   setEl('pm-rev',projs.filter(p=>p.st==='Em revisão').length);
   setEl('pm-pau',projs.filter(p=>p.pausado).length);
+  const totLbl=document.getElementById('pm-tot-label');if(totLbl)totLbl.textContent=projs.length+' projetos';
   const el=document.getElementById('proj-list');if(!el)return;
-  if(projs.length===0&&projsFinalizados.length===0){el.innerHTML='<div style="text-align:center;padding:48px 20px"><div class="empty-float" style="font-size:52px;margin-bottom:14px"><i data-lucide="folder-kanban" style="width:48px;height:48px;color:var(--t4)"></i></div><div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Nenhum projeto ainda</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:20px;line-height:1.5">Crie seu primeiro projeto para começar<br>a gerenciar com a metodologia de 6 fases.</div><button class="btn-p" style="font-size:var(--fs-sm)" onclick="openM(\'m-proj\')">+ Novo projeto</button></div>';setTimeout(refreshIcons,50);return;}
-  let html=projs.map((p,i)=>{const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;const fn=fases.map(f=>f.n);const ft=['f-briefing','f-conceito','f-producao','f-revisao','f-entrega','f-fechado'];const urgBadge=p.urg==='urgente'?'<span style="color:var(--am);font-size:var(--fs-2xs)"> ⚡</span>':p.urg==='critico'?'<span style="color:var(--rd);font-size:var(--fs-2xs)"> 🚨</span>':'';const modoBadge=p.modo==='rapido'?'<span style="color:var(--y);font-size:var(--fs-2xs)"> ⚡</span>':'';return `<div class="card" style="cursor:pointer" onclick="openProj(${p.id})"><div style="display:flex;align-items:center;gap:11px"><div class="p-num" style="min-width:26px;font-size:var(--fs-xs)">${String(i+1).padStart(2,'0')}</div><div style="flex:1;min-width:0"><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t1)">${p.nome}${modoBadge}${urgBadge}${p.pausado?' <span style="color:var(--am)"><i data-lucide="pause" style="width:12px;height:12px"></i></span>':''}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${p.cli} · ${p.tipo}</div></div><span class="ftag ${ft[p.fi]||'f-briefing'}">${fn[p.fi]||fn[0]}</span><div class="p-pct">${p.pct}%</div><div class="p-days ${p.urg}">${p.dias>0?p.dias+'d':p.dias===0?'hoje':'—'}</div></div><div class="p-prog" style="margin-top:9px"><div class="p-prog-fill" style="width:${p.pct}%;background:${p.cor}"></div></div></div>`;}).join('');
-  if(projsFinalizados.length>0){html+=`<div class="fin-section-title" style="margin-top:16px">Fora da fila — ${projsFinalizados.length}</div>`+projsFinalizados.map(p=>`<div class="proj-finalizado"><div style="display:flex;align-items:center;gap:10px"><div style="width:3px;height:34px;border-radius:2px;background:${p.cor};flex-shrink:0"></div><div style="flex:1"><div class="p-name" style="color:var(--t2)">${p.nome}</div><div class="p-meta">${p.cli} · ${p.dataFim||''}${p.tipo_fin==='case'?' · Case':''}</div></div><span class="ftag ${p.tipo_fin==='case'?'f-entrega':'f-fechado'}">${p.tipo_fin==='case'?'CASE':'ENTREGUE'}</span></div></div>`).join('');}
+  if(projs.length===0&&projsFinalizados.length===0){el.innerHTML='<div style="text-align:center;padding:48px 20px"><div style="font-size:22px;margin-bottom:8px;opacity:0.25">+</div><div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Nenhum projeto ainda</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:20px;line-height:1.5">Crie seu primeiro projeto para começar</div><button class="btn-p" style="font-size:var(--fs-sm)" onclick="openM(\'m-proj\')">+ Novo projeto</button></div>';return;}
+  el.className='cards-grid';
+  const fColors={0:'var(--bl)',1:'var(--pu)',2:'var(--y)',3:'var(--am)',4:'var(--gr)',5:'var(--t4)'};
+  let html=projs.map(p=>{
+    const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;const fn=fases.map(f=>f.n);
+    const _d=getDiasRestantes(p);const dLbl=_d>0?_d+'d':_d===0?'hoje':'vencido';
+    const dColor=_d<=2?'color:var(--rd)':_d<=5?'color:var(--am)':'';
+    const urgTag=_d<=2?'<span class="pc-tag tag-rd">🚨 Urgente</span>':p.modo==='rapido'?'<span class="pc-tag tag-gr">⚡ Rápido</span>':'';
+    const faseTag='<span class="pc-tag tag-n">'+(fn[p.fi]||fn[0])+'</span>';
+    const pIcon=_d<=2?'🔥':p.modo==='rapido'?'⚡':'◈';
+    const pIconBg=_d<=2?'rgba(239,68,68,0.1)':p.modo==='rapido'?'rgba(34,197,94,0.1)':'rgba(212,160,23,0.1)';
+    const opacity=p.pausado?'opacity:0.55':'';
+    return `<div class="proj-card" onclick="openProj(${p.id})" style="${opacity}">
+      <div class="pc-top">
+        <div class="pc-icon" style="background:${pIconBg}">${pIcon}</div>
+        <div>
+          <div class="pc-title">${p.nome}</div>
+          <div class="pc-desc">${p.cli} · ${p.tipo}</div>
+        </div>
+      </div>
+      <div class="pc-progress"><div class="pc-progress-fill" style="width:${p.pct}%;background:${p.cor||fColors[p.fi]||'var(--y)'}"></div></div>
+      <div class="pc-bottom">
+        ${urgTag}${faseTag}
+        <div class="pc-spacer"></div>
+        <div class="pc-count" style="${dColor}"><span>↓</span> ${p.pausado?'—':dLbl}</div>
+      </div>
+    </div>`;
+  }).join('');
+  // Add "new project" card
+  html+=`<div class="proj-card" style="border-style:dashed;border-color:var(--e2);background:transparent;justify-content:center;align-items:center;min-height:160px" onclick="openM('m-proj')">
+    <div style="text-align:center"><div style="font-size:22px;margin-bottom:8px;opacity:0.25">+</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3)">Novo projeto</div><div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:3px">Completo ou ⚡ Rápido</div></div>
+  </div>`;
+  if(projsFinalizados.length>0){html+=`<div style="grid-column:1/-1;margin-top:8px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding:8px 0;border-top:1px solid var(--e1)">Fora da fila — ${projsFinalizados.length}</div>`+projsFinalizados.map(p=>`<div class="proj-card" style="opacity:0.55"><div class="pc-top"><div class="pc-icon" style="background:var(--s3)">✓</div><div><div class="pc-title" style="color:var(--t2)">${p.nome}</div><div class="pc-desc">${p.cli} · ${p.dataFim||''}</div></div></div><div class="pc-bottom"><span class="pc-tag ${p.tipo_fin==='case'?'tag-y':'tag-n'}">${p.tipo_fin==='case'?'CASE':'ENTREGUE'}</span><div class="pc-spacer"></div></div></div>`).join('');}
   el.innerHTML=html;
 }
+// Filter & sort helpers for projetos
+function filterProjs(){
+  const q=(document.getElementById('proj-search-input')||{}).value||'';
+  const cards=document.querySelectorAll('#proj-list .proj-card');
+  cards.forEach(c=>{const t=c.textContent.toLowerCase();c.style.display=t.includes(q.toLowerCase())?'':'none';});
+}
+function sortProjs(){/* future: re-sort cards */}
+function toggleProjFaseFilter(){/* future: fase dropdown */}
 
 function openProj(id){curProjId=id;nav('gestao',null);document.querySelectorAll('.nav-item').forEach(n=>{if(n.textContent.trim().startsWith('Gestão'))n.classList.add('active');else n.classList.remove('active');});}
 
@@ -6894,46 +7257,9 @@ function pipeDrop(e, colId){
   document.head.appendChild(s);
 })();
 
-// ─── P2: FILTROS CLICÁVEIS EM PROJETOS ───────────────────────
-(function(){
-  const _orig = renderProjs;
-  renderProjs = function(){
-    const tot = projs.length;
-    const and = projs.filter(p=>p.st==='Em andamento').length;
-    const rev = projs.filter(p=>p.st==='Em revisão').length;
-    const pau = projs.filter(p=>p.pausado).length;
-    // Atualiza KPIs com cursor pointer e indicação de filtro ativo
-    ['pm-tot','pm-and','pm-rev','pm-pau'].forEach(id=>{
-      const el=document.getElementById(id); if(!el) return;
-      const fMap={'pm-tot':'todos','pm-and':'andamento','pm-rev':'revisao','pm-pau':'pausado'};
-      const f=fMap[id];
-      el.style.cursor='pointer';
-      el.style.outline = 'none';
-      el.style.borderRadius='4px';
-      el.style.borderTop = projFiltroAtual===f?'2px solid var(--y)':'2px solid transparent';
-      el.onclick = ()=>{ projFiltroAtual = projFiltroAtual===f?'todos':f; renderProjs(); };
-    });
-    // Filtra projetos
-    let lista = projs;
-    if(projFiltroAtual==='andamento') lista = projs.filter(p=>p.st==='Em andamento'&&!p.pausado);
-    else if(projFiltroAtual==='revisao') lista = projs.filter(p=>p.st==='Em revisão');
-    else if(projFiltroAtual==='pausado') lista = projs.filter(p=>p.pausado);
-    // Empty state para novo usuário
-    const el=document.getElementById('proj-list'); if(!el) return;
-    if(projs.length===0&&projsFinalizados.length===0){el.innerHTML='<div style="text-align:center;padding:48px 20px"><div class="empty-float" style="font-size:52px;margin-bottom:14px"><i data-lucide="folder-kanban" style="width:48px;height:48px;color:var(--t4)"></i></div><div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Nenhum projeto ainda</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:20px;line-height:1.5">Crie seu primeiro projeto para começar<br>a gerenciar com a metodologia de 6 fases.</div><button class="btn-p" style="font-size:var(--fs-sm)" onclick="openM(\'m-proj\')">+ Novo projeto</button></div>';setTimeout(refreshIcons,50);return;}
-    // Label do filtro ativo
-    const filtroLabel = projFiltroAtual!=='todos'?`<div style="grid-column:1/-1;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-bottom:4px;display:inline-flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:var(--y);flex-shrink:0;display:inline-block"></span>${projFiltroAtual === 'andamento' ? 'Em andamento' : projFiltroAtual === 'revisao' ? 'Em revisão' : 'Pausados'} <span style="cursor:pointer;color:var(--t4);font-size:var(--fs-sm);line-height:1;margin-left:2px" onclick="projFiltroAtual='todos';renderProjs()"><i data-lucide="x" style="width:12px;height:12px"></i></span></div>`:'';
-    let html=filtroLabel+lista.map((p,i)=>`<div class="card" style="cursor:pointer" onclick="openProj(${p.id})"><div style="display:flex;align-items:center;gap:11px"><div class="p-num" style="min-width:26px;font-size:var(--fs-xs)">${String(i+1).padStart(2,'0')}</div><div style="flex:1;min-width:0"><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t1)">${p.nome}${p.pausado?' <span style="color:var(--am)"><i data-lucide="pause" style="width:12px;height:12px"></i></span>':''}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${p.cli} · ${p.tipo}</div></div><span class="ftag ${FT[p.fi]}">${FN[p.fi]}</span><div class="p-pct">${p.pct}%</div><div class="p-days ${p.urg}">${p.dias>0?p.dias+'d':p.dias===0?'hoje':'—'}</div></div><div class="p-prog" style="margin-top:9px"><div class="p-prog-fill" style="width:${p.pct}%;background:${p.cor}"></div></div></div>`).join('');
-    if(lista.length===0&&projFiltroAtual!=='todos') html+=`<div style="text-align:center;padding:32px 12px"><div style="font-size:24px;margin-bottom:8px">🔍</div><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t2);margin-bottom:4px">Nenhum projeto aqui</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Tente outro filtro ou crie um novo projeto</div></div>`;
-    if(projFiltroAtual==='todos'&&projsFinalizados.length>0){html+=`<div class="fin-section-title" style="margin-top:16px">Fora da fila — ${projsFinalizados.length}</div>`+projsFinalizados.map(p=>`<div class="proj-finalizado"><div style="display:flex;align-items:center;gap:10px"><div style="width:3px;height:34px;border-radius:2px;background:${p.cor};flex-shrink:0"></div><div style="flex:1"><div class="p-name" style="color:var(--t2)">${p.nome}</div><div class="p-meta">${p.cli} · ${p.dataFim||''}${p.tipo_fin==='case'?' · Case':''}</div></div><span class="ftag ${p.tipo_fin==='case'?'f-entrega':'f-fechado'}">${p.tipo_fin==='case'?'CASE':'ENTREGUE'}</span></div></div>`).join('');}
-    el.innerHTML=html;
-    // Recalcula KPI values
-    document.getElementById('pm-tot')&&(document.getElementById('pm-tot').textContent=tot);
-    document.getElementById('pm-and')&&(document.getElementById('pm-and').textContent=and);
-    document.getElementById('pm-rev')&&(document.getElementById('pm-rev').textContent=rev);
-    document.getElementById('pm-pau')&&(document.getElementById('pm-pau').textContent=pau);
-  };
-})();
+// ─── P2: FILTROS CLICÁVEIS EM PROJETOS (aitmpl grid) ─────────
+// Filter integration is now handled by the filter-bar in HTML
+// and the filterProjs() / sortProjs() functions defined above.
 
 // ─── P2: BUSCA GLOBAL ⌘K / CTRL+K ────────────────────────────
 (function(){
