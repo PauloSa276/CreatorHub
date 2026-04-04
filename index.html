@@ -45,10 +45,10 @@
   --sp-8:32px;
 
   /* ═══ COMPONENTES ═══ */
-  --radius-sm:6px;
-  --radius-md:8px;
-  --radius-lg:12px;
-  --radius-xl:16px;
+  --radius-sm:8px;
+  --radius-md:10px;
+  --radius-lg:14px;
+  --radius-xl:20px;
   --radius-pill:999px;
 
   /* ═══ ALTURAS FIXAS (consistência vertical) ═══ */
@@ -117,10 +117,10 @@
   --t3:#6B6965;
   --t4:#948F86;
   --t5:#B8B3AA;
-  --sh1:0 1px 3px rgba(0,0,0,0.08);
-  --sh2:0 2px 8px rgba(0,0,0,0.10);
-  --sh3:0 4px 16px rgba(0,0,0,0.12);
-  --sh4:0 8px 28px rgba(0,0,0,0.14);
+  --sh1:0 1px 3px rgba(0,0,0,0.04);
+  --sh2:0 2px 8px rgba(0,0,0,0.06);
+  --sh3:0 4px 16px rgba(0,0,0,0.08);
+  --sh4:0 8px 28px rgba(0,0,0,0.11);
   --sh5:0 16px 48px rgba(0,0,0,0.16);
   --gly:0 0 24px rgba(180,140,20,0.15);
   --yb:rgba(180,140,20,0.12);
@@ -185,10 +185,14 @@
 html,body{
   height:100%;background:var(--bg);color:var(--t1);
   font-family:var(--sans);font-size:var(--fs-md);
-  line-height:1.5;overflow:hidden;
+  line-height:1.6;overflow:hidden;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
+
+/* ── HIG Typography ── */
+.modal-title,.card-title,.section-hdr,.pg-header-title{letter-spacing:-0.02em;line-height:1.2}
+.flbl,.nav-lbl,.card-title{letter-spacing:0.06em}
 
 /* ── Layout ── */
 .app{display:flex;height:100vh;overflow:hidden}
@@ -344,26 +348,28 @@ html,body{
 .btn-p{
   background:var(--y);color:#0C0C0E;border:none;
   border-radius:var(--radius-md);
-  padding:0 var(--sp-4);height:var(--h-btn-md);
+  padding:0 20px;height:var(--h-btn-md);
   font-family:var(--sans);font-size:var(--fs-sm);
   font-weight:var(--fw-bold);cursor:pointer;
-  letter-spacing:.02em;transition:all .14s;
+  letter-spacing:.02em;transition:all .15s ease;
   display:inline-flex;align-items:center;gap:var(--sp-1);
   white-space:nowrap;
 }
 .btn-p:hover{background:var(--yh);box-shadow:var(--sh2)}
-.btn-p:active{transform:scale(.98)}
+.btn-p:active{transform:scale(.97)}
 .btn-g{
   background:var(--s3);color:var(--t2);
   border:1px solid var(--e2);border-radius:var(--radius-md);
-  padding:0 var(--sp-3);height:var(--h-btn-md);
+  padding:0 16px;height:var(--h-btn-md);
   font-family:var(--sans);font-size:var(--fs-sm);
   font-weight:var(--fw-medium);cursor:pointer;
-  transition:all .14s;
+  transition:all .15s ease;
   display:inline-flex;align-items:center;gap:var(--sp-1);
   white-space:nowrap;
 }
 .btn-g:hover{background:var(--s5);color:var(--t1);border-color:var(--e3)}
+.btn-g:active{transform:scale(.97)}
+button:active{transform:scale(.97)}
 .btn-danger{color:var(--rd)!important;border-color:rgba(239,68,68,.25)!important}
 .btn-danger:hover{background:rgba(239,68,68,.08)!important}
 .btn-mini{
@@ -389,11 +395,11 @@ html,body{
 .fi,.fse{
   width:100%;background:var(--ib);
   border:1px solid var(--e2);border-radius:var(--radius-md);
-  padding:0 var(--sp-3);height:var(--h-input);
+  padding:0 14px;height:var(--h-input);
   font-family:var(--sans);font-size:var(--fs-md);
   color:var(--t1);transition:border .12s,box-shadow .12s;outline:none;
 }
-.fi:focus,.fse:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yr)}
+.fi:focus,.fse:focus{border-color:var(--y);box-shadow:0 0 0 3px rgba(212,160,23,0.15)}
 .fi::placeholder{color:var(--t4)}
 .fta{
   width:100%;background:var(--ib);
@@ -402,13 +408,13 @@ html,body{
   font-family:var(--sans);font-size:var(--fs-md);
   color:var(--t1);transition:border .12s;outline:none;resize:vertical;
 }
-.fta:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yr)}
+.fta:focus{border-color:var(--y);box-shadow:0 0 0 3px rgba(212,160,23,0.15)}
 
 /* ── Cards ── */
 .card{
   background:var(--s2);border:1px solid var(--e2);
   border-radius:var(--radius-lg);
-  padding:var(--sp-4);box-shadow:var(--sh1);
+  padding:18px 20px;box-shadow:var(--sh1);
 }
 .card-title{
   font-family:var(--mono);font-size:var(--fs-xs);
@@ -1567,7 +1573,7 @@ html,body{
 .proj-grid>.card{margin-bottom:0}
 
 /* ── Pill tags (Templates) ── */
-.pill{display:inline-flex;align-items:center;font-family:var(--mono);font-size:var(--fs-2xs);font-weight:var(--fw-semi);color:var(--y);background:var(--yr);border:1px solid rgba(212,160,23,.2);border-radius:var(--radius-pill);padding:2px var(--sp-2);letter-spacing:.04em;margin-top:var(--sp-2)}
+.pill{display:inline-flex;align-items:center;font-family:var(--mono);font-size:var(--fs-2xs);font-weight:var(--fw-semi);color:var(--y);background:var(--yr);border:1px solid rgba(212,160,23,.2);border-radius:var(--radius-pill);padding:3px 8px;letter-spacing:.04em;line-height:1.4;margin-top:var(--sp-2)}
 
 /* ── Skill bars (Perfil) ── */
 .sk-row{display:flex;align-items:center;gap:var(--sp-2);margin-bottom:var(--sp-2)}
@@ -1802,7 +1808,8 @@ html,body{
 
 /* ── Uniform badge height ── */
 .ftag,.sbadge,.nbadge,.pill{
-  height:22px;display:inline-flex;align-items:center;
+  height:auto;display:inline-flex;align-items:center;
+  padding:3px 8px;letter-spacing:.04em;line-height:1.4;
 }
 
 /* ── Data row (table-style list) ── */
@@ -1874,12 +1881,12 @@ div:focus-visible,a:focus-visible{outline:none}
 .page.active{animation:pageIn .24s cubic-bezier(.4,0,.2,1)}
 
 /* ── MODAL: spring entrance ── */
-@keyframes modalSpring{
-  from{opacity:0;transform:scale(.93) translateY(10px)}
+@keyframes modalIn{
+  from{opacity:0;transform:scale(.96) translateY(8px)}
   to{opacity:1;transform:scale(1) translateY(0)}
 }
-.moverlay.open .modal{animation:modalSpring .28s cubic-bezier(.34,1.4,.64,1)}
-.crm-popup-ov.open .crm-popup{animation:modalSpring .28s cubic-bezier(.34,1.4,.64,1)}
+.moverlay.open .modal{animation:modalIn .2s cubic-bezier(.34,1.2,.64,1)}
+.crm-popup-ov.open .crm-popup{animation:modalIn .2s cubic-bezier(.34,1.2,.64,1)}
 
 /* ── CARD: lift on hover ── */
 .card{transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease}
@@ -3987,7 +3994,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v11.0.1';
+const APP_VERSION='v11.1.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
