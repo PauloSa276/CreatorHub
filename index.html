@@ -587,11 +587,44 @@ html,body{
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ── CRM ── */
+/* CRM List Rows (OS-063A) */
+.cli-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 16px;border-bottom:1px solid var(--e1);
+  cursor:pointer;transition:background .12s;
+}
+.cli-row:hover{background:var(--s2)}
+.cli-row:last-child{border-bottom:none}
+.cli-row .crm-av{width:32px;height:32px;font-size:11px;flex-shrink:0}
+.cli-row-info{flex:1;min-width:0}
+.cli-row-name{font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cli-row-seg{font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px}
+.cli-row-actions{display:flex;gap:6px;opacity:0;transition:opacity .15s}
+.cli-row:hover .cli-row-actions{opacity:1}
+.cli-row-action{
+  width:28px;height:28px;border-radius:var(--radius-sm);
+  background:var(--s3);border:1px solid var(--e2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:12px;color:var(--t2);
+  transition:all .12s;text-decoration:none;
+}
+.cli-row-action:hover{background:var(--s5);color:var(--t1)}
+.crm-search-wrap{position:relative;margin-bottom:12px}
+.crm-search-wrap input{
+  width:100%;height:34px;background:var(--s2);
+  border:1px solid var(--e2);border-radius:var(--radius-md);
+  padding:0 12px 0 32px;color:var(--t1);
+  font-family:var(--sans);font-size:12.5px;outline:none;
+}
+.crm-search-wrap input::placeholder{color:var(--t3)}
+.crm-search-wrap input:focus{border-color:rgba(212,160,23,0.35)}
+.crm-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:13px;pointer-events:none}
+.crm-list-container{background:var(--s1);border:1px solid var(--e2);border-radius:var(--radius-lg);overflow:hidden}
 .crm-card{
   background:var(--s2);border:1px solid var(--e2);
   border-radius:var(--radius-lg);padding:var(--sp-5);
   cursor:pointer;transition:all .14s;box-shadow:var(--sh1);
-  margin-bottom:var(--sp-4);
+  margin-bottom:var(--sp-4);display:none;
 }
 .crm-card:last-child{margin-bottom:0}
 
@@ -2224,9 +2257,9 @@ button:active{transform:scale(.97);transition:transform .08s}
         <label class="cpop-lbl">Responsável<input id="cpop-resp" placeholder="—"></label>
         <label class="cpop-lbl">Origem<input id="cpop-origem" placeholder="—"></label>
         <label class="cpop-lbl">Serviço contratado<input id="cpop-serv" placeholder="—"></label>
-        <label class="cpop-lbl">Forma de pagamento<input id="cpop-pgto" placeholder="—"></label>
-        <label class="cpop-lbl">Valor do projeto (R$)<input id="cpop-val" type="number" placeholder="0"></label>
-        <label class="cpop-lbl">Tempo médio (dias)<input id="cpop-tempo" type="number" placeholder="0"></label>
+        <input id="cpop-pgto" type="hidden">
+        <input id="cpop-val" type="hidden" value="0">
+        <input id="cpop-tempo" type="hidden" value="0">
       </div>
       <label class="cpop-lbl" style="display:flex;flex-direction:column">Notas<textarea id="cpop-notas" placeholder="Observações sobre o cliente..."></textarea></label>
       <div>
@@ -3597,6 +3630,10 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="kpi"><div class="kpi-label">Em proposta</div><div class="kpi-val warn" id="crm-pr">1</div></div>
         <div class="kpi"><div class="kpi-label">Faturamento</div><div class="kpi-val" id="crm-fat">R$ 0</div></div>
       </div>
+      <div class="crm-search-wrap">
+        <span class="crm-search-icon">⌕</span>
+        <input placeholder="Buscar cliente por nome ou empresa..." id="crm-search" oninput="filterCRM()">
+      </div>
       <div id="crm-list"></div>
     </div>
     <div id="crm-tab-parceiros" style="display:none">
@@ -3950,7 +3987,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v11.0.0';
+const APP_VERSION='v11.0.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4378,7 +4415,7 @@ function renderDayTasks(){
   const calEl=document.getElementById('cal-tasks');
   if(calEl)calEl.innerHTML=calH.length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:5px 9px">Nenhuma tarefa do calendário hoje</div>':calH.map((e,i)=>`<div class="task-row"><div class="chk" onclick="this.classList.toggle(\'done\');this.textContent=\'\';">${''}</div><div class="task-txt">${e.nome}</div><span class="ttag" style="color:var(--y);border-color:rgba(212,160,23,.2);background:var(--yb)">Cal</span></div>`).join('');
   const listEl=document.getElementById('day-tasks');if(!listEl)return;
-  listEl.innerHTML=dayTasks.map((t,i)=>{const s=TS[t.tipo]||TS.geral;return `<div class="task-row"><div class="chk ${t.done?'done':''}" onclick="toggleTask(${i})">${''}</div><div class="task-txt ${t.done?'done':''}">${t.desc}</div><span class="ttag" style="color:${s.c};border-color:${s.b};background:${s.bg}">${s.l}</span><span style="cursor:pointer;color:var(--t4);font-size:var(--fs-2xs);padding:1px 5px;transition:color .12s" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'" onclick="delTask(${i})"><i data-lucide="x" style="width:12px;height:12px"></i></span></div>`;}).join('')+(dayTasks.length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:5px 9px">Clique em "+ tarefa" para adicionar</div>':'');
+  listEl.innerHTML=dayTasks.map((t,i)=>{const s=TS[t.tipo]||TS.geral;return `<div class="task-row"><div class="chk ${t.done?'done':''}" onclick="toggleTask(${i})">${''}</div><div class="task-txt ${t.done?'done':''}" ondblclick="editTaskInline(this,${i})">${t.desc}</div><span class="ttag" style="color:${s.c};border-color:${s.b};background:${s.bg}">${s.l}</span><span style="cursor:pointer;color:var(--t4);font-size:13px;padding:1px 5px;transition:color .12s;line-height:1;user-select:none" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'" onclick="delTask(${i})" title="Remover">×</span></div>`;}).join('')+(dayTasks.length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:5px 9px">Clique em "+ tarefa" para adicionar</div>':'');
   const done=dayTasks.filter(t=>t.done).length;
   const tot=calH.length+dayTasks.length;
   const pct=tot?Math.round(done/tot*100):0;
@@ -4389,6 +4426,19 @@ function renderDayTasks(){
 
 function toggleTask(i){dayTasks[i].done=!dayTasks[i].done;save();renderDayTasks();}
 function delTask(i){dayTasks.splice(i,1);save();renderDayTasks();}
+function editTaskInline(el,i){
+  const orig=dayTasks[i].desc;
+  el.contentEditable='true';el.focus();
+  el.style.background='var(--s3)';el.style.borderRadius='4px';el.style.padding='2px 4px';el.style.outline='none';
+  const finish=()=>{
+    el.contentEditable='false';el.style.background='';el.style.padding='';
+    const nv=el.textContent.trim();
+    if(nv&&nv!==orig){dayTasks[i].desc=nv;save();toast('Tarefa editada');}
+    else{el.textContent=orig;}
+  };
+  el.onblur=finish;
+  el.onkeydown=(e)=>{if(e.key==='Enter'){e.preventDefault();el.blur();}if(e.key==='Escape'){el.textContent=orig;el.blur();}};
+}
 function addTask(){
   const d=document.getElementById('nt-desc');if(!d||!d.value.trim()){toast('Descreva a tarefa!','var(--am)');return;}
   dayTasks.push({desc:d.value.trim(),tipo:document.getElementById('nt-tipo').value,data:document.getElementById('nt-data').value,done:false});
@@ -4686,7 +4736,16 @@ function renderCRM(){
   const critMap={alta:'🔴 Alta — urgência máxima',media:'🟡 Média — flexível',baixa:'🟢 Baixa — ótimo relacionamento'};
   const el=document.getElementById('crm-list');if(!el)return;
   if(clients.length===0){el.innerHTML='<div style="text-align:center;padding:48px 20px"><div class="empty-float" style="font-size:52px;margin-bottom:14px"><i data-lucide="users" style="width:48px;height:48px;color:var(--t4)"></i></div><div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Nenhum cliente cadastrado</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:20px;line-height:1.5">Adicione seu primeiro cliente e acompanhe<br>o relacionamento com a ficha RPG.</div><button class="btn-p" style="font-size:var(--fs-sm)" onclick="openM(\'m-cliente\')">+ Novo cliente</button></div>';setTimeout(refreshIcons,50);return;}
-  el.innerHTML=clients.map(c=>`<div class="crm-card" onclick="openCRMPopup(${c.id})"><div style="display:flex;align-items:center;gap:11px;margin-bottom:9px"><div class="crm-av" style="background:var(--yb);border-color:rgba(212,160,23,.3);color:${c.cor}">${c.av||c.nome.slice(0,2).toUpperCase()}</div><div style="flex:1"><div class="crm-name">${c.nome}</div><div class="crm-seg">${c.seg||''}${c.serv?' · '+c.serv:''}</div></div><span class="sbadge ${stMap[c.status]||'s-lead'}">${stLbl[c.status]||'—'}</span></div>${c.crit?`<div class="crit-row"><div class="crit-dot" style="background:${c.crit==='alta'?'var(--rd)':c.crit==='baixa'?'var(--gr)':'var(--am)'}"></div><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);font-weight:500">${critMap[c.crit]||''}</span></div>`:''}<div class="crm-meta"><div><div class="crm-ml">Origem</div><div class="crm-mv">${c.origem||'—'}</div></div><div><div class="crm-ml">Contato</div><div class="crm-mv">${c.wpp||c.email||'—'}</div></div><div><div class="crm-ml">Serviço</div><div class="crm-mv">${c.serv||'—'}</div></div><div><div class="crm-ml">Pagamento</div><div class="crm-mv">${c.pgto||'—'}</div></div>${c.val>0?`<div><div class="crm-ml">Valor</div><div class="crm-mv" style="color:var(--y);font-weight:600">${fmt(c.val)}</div></div>`:''}</div>${c.notas?`<div style="margin-top:8px;padding:7px 9px;background:var(--s4);border-radius:var(--r1);font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t2);border:1px solid var(--e1)">${c.notas}</div>`:''}<div style="display:flex;justify-content:flex-end;margin-top:10px;padding-top:8px;border-top:1px solid var(--e1)"><button class="btn-g" style="font-size:var(--fs-2xs);color:var(--rd);border-color:rgba(239,68,68,.2)" onclick="event.stopPropagation();deletarCliente(${c.id})">Remover cliente</button></div></div>`).join('');
+  el.innerHTML='<div class="crm-list-container">'+clients.map(c=>{
+    const wppLink=c.wpp?`<a class="cli-row-action" href="https://wa.me/${c.wpp.replace(/\D/g,'')}" target="_blank" onclick="event.stopPropagation()" title="WhatsApp">💬</a>`:'';
+    const emailLink=c.email?`<a class="cli-row-action" href="mailto:${c.email}" onclick="event.stopPropagation()" title="E-mail">✉</a>`:'';
+    return `<div class="cli-row" onclick="openCRMPopup(${c.id})" data-name="${(c.nome+' '+c.seg+' '+c.serv).toLowerCase()}"><div class="crm-av" style="background:var(--yb);border-color:rgba(212,160,23,.3);color:${c.cor}">${c.av||c.nome.slice(0,2).toUpperCase()}</div><div class="cli-row-info"><div class="cli-row-name">${c.nome}${c.serv?' · '+c.serv:''}</div><div class="cli-row-seg">${c.seg||'—'}${c.origem?' · '+c.origem:''}</div></div><span class="sbadge ${stMap[c.status]||'s-lead'}" style="flex-shrink:0">${stLbl[c.status]||'—'}</span><div class="cli-row-actions">${wppLink}${emailLink}</div><span style="color:var(--t4);font-size:14px;flex-shrink:0">›</span></div>`;
+  }).join('')+'</div>';
+}
+function filterCRM(){
+  const q=(document.getElementById('crm-search')||{}).value||'';
+  const rows=document.querySelectorAll('#crm-list .cli-row');
+  rows.forEach(r=>{r.style.display=(r.dataset.name||'').includes(q.toLowerCase())?'':'none';});
 }
 function toggleNcProj(){
   const sec=document.getElementById('nc-proj-section');
