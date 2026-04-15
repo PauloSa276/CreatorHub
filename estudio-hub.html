@@ -761,30 +761,52 @@ button:active{transform:scale(.97)}
 .crit-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
 /* ── Hub Criativo ── */
-.hub-layout{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.hub-cat{background:var(--s2);border:1px solid var(--e2);border-radius:var(--radius-lg);overflow:hidden}
-.hub-cat.hub-main{grid-column:span 2}
-@media(max-width:768px){.hub-cat.hub-main{grid-column:span 1}}
+/* ── Hub Board (drag-to-scroll) ── */
+.hub-layout{
+  display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;
+  height:calc(100vh - 180px);padding-bottom:8px;
+  cursor:grab;-webkit-overflow-scrolling:touch;
+}
+.hub-layout.dragging{cursor:grabbing;user-select:none}
+.hub-layout::-webkit-scrollbar{height:4px}
+.hub-layout::-webkit-scrollbar-track{background:transparent}
+.hub-layout::-webkit-scrollbar-thumb{background:var(--e2);border-radius:4px}
+.hub-layout::-webkit-scrollbar-thumb:hover{background:var(--e3)}
+.hub-cat{
+  min-width:240px;max-width:240px;flex-shrink:0;
+  background:var(--s2);border:1px solid var(--e2);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.hub-cat.hub-main{min-width:240px;max-width:240px}
 .hub-cat-hdr{
   display:flex;align-items:center;gap:var(--sp-2);
-  padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--e2);
-  background:var(--s3);
+  padding:12px 14px;border-bottom:1px solid var(--e2);
+  background:var(--s3);flex-shrink:0;
 }
 .hub-cat-name{font-family:var(--mono);font-size:var(--fs-xs);font-weight:var(--fw-semi);color:var(--t2);text-transform:uppercase;letter-spacing:.08em}
+.hub-cat-count{font-family:var(--mono);font-size:10px;color:var(--t4);margin-left:auto}
+.hub-col-body{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+}
+.hub-col-body::-webkit-scrollbar{width:3px}
+.hub-col-body::-webkit-scrollbar-track{background:transparent}
+.hub-col-body::-webkit-scrollbar-thumb{background:var(--e2);border-radius:3px}
 .hub-tool{
-  display:flex;align-items:center;padding:var(--sp-2) var(--sp-4);
-  gap:var(--sp-3);border-bottom:1px solid var(--e1);transition:all .12s;
+  display:flex;align-items:center;padding:10px 14px;
+  gap:10px;border-bottom:1px solid var(--e1);transition:background .12s;
 }
 .hub-tool:last-of-type{border-bottom:none}
 .hub-tool:hover{background:var(--s3)}
-.hub-tn{font-size:var(--fs-md);font-weight:var(--fw-semi);color:var(--t1)}
+.hub-tn{font-size:13px;font-weight:var(--fw-semi);color:var(--t1)}
 .hub-td{font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px}
-.hub-tr{display:flex;align-items:center;gap:var(--sp-1);margin-left:auto;flex-shrink:0}
+.hub-tr{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0;opacity:0;transition:opacity .15s}
+.hub-tool:hover .hub-tr{opacity:1}
+.hub-tv{opacity:1}
 .hub-add{
-  display:flex;align-items:center;gap:var(--sp-2);
-  padding:var(--sp-2) var(--sp-4);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  padding:10px 14px;cursor:pointer;flex-shrink:0;
   color:var(--t4);font-family:var(--mono);font-size:var(--fs-xs);
-  transition:all .12s;
+  border-top:1px solid var(--e1);transition:all .12s;
 }
 .hub-add:hover{color:var(--y);background:var(--s3)}
 .hub-edit{cursor:pointer;color:var(--t4);font-size:var(--fs-xs);padding:2px 4px;transition:color .12s}
@@ -1035,7 +1057,7 @@ button:active{transform:scale(.97)}
 }
 @media(max-width:1024px){
   .metric-row{grid-template-columns:1fr 1fr}
-  .hub-layout{grid-template-columns:1fr 1fr}
+  .hub-layout{height:calc(100vh - 200px)}
   .gm{grid-template-columns:1fr}
 }
 /* ── OS-032: Mobile Responsivo ── */
@@ -1059,7 +1081,7 @@ button:active{transform:scale(.97)}
   /* Grids colapsam */
   .metric-row,.kpi-row{grid-template-columns:1fr 1fr !important}
   .g2,.g3,.gm,.dash-grid,.pipe-grid{grid-template-columns:1fr !important}
-  .hub-layout{column-count:1}
+  .hub-cat{min-width:200px;max-width:200px}
   /* Bento 1 coluna */
   .dash-bento{grid-template-columns:1fr}
   .dash-bento .bento-span2{grid-column:span 1}
@@ -3001,7 +3023,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v11.1.0</span>
+      <span class="version-txt" id="version-label">v11.1.1</span>
       <span class="version-date">04 abr 2026</span>
     </div>
   </div>
@@ -3713,8 +3735,8 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="pg-header-sub">Ferramentas curadas para o seu fluxo de design</div>
       </div>
     </div>
-    <div style="padding:0 24px 24px">
-    <div style="padding:16px 0 0;display:flex;justify-content:flex-end"><button class="btn-p" onclick="openM('m-add-tool')">+ Adicionar</button></div>
+    <div style="padding:0 24px 24px;display:flex;flex-direction:column;flex:1;overflow:hidden">
+    <div style="padding:16px 0 12px;display:flex;justify-content:flex-end;flex-shrink:0"><button class="btn-p" onclick="openM('m-add-tool')">+ Adicionar</button></div>
     <div class="hub-layout" id="hub-layout"></div>
     </div><!-- /padding wrapper -->
   </div>
@@ -3994,7 +4016,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v11.1.0';
+const APP_VERSION='v11.1.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -6081,14 +6103,36 @@ function descartaProp(id){
 // ── HUB ───────────────────────────────────────────────
 function renderHub(){
   const el=document.getElementById('hub-layout');if(!el)return;
-  const mainCats=['inspiracao','designer'];
-  el.innerHTML=hubData.map(cat=>`<div class="hub-cat${mainCats.includes(cat.id)?' hub-main':''}"><div class="hub-cat-hdr"><span style="width:7px;height:7px;border-radius:50%;background:${cat.cor};flex-shrink:0;display:inline-block"></span><span class="hub-cat-name">${cat.n}</span></div>${cat.tools.map((t,ti)=>`<div class="hub-tool"><div style="flex:1;cursor:pointer" onclick="window.open('${t.u}','_blank')"><div class="hub-tn">${t.n}</div><div class="hub-td">${t.d||''}</div></div><div class="hub-tr"><span class="${t.v==='free'?'vf':t.v==='pago'?'vp':'vm'}">${t.v==='free'?'FREE':t.v==='pago'?'PAGO':'FREE+'}</span><span class="hub-edit" onclick="openEditT('${cat.id}',${ti})" title="Editar"><i data-lucide="pencil" style="width:12px;height:12px"></i></span><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);cursor:pointer" onclick="window.open('${t.u}','_blank')"><i data-lucide="external-link" style="width:12px;height:12px"></i></span></div></div>`).join('')}<div class="hub-add" onclick="prepAddT('${cat.id}')"><span style="font-size:14px">+</span> Adicionar</div></div>`).join('');
+  el.innerHTML=hubData.map(cat=>`<div class="hub-cat"><div class="hub-cat-hdr"><span style="width:7px;height:7px;border-radius:50%;background:${cat.cor};flex-shrink:0;display:inline-block"></span><span class="hub-cat-name">${cat.n}</span><span class="hub-cat-count">${cat.tools.length}</span></div><div class="hub-col-body">${cat.tools.map((t,ti)=>`<div class="hub-tool"><div style="flex:1;cursor:pointer" onclick="window.open('${t.u}','_blank')"><div class="hub-tn">${t.n}</div><div class="hub-td">${t.d||''}</div></div><div class="hub-tr"><span class="hub-tv ${t.v==='free'?'vf':t.v==='pago'?'vp':'vm'}">${t.v==='free'?'FREE':t.v==='pago'?'PAGO':'FREE+'}</span><span class="hub-edit" onclick="openEditT('${cat.id}',${ti})" title="Editar"><i data-lucide="pencil" style="width:12px;height:12px"></i></span><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);cursor:pointer" onclick="window.open('${t.u}','_blank')"><i data-lucide="external-link" style="width:12px;height:12px"></i></span></div></div>`).join('')}</div><div class="hub-add" onclick="prepAddT('${cat.id}')"><span style="font-size:14px">+</span> Adicionar</div></div>`).join('');
+  initHubDrag();
 }
 function prepAddT(catId){const hc=document.getElementById('ht-cat');if(hc)hc.value=catId;openM('m-add-tool');}
 function addTool(){const n=document.getElementById('ht-nome').value.trim(),u=document.getElementById('ht-url').value.trim();if(!n||!u){toast('Preencha nome e URL!','var(--am)');return;}const cat=hubData.find(c=>c.id===document.getElementById('ht-cat').value);if(cat)cat.tools.push({n,d:document.getElementById('ht-desc').value.trim()||'Ferramenta',u:u.startsWith('http')?u:'https://'+u,v:document.getElementById('ht-val').value});save();closeM('m-add-tool');renderHub();document.getElementById('ht-nome').value='';document.getElementById('ht-url').value='';document.getElementById('ht-desc').value='';toast('Ferramenta adicionada!');}
 function openEditT(catId,ti){const cat=hubData.find(c=>c.id===catId);if(!cat||!cat.tools[ti])return;const t=cat.tools[ti];const ec=document.getElementById('et-cat');if(ec)ec.value=catId;const ei=document.getElementById('et-idx');if(ei)ei.value=ti;const en=document.getElementById('et-nome');if(en)en.value=t.n;const eu=document.getElementById('et-url');if(eu)eu.value=t.u;const ed=document.getElementById('et-desc');if(ed)ed.value=t.d||'';const ev=document.getElementById('et-val');if(ev)ev.value=t.v||'free';openM('m-edit-tool');}
 function saveTool(){const cat=hubData.find(c=>c.id===document.getElementById('et-cat').value),i=parseInt(document.getElementById('et-idx').value);if(!cat)return;cat.tools[i]={n:document.getElementById('et-nome').value.trim(),u:document.getElementById('et-url').value.trim(),d:document.getElementById('et-desc').value.trim(),v:document.getElementById('et-val').value};save();closeM('m-edit-tool');renderHub();toast('Ferramenta atualizada!');}
 function delTool(){const cat=hubData.find(c=>c.id===document.getElementById('et-cat').value),i=parseInt(document.getElementById('et-idx').value);if(!cat)return;cat.tools.splice(i,1);save();closeM('m-edit-tool');renderHub();toast('Removida','var(--am)');}
+function initHubDrag(){
+  const board=document.getElementById('hub-layout');if(!board)return;
+  let isDown=false,startX,scrollL,moved;
+  const onDown=e=>{
+    if(e.target.closest('.hub-tool,.hub-add,.hub-edit,a,button'))return;
+    isDown=true;moved=false;startX=(e.pageX||e.touches[0].pageX)-board.offsetLeft;scrollL=board.scrollLeft;
+    board.classList.add('dragging');
+  };
+  const onUp=()=>{isDown=false;board.classList.remove('dragging');};
+  const onMove=e=>{
+    if(!isDown)return;e.preventDefault();
+    const x=(e.pageX||(e.touches&&e.touches[0].pageX))-board.offsetLeft;
+    const walk=(x-startX)*1.2;board.scrollLeft=scrollL-walk;moved=true;
+  };
+  board.addEventListener('mousedown',onDown);
+  board.addEventListener('touchstart',onDown,{passive:true});
+  document.addEventListener('mouseup',onUp);
+  document.addEventListener('touchend',onUp);
+  board.addEventListener('mousemove',onMove);
+  board.addEventListener('touchmove',onMove,{passive:false});
+  board.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();}},{capture:true});
+}
 
 // ── MÉTRICAS ──────────────────────────────────────────
 function renderMetricas(){
