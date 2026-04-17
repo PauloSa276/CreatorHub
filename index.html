@@ -372,6 +372,9 @@ html,body{
 button:active{transform:scale(.97)}
 .btn-danger{color:var(--rd)!important;border-color:rgba(239,68,68,.25)!important}
 .btn-danger:hover{background:rgba(239,68,68,.08)!important}
+/* OS-068 — Feedback inline nível 2 */
+@keyframes feedbackPulse{0%{outline-color:rgba(34,197,94,0.8)}60%{outline-color:rgba(34,197,94,0.4)}100%{outline-color:transparent;outline-width:0}}
+.feedback-success{animation:feedbackPulse 1.5s ease forwards;outline:2px solid var(--gr);outline-offset:2px}
 .btn-mini{
   background:var(--s4);color:var(--t3);
   border:1px solid var(--e2);border-radius:var(--radius-sm);
@@ -1668,8 +1671,9 @@ button:active{transform:scale(.97)}
   background:linear-gradient(135deg,rgba(212,160,23,0.2),rgba(212,160,23,0.05));
   border:1px solid rgba(212,160,23,0.2);
   display:flex;align-items:center;justify-content:center;
-  font-size:26px;flex-shrink:0;
+  font-size:22px;flex-shrink:0;color:var(--y);
 }
+.pg-header-icon i[data-lucide]{width:26px;height:26px;stroke:var(--y);stroke-width:1.6}
 .pg-header-title{
   font-size:26px;font-weight:800;letter-spacing:-0.04em;
   color:var(--t1);margin-bottom:4px;line-height:1;
@@ -3023,7 +3027,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v11.2.0</span>
+      <span class="version-txt" id="version-label">v11.3.0</span>
       <span class="version-date">16 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -3082,7 +3086,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <!-- Page Header -->
     <div class="pg-header">
-      <div class="pg-header-icon">▣</div>
+      <div class="pg-header-icon"><i data-lucide="layout-dashboard"></i></div>
       <div>
         <div class="pg-header-title">Dashboard</div>
         <div class="pg-header-sub">Visão geral do seu estúdio criativo — projetos, prazos e performance</div>
@@ -3230,14 +3234,7 @@ button:active{transform:scale(.97);transition:transform .08s}
             </div>
             <button class="btn-mini" onclick="openM('m-task')">+ tarefa</button>
           </div>
-          <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px">
-            <span style="width:5px;height:5px;border-radius:50%;background:var(--y);display:inline-block;flex-shrink:0"></span>Do calendário
-          </div>
-          <div id="cal-tasks" style="margin-bottom:10px"></div>
-          <div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px">
-            <span style="width:5px;height:5px;border-radius:50%;background:var(--gr);display:inline-block;flex-shrink:0"></span>Adicionadas
-          </div>
-          <div id="day-tasks"></div>
+          <div id="day-list"></div>
           <div style="margin-top:10px">
             <div style="height:2px;background:var(--e1);border-radius:1px;overflow:hidden">
               <div id="day-bar" style="height:100%;width:0%;background:var(--y);border-radius:1px;transition:width .4s ease"></div>
@@ -3305,7 +3302,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ PROJETOS ══════ -->
   <div class="page" id="page-projetos">
     <div class="pg-header">
-      <div class="pg-header-icon">◈</div>
+      <div class="pg-header-icon"><i data-lucide="folders"></i></div>
       <div>
         <div class="pg-header-title">Projetos</div>
         <div class="pg-header-sub">Gerencie seu processo criativo do briefing à entrega</div>
@@ -3351,7 +3348,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ PIPELINE ══════ -->
   <div class="page" id="page-pipeline">
     <div class="pg-header">
-      <div class="pg-header-icon">⟶</div>
+      <div class="pg-header-icon"><i data-lucide="git-branch"></i></div>
       <div>
         <div class="pg-header-title">Pipeline</div>
         <div class="pg-header-sub">Controle de propostas e negociações</div>
@@ -3407,7 +3404,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ ORÇAMENTOS ══════ -->
   <div class="page" id="page-orcamentos">
     <div class="pg-header">
-      <div class="pg-header-icon">◻</div>
+      <div class="pg-header-icon"><i data-lucide="file-spreadsheet"></i></div>
       <div>
         <div class="pg-header-title">Orçamentos</div>
         <div class="pg-header-sub">Crie, envie e acompanhe orçamentos detalhados</div>
@@ -3446,7 +3443,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ GESTÃO ══════ -->
   <div class="page" id="page-gestao">
     <div class="pg-header">
-      <div class="pg-header-icon">▦</div>
+      <div class="pg-header-icon"><i data-lucide="kanban"></i></div>
       <div>
         <div class="pg-header-title">Gestão</div>
         <div class="pg-header-sub">Acompanhe fases, tarefas e progresso de cada projeto</div>
@@ -3568,7 +3565,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ CALENDÁRIO ══════ -->
   <div class="page" id="page-calendario">
     <div class="pg-header">
-      <div class="pg-header-icon">⊡</div>
+      <div class="pg-header-icon"><i data-lucide="calendar"></i></div>
       <div>
         <div class="pg-header-title">Calendário</div>
         <div class="pg-header-sub">Agenda integrada — vincule eventos aos seus projetos</div>
@@ -3606,7 +3603,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ TEMPLATES ══════ -->
   <div class="page" id="page-templates">
     <div class="pg-header">
-      <div class="pg-header-icon">⊟</div>
+      <div class="pg-header-icon"><i data-lucide="layout-template"></i></div>
       <div>
         <div class="pg-header-title">Templates</div>
         <div class="pg-header-sub">Textos prontos e templates de projeto</div>
@@ -3642,7 +3639,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ CRM ══════ -->
   <div class="page" id="page-crm">
     <div class="pg-header">
-      <div class="pg-header-icon">◎</div>
+      <div class="pg-header-icon"><i data-lucide="users"></i></div>
       <div>
         <div class="pg-header-title">CRM</div>
         <div class="pg-header-sub">Gestão de relacionamento com clientes</div>
@@ -3675,7 +3672,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ FINANCEIRO ══════ -->
   <div class="page" id="page-financeiro">
     <div class="pg-header">
-      <div class="pg-header-icon">$</div>
+      <div class="pg-header-icon"><i data-lucide="bar-chart-2"></i></div>
       <div>
         <div class="pg-header-title">Financeiro</div>
         <div class="pg-header-sub">Controle de entradas, saídas e margem do estúdio</div>
@@ -3730,7 +3727,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ HUB ══════ -->
   <div class="page" id="page-hub">
     <div class="pg-header">
-      <div class="pg-header-icon">✦</div>
+      <div class="pg-header-icon"><i data-lucide="sparkles"></i></div>
       <div>
         <div class="pg-header-title">Hub Criativo</div>
         <div class="pg-header-sub">Ferramentas curadas para o seu fluxo de design</div>
@@ -3745,7 +3742,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ MÉTRICAS ══════ -->
   <div class="page" id="page-metricas">
     <div class="pg-header">
-      <div class="pg-header-icon">↗</div>
+      <div class="pg-header-icon"><i data-lucide="trending-up"></i></div>
       <div>
         <div class="pg-header-title">Métricas</div>
         <div class="pg-header-sub">Performance do estúdio — projetos, finanças e gargalos</div>
@@ -3868,7 +3865,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ PERFIL ══════ -->
   <div class="page" id="page-perfil">
     <div class="pg-header">
-      <div class="pg-header-icon">◉</div>
+      <div class="pg-header-icon"><i data-lucide="user-circle"></i></div>
       <div>
         <div class="pg-header-title">Perfil</div>
         <div class="pg-header-sub">Seu perfil profissional e conquistas</div>
@@ -3922,7 +3919,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ CASES & PORTFÓLIO ══════ -->
   <div class="page" id="page-cases">
     <div class="pg-header">
-      <div class="pg-header-icon">⊛</div>
+      <div class="pg-header-icon"><i data-lucide="award"></i></div>
       <div>
         <div class="pg-header-title">Cases & Portfólio</div>
         <div class="pg-header-sub">Projetos documentados — ao finalizar um projeto, escolha "Criar case"</div>
@@ -3944,7 +3941,7 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- ══════ CONFIGURAÇÕES ══════ -->
   <div class="page" id="page-config">
     <div class="pg-header">
-      <div class="pg-header-icon">⊙</div>
+      <div class="pg-header-icon"><i data-lucide="settings"></i></div>
       <div>
         <div class="pg-header-title">Configurações & Dados</div>
         <div class="pg-header-sub">Gerencie seus dados, faça backup e personalize a plataforma</div>
@@ -4017,7 +4014,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v11.2.0';
+const APP_VERSION='v11.3.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4442,16 +4439,27 @@ function renderAlertas(){
 function renderDayTasks(){
   const hoje=new Date().toISOString().split('T')[0];
   const calH=calEvs.filter(e=>e.data===hoje);
-  const calEl=document.getElementById('cal-tasks');
-  if(calEl)calEl.innerHTML=calH.length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:5px 9px">Nenhuma tarefa do calendário hoje</div>':calH.map((e,i)=>`<div class="task-row"><div class="chk" onclick="this.classList.toggle(\'done\');this.textContent=\'\';">${''}</div><div class="task-txt">${e.nome}</div><span class="ttag" style="color:var(--y);border-color:rgba(212,160,23,.2);background:var(--yb)">Cal</span></div>`).join('');
-  const listEl=document.getElementById('day-tasks');if(!listEl)return;
-  listEl.innerHTML=dayTasks.map((t,i)=>{const s=TS[t.tipo]||TS.geral;return `<div class="task-row"><div class="chk ${t.done?'done':''}" onclick="toggleTask(${i})">${''}</div><div class="task-txt ${t.done?'done':''}" ondblclick="editTaskInline(this,${i})">${t.desc}</div><span class="ttag" style="color:${s.c};border-color:${s.b};background:${s.bg}">${s.l}</span><span style="cursor:pointer;color:var(--t4);font-size:13px;padding:1px 5px;transition:color .12s;line-height:1;user-select:none" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'" onclick="delTask(${i})" title="Remover">×</span></div>`;}).join('')+(dayTasks.length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:5px 9px">Clique em "+ tarefa" para adicionar</div>':'');
-  const done=dayTasks.filter(t=>t.done).length;
+  const listEl=document.getElementById('day-list');if(!listEl)return;
+  // Lista unificada: eventos do calendário + tarefas manuais
+  let calDone=0;
+  const calRows=calH.map(e=>{
+    const done=e._done||false;
+    if(done)calDone++;
+    return `<div class="task-row"><div class="chk${done?' done':''}" onclick="toggleCalTask(this,'${e.data}','${e.nome.replace(/'/g,'&apos;')}')"></div><div class="task-txt${done?' done':''}">📅 ${e.nome}</div><span class="ttag" style="color:var(--y);border-color:rgba(212,160,23,.2);background:var(--yb)">Cal</span></div>`;
+  });
+  const taskRows=dayTasks.map((t,i)=>{const s=TS[t.tipo]||TS.geral;return `<div class="task-row"><div class="chk ${t.done?'done':''}" onclick="toggleTask(${i})"></div><div class="task-txt ${t.done?'done':''}" ondblclick="editTaskInline(this,${i})">${t.desc}</div><span class="ttag" style="color:${s.c};border-color:${s.b};background:${s.bg}">${s.l}</span><span style="cursor:pointer;color:var(--t4);font-size:13px;padding:1px 5px;transition:color .12s;line-height:1;user-select:none" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'" onclick="delTask(${i})" title="Remover">×</span></div>`;});
+  const allRows=[...calRows,...taskRows];
+  listEl.innerHTML=allRows.length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:5px 9px">Clique em "+ tarefa" para adicionar</div>':allRows.join('');
+  const done=calDone+dayTasks.filter(t=>t.done).length;
   const tot=calH.length+dayTasks.length;
   const pct=tot?Math.round(done/tot*100):0;
   setEl('task-count',done+'/'+tot);
   const bar=document.getElementById('day-bar');if(bar)bar.style.width=pct+'%';
   setEl('day-pct',pct+'%');
+}
+function toggleCalTask(el,data,nome){
+  const ev=calEvs.find(e=>e.data===data&&e.nome===nome);
+  if(ev){ev._done=!ev._done;save();renderDayTasks();}
 }
 
 function toggleTask(i){dayTasks[i].done=!dayTasks[i].done;save();renderDayTasks();}
@@ -4588,6 +4596,15 @@ function togglePT(fi,ti){
   if(dc===5&&fi===p.fi&&!p.pausado)toast('Todas as tarefas concluídas! Clique em AVANÇAR','var(--y)');
 }
 
+// OS-068 — Feedback inline nível 2
+function feedbackInline(elOrId){
+  const el=typeof elOrId==='string'?document.getElementById(elOrId):elOrId;
+  if(!el)return;
+  el.classList.remove('feedback-success');
+  void el.offsetWidth; // force reflow para reiniciar animação
+  el.classList.add('feedback-success');
+  setTimeout(()=>el.classList.remove('feedback-success'),1600);
+}
 let _notaDebounce=null,_feedbackDebounce=null;
 function salvarNotaFase(fi,val){
   clearTimeout(_notaDebounce);
@@ -4724,6 +4741,7 @@ function criarProjeto(){
   selTipoV='';_npModo='completo';_npUrg='normal';document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));
   const bfEl=document.getElementById('np-brief-fields');if(bfEl)bfEl.innerHTML='';
   addXP(50);toast('Projeto criado! +50 XP 🎉');curProjId=np.id;renderDash();openProj(np.id);
+  setTimeout(()=>feedbackInline(document.querySelector('.proj-card')),200);
   setTimeout(()=>{const row=document.querySelector('.proj-row');if(row)row.classList.add('new-entry');},100);
 }
 
@@ -4944,6 +4962,7 @@ function saveCRMPopup(){
   cl.notas=document.getElementById('cpop-notas').value;
   const activeSt=document.querySelector('.cpop-st-btn.active');if(activeSt)cl.status=activeSt.dataset.st;
   save();renderCRM();closeCRMPopup();toast('Cliente salvo!');
+  setTimeout(()=>{const row=document.querySelector('.cli-row[data-name]');if(row)feedbackInline(row);},150);
 }
 
 // ══ PARCEIROS / FORNECEDORES (OS-043) ══════════════════════
@@ -5584,6 +5603,9 @@ function renderFin(){
   const tM=enM.reduce((s,l)=>s+l.val,0),tE=ent.reduce((s,l)=>s+l.val,0),tS=sai.reduce((s,l)=>s+l.val,0);
   const mg=tE>0?Math.round((tE-tS)/tE*100):0;
   setEl('fin-mes',fmt(tM));setEl('fin-mes-s',enM.length+' entradas');setEl('fin-rec',fmt(arec));setEl('fin-recb',fmt(rec));
+  // OS-068 nível 3: comemorar mês positivo uma vez por mês
+  const _mesAno=m+'-'+y,_ckMes='ph4-comemorou-'+_mesAno;
+  if(tE-tS>0&&!localStorage.getItem(_ckMes)){localStorage.setItem(_ckMes,'1');setTimeout(()=>toast('🎉 Mês positivo! Saldo: '+fmt(tE-tS),'var(--gr)'),800);}
   const mg_el=document.getElementById('fin-marg');if(mg_el){mg_el.textContent=mg+'%';mg_el.className='m-val '+(mg>50?'ok':mg>20?'warn':'danger');}
   const lista=document.getElementById('fin-lista');
   if(lista)lista.innerHTML=lancs.length===0?'<div class="empty-state"><div class="empty-icon empty-float">💰</div><div class="empty-title">Sem lançamentos</div><div class="empty-desc">Registre entradas e saídas para acompanhar a saúde financeira do estúdio.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-lanc\')">+ Novo lançamento</button></div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp','recusado':'vp','perdido':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO','recusado':'RECUSADO','perdido':'PERDIDO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div><span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
@@ -5979,6 +6001,7 @@ function setOrcStatus(st){
 }
 function salvarOrcStatus(){
   saveExtra();closeM('m-orc-detail');renderOrcamentos();toast('Orçamento atualizado!');
+  setTimeout(()=>{const cards=document.querySelectorAll('#orc-list .card');if(cards.length)feedbackInline(cards[0]);},150);
 }
 function deletarOrcamento(){
   if(!confirm('Deletar este orçamento?'))return;
@@ -7454,16 +7477,52 @@ function fecharBusca(){
 function renderBusca(){
   const q=(document.getElementById('busca-input')?.value||'').toLowerCase().trim();
   const res=document.getElementById('busca-res');if(!res)return;
-  if(!q){
-    res.innerHTML='<div style="padding:20px;text-align:center;font-family:var(--mono);font-size:var(--fs-xs);color:var(--t4)">Digite para buscar projetos, clientes, ferramentas e templates</div>';
+  if(q.length<2){
+    res.innerHTML='<div style="padding:20px;text-align:center;font-family:var(--mono);font-size:var(--fs-xs);color:var(--t4)">Digite pelo menos 2 caracteres...</div>';
     return;
   }
-  const items=[];
-  projs.filter(p=>p.nome.toLowerCase().includes(q)||p.cli.toLowerCase().includes(q)||p.tipo.toLowerCase().includes(q)).forEach(p=>items.push({icon:'📁',label:p.nome,sub:p.cli+' · '+FN[p.fi],action:`fecharBusca();openProj(${p.id});nav('gestao',null)`}));
-  clients.filter(c=>c.nome.toLowerCase().includes(q)||(c.serv||'').toLowerCase().includes(q)).forEach(c=>items.push({icon:'👤',label:c.nome,sub:(c.seg||'')+(c.serv?' · '+c.serv:''),action:`fecharBusca();nav('crm',null);setTimeout(()=>openRPG(${c.id}),200)`}));
-  hubData.forEach(cat=>cat.tools.filter(t=>t.n.toLowerCase().includes(q)||(t.d||'').toLowerCase().includes(q)).forEach(t=>items.push({icon:'🔧',label:t.n,sub:cat.n+' · '+t.d,action:`fecharBusca();nav('hub',null)`})));
-  if(items.length===0){res.innerHTML='<div style="padding:24px 12px;text-align:center"><div style="font-size:24px;margin-bottom:8px">🔎</div><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t2);margin-bottom:4px">Nenhum resultado</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Nada encontrado para "'+q+'"</div></div>';return;}
-  res.innerHTML=items.slice(0,10).map((it,i)=>`<div class="busca-item" onclick="${it.action}" style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:var(--radius-md);cursor:pointer;transition:background .1s" onmouseover="this.style.background='var(--s4)'" onmouseout="this.style.background=''"><span style="font-size:20px;flex-shrink:0">${it.icon}</span><div style="flex:1;min-width:0"><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${it.label}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${it.sub}</div></div></div>`).join('');
+  // Grupos de resultados: {label, icon, items[]}
+  const grupos=[];
+  const _item=(icon,label,sub,action)=>({icon,label,sub,action});
+  const _match=s=>s&&s.toLowerCase().includes(q);
+
+  // Projetos
+  const rProj=projs.filter(p=>_match(p.nome)||_match(p.cli)||_match(p.tipo)).map(p=>_item('📁',p.nome,p.cli+' · '+FN[p.fi],`fecharBusca();openProj(${p.id});nav('gestao',null)`));
+  if(rProj.length)grupos.push({label:'Projetos',items:rProj.slice(0,5)});
+
+  // Clientes
+  const rCli=clients.filter(c=>_match(c.nome)||_match(c.serv)||_match(c.seg)).map(c=>_item('👤',c.nome,(c.seg||'')+(c.serv?' · '+c.serv:''),`fecharBusca();nav('crm',null);setTimeout(()=>openRPG(${c.id}),200)`));
+  if(rCli.length)grupos.push({label:'Clientes',items:rCli.slice(0,4)});
+
+  // Propostas
+  const rProp=(typeof propostas!=='undefined'?propostas:[]).filter(p=>_match(p.servico)||_match(p.cliente)).map(p=>_item('📋',p.servico||p.titulo||'Proposta',p.cliente+' · '+(p.status||''),`fecharBusca();nav('pipeline',null)`));
+  if(rProp.length)grupos.push({label:'Pipeline',items:rProp.slice(0,3)});
+
+  // Orçamentos
+  const rOrc=(typeof orcamentos!=='undefined'?orcamentos:[]).filter(o=>_match(o.titulo)||_match(o.cliente)).map(o=>_item('📄',o.titulo,o.cliente+' · '+fmt(o.total||0),`fecharBusca();nav('orcamentos',null)`));
+  if(rOrc.length)grupos.push({label:'Orçamentos',items:rOrc.slice(0,3)});
+
+  // Cases
+  const rCases=(typeof cases!=='undefined'?cases:[]).filter(c=>_match(c.titulo)||_match(c.cliente)||_match(c.desc)).map(c=>_item('🏆',c.titulo,c.cliente||'',`fecharBusca();nav('cases',null)`));
+  if(rCases.length)grupos.push({label:'Cases',items:rCases.slice(0,3)});
+
+  // Lançamentos financeiros
+  const rLanc=(typeof lancs!=='undefined'?lancs:[]).filter(l=>_match(l.desc)||_match(l.proj)).map(l=>_item(l.tipo==='entrada'?'💰':'💸',l.desc,(l.tipo==='entrada'?'+':'-')+fmt(l.val)+' · '+(l.data||''),`fecharBusca();nav('financeiro',null)`));
+  if(rLanc.length)grupos.push({label:'Financeiro',items:rLanc.slice(0,3)});
+
+  // Hub tools
+  const rHub=[];hubData.forEach(cat=>cat.tools.filter(t=>_match(t.n)||_match(t.d)).forEach(t=>rHub.push(_item('🔧',t.n,cat.n+(t.d?' · '+t.d:''),`fecharBusca();nav('hub',null)`))));
+  if(rHub.length)grupos.push({label:'Hub Criativo',items:rHub.slice(0,4)});
+
+  if(grupos.length===0){
+    res.innerHTML='<div style="padding:24px 12px;text-align:center"><div style="font-size:24px;margin-bottom:8px">🔎</div><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t2);margin-bottom:4px">Nenhum resultado</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Nada encontrado para "'+q+'"</div></div>';
+    return;
+  }
+  const itemHtml=(it)=>`<div class="busca-item" onclick="${it.action}" style="display:flex;align-items:center;gap:12px;padding:9px 16px;border-radius:var(--radius-md);cursor:pointer;transition:background .1s" onmouseover="this.style.background='var(--s4)'" onmouseout="this.style.background=''"><span style="font-size:18px;flex-shrink:0;width:24px;text-align:center">${it.icon}</span><div style="flex:1;min-width:0"><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${it.label}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${it.sub}</div></div></div>`;
+  const grpHtml=(g)=>`<div style="padding:6px 16px 2px;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:.08em">${g.label}</div>${g.items.map(itemHtml).join('')}`;
+  // Limitar total a 20 resultados
+  let total=0;const grupos20=grupos.map(g=>{const remaining=Math.max(0,20-total);const its=g.items.slice(0,remaining);total+=its.length;return{...g,items:its};}).filter(g=>g.items.length>0);
+  res.innerHTML=grupos20.map(grpHtml).join('<div style="height:1px;background:var(--e1);margin:4px 0"></div>');
 }
 
 // ─── P2: CRM → PROJETOS DO CLIENTE ───────────────────────────
