@@ -1493,6 +1493,15 @@ button:active{transform:scale(.97)}
 }
 
 
+/* Filter pills (Insights + QNotes) */
+.filter-pill{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:var(--radius-pill);border:1px solid var(--e2);background:var(--s3);color:var(--t3);cursor:pointer;transition:all .12s;white-space:nowrap}
+.filter-pill:hover{border-color:var(--e3);color:var(--t1)}
+.filter-pill.active{background:var(--y);color:#0C0C0D;border-color:var(--y);font-weight:700}
+/* Insight item CRUD */
+.insight-item{padding:8px 12px;border:1px solid var(--e1);border-radius:var(--radius-md);margin-bottom:6px;background:var(--s2);transition:border-color .12s}
+.insight-item:hover{border-color:var(--e2)}
+.insight-item:hover .insight-actions{opacity:1}
+.insight-actions{display:flex;gap:4px;opacity:0;transition:opacity .12s;flex-shrink:0}
 /* Agenda / eventos */
 .ev-item { padding: 7px 0; border-bottom: 1px solid var(--e1); }
 .ev-item:last-child { border-bottom: none; }
@@ -3027,7 +3036,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v11.3.0</span>
+      <span class="version-txt" id="version-label">v11.3.1</span>
       <span class="version-date">16 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -3220,9 +3229,24 @@ button:active{transform:scale(.97);transition:transform .08s}
             </div>
             <div style="padding:6px 14px 8px;display:flex;gap:6px">
               <input class="fi" id="insight-input" placeholder="Anote uma referência, ideia..." style="flex:1;height:32px;font-size:var(--fs-2xs)" onkeydown="if(event.key==='Enter')addInsight()">
+              <select id="insight-cat" class="fi" style="width:72px;height:32px;font-size:var(--fs-2xs);padding:0 4px;flex-shrink:0">
+                <option value="ideia">💡 Ideia</option>
+                <option value="referencia">🔗 Ref</option>
+                <option value="aprendizado">📚 Apren.</option>
+                <option value="cliente">👤 Cliente</option>
+                <option value="outro">• Outro</option>
+              </select>
               <button class="btn-p" style="height:32px;padding:0 10px;font-size:var(--fs-2xs);flex-shrink:0" onclick="addInsight()">+</button>
             </div>
-            <div id="insights-list" style="max-height:90px;overflow-y:auto"></div>
+            <div style="padding:0 14px 8px;display:flex;gap:5px;flex-wrap:wrap">
+              <button class="filter-pill active" onclick="filtrarInsights('todos')">Todos</button>
+              <button class="filter-pill" onclick="filtrarInsights('ideia')">💡</button>
+              <button class="filter-pill" onclick="filtrarInsights('referencia')">🔗</button>
+              <button class="filter-pill" onclick="filtrarInsights('aprendizado')">📚</button>
+              <button class="filter-pill" onclick="filtrarInsights('cliente')">👤</button>
+            </div>
+            <input type="hidden" id="insights-filtro" value="todos">
+            <div id="insights-list" style="padding:0 14px 8px;max-height:280px;overflow-y:auto"></div>
           </div>
         </div>
 
@@ -4014,7 +4038,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v11.3.0';
+const APP_VERSION='v11.3.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4050,7 +4074,10 @@ let curProjId=projs[0]?.id||null;
 let selTipoV='';
 let propAtualId=null;
 let rpgClientId=null;
-let insightsList=JSON.parse(localStorage.getItem('ph4-insights')||'[]');
+let insightsList=JSON.parse(localStorage.getItem('ph4-insights')||'[]').map(x=>{
+  if(x.texto!==undefined)return x;
+  return{id:x.id||Date.now()+Math.floor(Math.random()*9999),texto:x.txt||'',categoria:'ideia',criadoEm:x.data||new Date().toLocaleDateString('pt-BR'),editadoEm:null};
+});
 let doseIdx=null;
 let desafioFeito=false;
 
@@ -5413,7 +5440,10 @@ function copiarRelatorio(){
 // ══════════════════════════════════════════════════════════
 // GAP 4 — NOTAS RÁPIDAS
 // ══════════════════════════════════════════════════════════
-let qNotes=JSON.parse(localStorage.getItem('ph4-qnotes')||'[]');
+let qNotes=JSON.parse(localStorage.getItem('ph4-qnotes')||'[]').map(x=>{
+  if(x.texto!==undefined)return x;
+  return{id:x.id||Date.now()+Math.floor(Math.random()*9999),texto:x.text||'',categoria:x.tag||'ideia',criadoEm:x.date||new Date().toLocaleDateString('pt-BR'),editadoEm:null};
+});
 function abrirNotas(){
   renderQNotes();
   document.getElementById('qnotes-drawer').classList.add('open');
@@ -5422,19 +5452,20 @@ function abrirNotas(){
 }
 function fecharNotas(){document.getElementById('qnotes-drawer').classList.remove('open');document.body.style.overflow='';}
 function salvarNota(){
-  const text=document.getElementById('qn-text').value.trim();if(!text)return;
-  const tag=document.getElementById('qn-tag').value;
-  const now=new Date();
-  qNotes.unshift({id:Date.now(),text,tag,date:now.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})});
+  const texto=document.getElementById('qn-text').value.trim();if(!texto)return;
+  const categoria=document.getElementById('qn-tag').value;
+  qNotes.unshift({id:Date.now(),texto,categoria,criadoEm:new Date().toLocaleDateString('pt-BR'),editadoEm:null});
   localStorage.setItem('ph4-qnotes',JSON.stringify(qNotes));
   document.getElementById('qn-text').value='';
   renderQNotes();atualizarBadgeNotas();toast('Nota salva!');
 }
-function deletarNota(id){
+function excluirQNote(id){
+  if(!confirm('Excluir esta nota?'))return;
   qNotes=qNotes.filter(n=>n.id!==id);
   localStorage.setItem('ph4-qnotes',JSON.stringify(qNotes));
-  renderQNotes();atualizarBadgeNotas();
+  renderQNotes();atualizarBadgeNotas();toast('Nota removida','var(--t3)');
 }
+function deletarNota(id){excluirQNote(id);}// alias retrocompat
 function atualizarBadgeNotas(){
   const b=document.getElementById('qnbadge');
   if(!b)return;
@@ -5443,10 +5474,55 @@ function atualizarBadgeNotas(){
 }
 function renderQNotes(){
   const el=document.getElementById('qn-list');if(!el)return;
-  if(qNotes.length===0){el.innerHTML='<div style="text-align:center;padding:32px 12px"><div style="font-size:28px;margin-bottom:8px">💡</div><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t2);margin-bottom:4px">Suas ideias moram aqui</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Capture insights, referências e anotações rápidas</div></div>';return;}
+  const filtro=document.getElementById('qnotes-filtro')?.value||'todos';
+  const lista=[...qNotes].filter(n=>filtro==='todos'||n.categoria===filtro);
   const tCls={ideia:'ideia',cliente:'cliente',copy:'copy',ref:'ref'};
   const tLbl={ideia:'💡 Ideia',cliente:'👤 Cliente',copy:'✍ Copy',ref:'🔗 Ref'};
-  el.innerHTML=qNotes.map(n=>`<div class="qn-item"><span class="qn-del" onclick="deletarNota(${n.id})"><i data-lucide="x" style="width:12px;height:12px"></i></span><div class="qn-tag ${tCls[n.tag]||'ideia'}">${tLbl[n.tag]||'💡 Ideia'}</div><div class="qn-body">${n.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div><div class="qn-date">${n.date}</div></div>`).join('');
+  if(lista.length===0){
+    el.innerHTML='<div style="text-align:center;padding:32px 12px"><div style="font-size:28px;margin-bottom:8px">💡</div><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t2);margin-bottom:4px">Suas ideias moram aqui</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Capture insights, referências e anotações rápidas</div></div>';
+    return;
+  }
+  el.innerHTML=lista.map(n=>`
+    <div class="qn-item" style="position:relative">
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <div style="flex:1">
+          <span id="qnote-txt-${n.id}" style="font-size:var(--fs-sm);color:var(--t1);line-height:1.5;white-space:pre-wrap">${(n.texto||'').replace(/</g,'&lt;')}</span>
+        </div>
+        <div class="insight-actions" style="display:flex;gap:4px;opacity:0;transition:opacity .12s;flex-shrink:0">
+          <button onclick="editarQNote(${n.id})" style="font-family:var(--mono);font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:2px 4px" title="Editar">✎</button>
+          <button onclick="excluirQNote(${n.id})" style="font-family:var(--mono);font-size:14px;color:var(--rd);background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1" title="Excluir">×</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+        <span class="qn-tag ${tCls[n.categoria]||'ideia'}" style="flex-shrink:0">${tLbl[n.categoria]||'💡 Ideia'}</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">${n.criadoEm||''}${n.editadoEm?' · editado '+n.editadoEm:''}</span>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('.qn-item').forEach(row=>{
+    const a=row.querySelector('.insight-actions');
+    row.onmouseenter=()=>{if(a)a.style.opacity='1';};
+    row.onmouseleave=()=>{if(a)a.style.opacity='0';};
+  });
+}
+function editarQNote(id){
+  const item=qNotes.find(x=>x.id===id);if(!item)return;
+  const el=document.getElementById('qnote-txt-'+id);if(!el)return;
+  const ta=document.createElement('textarea');
+  ta.className='fta';ta.value=item.texto||'';
+  ta.style.cssText='width:100%;min-height:60px;font-size:var(--fs-sm)';
+  el.replaceWith(ta);ta.focus();
+  ta.onblur=()=>{
+    item.texto=ta.value.trim();
+    item.editadoEm=new Date().toLocaleDateString('pt-BR');
+    localStorage.setItem('ph4-qnotes',JSON.stringify(qNotes));
+    renderQNotes();
+  };
+}
+function filtrarQNotes(cat){
+  const inp=document.getElementById('qnotes-filtro');if(inp)inp.value=cat;
+  document.querySelectorAll('#qnotes-drawer .filter-pill').forEach(b=>b.classList.remove('active'));
+  if(event&&event.target)event.target.classList.add('active');
+  renderQNotes();
 }
 // Inicializar badge de notas
 setTimeout(atualizarBadgeNotas,500);
@@ -7182,32 +7258,89 @@ function renderInsights(){
   const cnt = document.getElementById('insight-count');
   if(cnt) cnt.textContent = insightsList.length + ' insight' + (insightsList.length !== 1 ? 's' : '');
   if(!el) return;
-  el.innerHTML = insightsList.slice(0, 5).map((ins, i) => `
+  const filtro = document.getElementById('insights-filtro')?.value || 'todos';
+  // insightsList[0] é mais recente (unshift), mantemos essa ordem
+  const sorted = [...insightsList].filter(i => filtro === 'todos' || i.categoria === filtro);
+  if(sorted.length === 0){
+    el.innerHTML = `<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:12px 0">
+      ${insightsList.length === 0 ? 'Anote o que te inspirou hoje.' : 'Nenhum insight nesta categoria.'}</div>`;
+    return;
+  }
+  el.innerHTML = sorted.map(item => `
     <div class="insight-item">
-      <div class="insight-dot"></div>
-      <div class="insight-txt">${ins.txt}</div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <div class="insight-data">${ins.data}</div>
-        <span style="cursor:pointer;color:var(--t4);font-size:var(--fs-xs);transition:color .12s" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'" onclick="delInsight(${i})"><i data-lucide="x" style="width:12px;height:12px"></i></span>
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <div style="flex:1">
+          <span id="insight-txt-${item.id}" style="font-size:var(--fs-sm);color:var(--t1);line-height:1.5">${(item.texto||'').replace(/</g,'&lt;')}</span>
+        </div>
+        <div class="insight-actions">
+          <button onclick="editarInsight(${item.id})" style="font-family:var(--mono);font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:2px 4px" title="Editar">✎</button>
+          <button onclick="excluirInsight(${item.id})" style="font-family:var(--mono);font-size:14px;color:var(--rd);background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1" title="Excluir">×</button>
+        </div>
       </div>
-    </div>`).join('') + (insightsList.length === 0 ? '<div style="text-align:center;padding:16px 12px"><div style="font-size:20px;margin-bottom:6px">✍️</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Anote o que te inspirou hoje</div></div>' : '');
+      <div style="display:flex;align-items:center;gap:8px;margin-top:5px">
+        <span style="font-family:var(--mono);font-size:9px;padding:1px 7px;border-radius:var(--radius-pill);background:var(--s4);color:var(--t3)">${item.categoria||'ideia'}</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">${item.criadoEm||''}${item.editadoEm?' · editado '+item.editadoEm:''}</span>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('.insight-item').forEach(row => {
+    const a = row.querySelector('.insight-actions');
+    row.onmouseenter = () => { if(a) a.style.opacity = '1'; };
+    row.onmouseleave = () => { if(a) a.style.opacity = '0'; };
+  });
 }
 
 function addInsight(){
   const inp = document.getElementById('insight-input');
   if(!inp || !inp.value.trim()) return;
+  const cat = document.getElementById('insight-cat')?.value || 'ideia';
   insightsList.unshift({
-    txt: inp.value.trim(),
-    data: new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'short'})
+    id: Date.now(),
+    texto: inp.value.trim(),
+    categoria: cat,
+    criadoEm: new Date().toLocaleDateString('pt-BR'),
+    editadoEm: null
   });
-  if(insightsList.length > 50) insightsList = insightsList.slice(0, 50); // manter 50 máx
+  if(insightsList.length > 100) insightsList = insightsList.slice(0, 100);
   localStorage.setItem('ph4-insights', JSON.stringify(insightsList));
   inp.value = '';
   renderInsights();
   toast('Insight registrado! 💡');
 }
 
-function delInsight(i){
+function editarInsight(id){
+  const item = insightsList.find(x => x.id === id); if(!item) return;
+  const el = document.getElementById('insight-txt-' + id); if(!el) return;
+  const ta = document.createElement('textarea');
+  ta.className = 'fta'; ta.value = item.texto || '';
+  ta.style.cssText = 'width:100%;min-height:60px;font-size:var(--fs-sm)';
+  el.replaceWith(ta); ta.focus();
+  ta.onblur = () => {
+    item.texto = ta.value.trim();
+    item.editadoEm = new Date().toLocaleDateString('pt-BR');
+    localStorage.setItem('ph4-insights', JSON.stringify(insightsList));
+    renderInsights();
+  };
+}
+
+function excluirInsight(id){
+  if(!confirm('Excluir este insight?')) return;
+  insightsList = insightsList.filter(x => x.id !== id);
+  localStorage.setItem('ph4-insights', JSON.stringify(insightsList));
+  renderInsights();
+  const cnt = document.getElementById('insight-count');
+  if(cnt) cnt.textContent = insightsList.length + ' insight' + (insightsList.length !== 1 ? 's' : '');
+  toast('Insight removido', 'var(--t3)');
+}
+
+function filtrarInsights(cat){
+  const inp = document.getElementById('insights-filtro'); if(inp) inp.value = cat;
+  document.querySelectorAll('[onclick^="filtrarInsights"]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('onclick') === `filtrarInsights('${cat}')`);
+  });
+  renderInsights();
+}
+
+function delInsight(i){ // alias retrocompat — index-based fallback
   insightsList.splice(i, 1);
   localStorage.setItem('ph4-insights', JSON.stringify(insightsList));
   renderInsights();
@@ -7772,6 +7905,14 @@ function copiarFeedback(){
     <textarea id="qn-text" rows="3" placeholder="Capture uma ideia, insight ou referência..." style="width:100%;background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-sm);padding:8px 10px;font-size:var(--fs-sm);color:var(--t1);font-family:var(--sans);resize:vertical;outline:none;box-sizing:border-box;transition:border-color .12s" onfocus="this.style.borderColor='var(--y)'" onblur="this.style.borderColor='var(--e2)'" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter')salvarNota()"></textarea>
     <button class="btn-p" style="width:100%;margin-top:8px;font-size:var(--fs-xs)" onclick="salvarNota()">Salvar nota <span style="opacity:.6;font-size:var(--fs-2xs)">⌘↵</span></button>
   </div>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;padding:0 12px 10px">
+    <button class="filter-pill active" onclick="filtrarQNotes('todos')">Todos</button>
+    <button class="filter-pill" onclick="filtrarQNotes('ideia')">💡</button>
+    <button class="filter-pill" onclick="filtrarQNotes('cliente')">👤</button>
+    <button class="filter-pill" onclick="filtrarQNotes('copy')">✍</button>
+    <button class="filter-pill" onclick="filtrarQNotes('ref')">🔗</button>
+  </div>
+  <input type="hidden" id="qnotes-filtro" value="todos">
   <div class="qn-list" id="qn-list"></div>
 </div>
 
