@@ -2094,7 +2094,7 @@ button:active{transform:scale(.97);transition:transform .08s}
       <textarea class="fta" id="np-brief" style="margin-top:6px" placeholder="Observações adicionais..."></textarea>
     </div>
     <div class="fg"><label class="flbl" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="np-gcal" style="width:14px;height:14px;cursor:pointer;accent-color:var(--y)"><span>Criar evento de kickoff no Google Calendar</span></label></div>
-    <div class="modal-footer"><button class="btn-g" onclick="closeM('m-proj')">Cancelar</button><button class="btn-p" onclick="criarProjeto()">Criar projeto</button></div>
+    <div class="modal-footer"><button class="btn-g" onclick="window._propParaMover=null;window._orcParaMover=null;closeM('m-proj')">Cancelar</button><button class="btn-p" onclick="criarProjeto()">Criar projeto</button></div>
   </div>
 </div>
 
@@ -3023,9 +3023,10 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v11.1.1</span>
-      <span class="version-date">04 abr 2026</span>
+      <span class="version-txt" id="version-label">v11.2.0</span>
+      <span class="version-date">16 abr 2026</span>
     </div>
+    <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
   </div>
 </aside>
 <div class="mob-sidebar-overlay" id="mob-sidebar-ov" onclick="toggleSidebarMobile()"></div>
@@ -4016,7 +4017,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v11.1.1';
+const APP_VERSION='v11.2.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4024,7 +4025,7 @@ const FASES=[
   {id:'desenvolv',n:'Desenvolv.',i:'pencil-ruler',xp:120,desc:'Crie, explore e itere. Transforme conceitos em soluções visuais.',tasks:['Desenvolver primeiros esboços e alternativas','Explorar direções tipográficas','Construir sistema de cores','Refinar a opção escolhida','Preparar apresentação das alternativas']},
   {id:'prototipo',n:'Protótipo',i:'monitor',xp:100,desc:'Teste em contexto real. Aplique em mockups e materiais reais.',tasks:['Criar mockups e aplicações da marca','Testar em diferentes suportes','Simular aplicação em redes sociais','Apresentar protótipos ao cliente','Coletar feedback e ajustar']},
   {id:'entrega',n:'Entrega',i:'package',xp:80,desc:'Finalize e entregue. Documente e organize tudo.',tasks:['Aprovar versão final com o cliente','Exportar em todos os formatos','Organizar e nomear os arquivos','Criar manual de uso básico','Enviar pacote de entrega']},
-  {id:'floresc',n:'Florescimento',i:'star',xp:80,desc:'Faça o projeto crescer além da entrega.',tasks:['Publicar no portfólio','Escrever case do projeto','Pedir depoimento ao cliente','Postar nas redes sociais','Pedir indicação ao cliente']}
+  {id:'floresc',n:'Florescimento',i:'star',xp:80,desc:'Reflita, celebre e cresça com o que aprendeu.',tasks:['Solicitar depoimento ao cliente','Analisar o que funcionou neste projeto','Atualizar precificação se necessário','Registrar insights e aprendizados','Celebrar a entrega com você mesmo']}
 ];
 const FN=['Imersão','Definição','Desenvolv.','Protótipo','Entrega','Florescimento'];
 const FT=['f-briefing','f-conceito','f-producao','f-revisao','f-entrega','f-fechado'];
@@ -4539,7 +4540,11 @@ function renderGestao(){
     const _dRef=p.dataEntrega||p.prazo;const _dFmt=_dRef?new Date(_dRef+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):'';
     const _dLbl=_dFmt?'Entrega: '+_dFmt+' · '+(_dr>0?_dr+'d restantes':_dr===0?'hoje':'vencido'):'';
     const _dTag=p.dataEntrega?'<span style="font-family:var(--mono);font-size:var(--fs-2xs);background:var(--s4);padding:1px 5px;border-radius:4px;margin-left:4px">combinada</span>':'';
-    gm.innerHTML=`<span>${p.cli}</span><span>·</span><span>${p.tipo}</span><span>·</span><span style="color:${_dCor};font-weight:600">${_dLbl}${_dTag}</span><span style="cursor:pointer;color:var(--t4);font-size:var(--fs-2xs)" onclick="editarDataEntrega()" title="Alterar data de entrega">✏️</span>`;
+    // BUG-05: mini-timeline de origem
+    let _origemHtml='';
+    if(p.origemPropostaId){const _op=propostas.find(x=>x.id===p.origemPropostaId)||projsFinalizados.find(x=>x.origemPropostaId===p.origemPropostaId);_origemHtml=`<span>·</span><span style="font-family:var(--mono);font-size:10px;color:var(--t4);background:var(--pb);padding:1px 6px;border-radius:var(--radius-sm)">via proposta</span>`;}
+    else if(p.origemOrcamentoId){_origemHtml=`<span>·</span><span style="font-family:var(--mono);font-size:10px;color:var(--t4);background:var(--gb);padding:1px 6px;border-radius:var(--radius-sm)">via orçamento</span>`;}
+    gm.innerHTML=`<span>${p.cli}</span><span>·</span><span>${p.tipo}</span>${_origemHtml}<span>·</span><span style="color:${_dCor};font-weight:600">${_dLbl}${_dTag}</span><span style="cursor:pointer;color:var(--t4);font-size:var(--fs-2xs)" onclick="editarDataEntrega()" title="Alterar data de entrega">✏️</span>`;
   }
   const ga=document.getElementById('g-actions');if(ga)ga.innerHTML=`<div style="display:flex;align-items:center;gap:8px">${!p.pausado?`<button class="pause-btn" onclick="abrirPausa()" style="display:inline-flex;align-items:center;gap:4px"><i data-lucide="pause-circle" style="width:13px;height:13px"></i>Pausar</button>`:`<button class="pause-btn" style="background:var(--gb);color:var(--gr);border-color:rgba(34,197,94,.28);display:inline-flex;align-items:center;gap:4px" onclick="retomar()"><i data-lucide="play-circle" style="width:13px;height:13px"></i>Retomar</button>`}</div><div style="text-align:right"><div style="font-size:var(--fs-2xl);font-weight:900;letter-spacing:-.05em;color:var(--y)">${p.pct}%</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">CONCLUÍDO</div></div>`;
   const bn=document.getElementById('g-pausa-banner');if(bn)bn.innerHTML=p.pausado?`<div class="pausa-banner"><i data-lucide="pause-circle" style="width:16px;height:16px;color:var(--am);flex-shrink:0"></i><div><div style="font-size:var(--fs-xs);font-weight:600;color:var(--am)">Projeto pausado</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t2)">${p.pMot}${p.pObs?' — '+p.pObs:''}</div></div></div>`:'';
@@ -4570,7 +4575,7 @@ function renderFase(p,fi){
     <button class="adv-btn ${all?'rdy':''}" onclick="avancar()" style="display:inline-flex;align-items:center;gap:5px">${fi===4?`<i data-lucide="send" style="width:12px;height:12px"></i>IR PARA LANÇAMENTO`:`<i data-lucide="chevron-right" style="width:12px;height:12px"></i>AVANÇAR`}</button>
     ${fi===4?`<button onclick="openM('m-rejeicao')" style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--rd);background:var(--rb);border:1px solid rgba(239,68,68,.25);padding:4px 10px;border-radius:var(--r2);cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:4px"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i>Entrega rejeitada</button>`:''}
   </div>
-`:''}</div></div><div class="xts" style="margin-bottom:9px"><div class="xfs" style="width:${dc/5*100}%;background:${isCur?'var(--y)':'var(--gr)'}"></div></div>${fase.tasks.map((t,i)=>`<div class="task-row" style="cursor:pointer" onclick="togglePT(${fi},${i})"><div class="chk ${pd[i]?'done':''}">${pd[i]?'<i data-lucide="check" style="width:11px;height:11px"></i>':''}</div><div class="task-txt ${pd[i]?'done':''}">${t}</div></div>`).join('')}</div><div class="g2" style="gap:11px"><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="sticky-note" style="width:12px;height:12px"></i>Notas da fase</div><textarea class="fta" style="margin-top:0" placeholder="Decisões criativas, referências..."></textarea></div><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="message-circle" style="width:12px;height:12px"></i>Feedback do cliente</div><textarea class="fta" style="margin-top:0" placeholder="Cole aqui o feedback recebido..."></textarea></div></div>${flor}`;
+`:''}</div></div><div class="xts" style="margin-bottom:9px"><div class="xfs" style="width:${dc/5*100}%;background:${isCur?'var(--y)':'var(--gr)'}"></div></div>${fase.tasks.map((t,i)=>`<div class="task-row" style="cursor:pointer" onclick="togglePT(${fi},${i})"><div class="chk ${pd[i]?'done':''}">${pd[i]?'<i data-lucide="check" style="width:11px;height:11px"></i>':''}</div><div class="task-txt ${pd[i]?'done':''}">${t}</div></div>`).join('')}</div><div class="g2" style="gap:11px"><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="sticky-note" style="width:12px;height:12px"></i>Notas da fase</div><textarea class="fta" id="g-notas-fase-${fi}" style="margin-top:0" placeholder="Decisões criativas, referências..." oninput="salvarNotaFase(${fi},this.value)">${p.notasFase?.[fi]||''}</textarea></div><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="message-circle" style="width:12px;height:12px"></i>Feedback do cliente</div><textarea class="fta" id="g-feedback-fase-${fi}" style="margin-top:0" placeholder="Cole aqui o feedback recebido..." oninput="salvarFeedbackFase(${fi},this.value)">${p.feedbackFase?.[fi]||''}</textarea></div></div>${flor}`;
 }
 
 function togglePT(fi,ti){
@@ -4583,6 +4588,15 @@ function togglePT(fi,ti){
   if(dc===5&&fi===p.fi&&!p.pausado)toast('Todas as tarefas concluídas! Clique em AVANÇAR','var(--y)');
 }
 
+let _notaDebounce=null,_feedbackDebounce=null;
+function salvarNotaFase(fi,val){
+  clearTimeout(_notaDebounce);
+  _notaDebounce=setTimeout(()=>{const p=projs.find(x=>x.id===curProjId);if(!p)return;if(!p.notasFase)p.notasFase=[];p.notasFase[fi]=val;save();},400);
+}
+function salvarFeedbackFase(fi,val){
+  clearTimeout(_feedbackDebounce);
+  _feedbackDebounce=setTimeout(()=>{const p=projs.find(x=>x.id===curProjId);if(!p)return;if(!p.feedbackFase)p.feedbackFase=[];p.feedbackFase[fi]=val;save();},400);
+}
 function avancar(){
   const p=projs.find(x=>x.id===curProjId);if(!p)return;
   const off=p.fi*5,dc=p.tasks.slice(off,off+5).filter(Boolean).length;
@@ -4699,8 +4713,11 @@ function criarProjeto(){
   const modo=_npModo||'completo';
   const numTasks=modo==='rapido'?15:30;
   const deVal=document.getElementById('np-data-entrega')?.value||'';
-  const np={id:Date.now(),nome,cli,tipo:selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#D4A017',urg:_npUrg!=='normal'?_npUrg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(numTasks).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo,briefing:getBriefData(),dataEntrega:deVal||undefined};
+  const np={id:Date.now(),nome,cli,tipo:selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#D4A017',urg:_npUrg!=='normal'?_npUrg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(numTasks).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo,briefing:getBriefData(),dataEntrega:deVal||undefined,notasFase:[],feedbackFase:[],origemPropostaId:window._propParaMover||null,origemOrcamentoId:window._orcParaMover||null};
   projs.unshift(np);
+  // BUG-01: deletar proposta só após projeto criado com sucesso
+  if(window._propParaMover){propostas=propostas.filter(x=>x.id!==window._propParaMover);saveExtra();window._propParaMover=null;}
+  if(window._orcParaMover){const _orc=orcamentos.find(x=>x.id===window._orcParaMover);if(_orc)_orc.projId=np.id;saveExtra();window._orcParaMover=null;}
   if(document.getElementById('np-gcal').checked){const d=new Date(ini),gs=d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Kickoff: '+nome)}&dates=${gs}/${gs}&details=${encodeURIComponent('paulosa.studio')}` ,'_blank');}
   save();closeM('m-proj');
   document.getElementById('np-nome').value='';const bv=document.getElementById('np-brief');if(bv)bv.value='';const vv=document.getElementById('np-val');if(vv)vv.value='';const deEl=document.getElementById('np-data-entrega');if(deEl)deEl.value='';
@@ -5953,8 +5970,10 @@ function setOrcStatus(st){
       'Landing Page':'#2DD4BF'
     };
     const tipo=o.titulo.split('—')[0]?.trim()||o.titulo;
-    projs.unshift({id:Date.now()+1,nome:o.titulo,cli:o.cliente,tipo:tipo,val:o.total,ini,prazo:ed.toISOString().split('T')[0],dias,fi:0,st:'Em andamento',pausado:false,cor:pcores[tipo]||'#60A5FA',tasks:Array.from({length:30},(_,i)=>({id:i+1,n:`Tarefa ${i+1}`,done:false}))});
-    save();renderProjs();
+    const npId=Date.now()+1;
+    o.projId=npId; // rastreabilidade bidirecional
+    projs.unshift({id:npId,nome:o.titulo,cli:o.cliente,tipo:tipo,val:o.total,ini,prazo:ed.toISOString().split('T')[0],dias,fi:0,pct:0,st:'Em andamento',pausado:false,pMot:'',pObs:'',cor:pcores[tipo]||'#60A5FA',tasks:new Array(30).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo:'completo',briefing:{},notasFase:[],feedbackFase:[],origemOrcamentoId:orcAtualId,origemPropostaId:null});
+    save();saveExtra();renderProjs();
     addXP(80);toast('Projeto criado automaticamente! +80 XP 🎉');
   }
 }
@@ -6273,7 +6292,7 @@ function exportarDados(){
   const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download='paulosahub-'+new Date().toISOString().split('T')[0]+'.json';a.click();URL.revokeObjectURL(url);
-  localStorage.setItem('ph4-ultimo-backup',new Date().toLocaleString('pt-BR'));const el=document.getElementById('ultimo-backup');if(el)el.textContent=localStorage.getItem('ph4-ultimo-backup');toast('Backup exportado!');
+  localStorage.setItem('ph4-ultimo-backup',new Date().toLocaleString('pt-BR'));const el=document.getElementById('ultimo-backup');if(el)el.textContent=localStorage.getItem('ph4-ultimo-backup');atualizarStatusBackup();toast('Backup exportado! ✅');
 }
 function importarDados(event){
   const file=event.target.files[0];if(!file)return;const reader=new FileReader();
@@ -6306,6 +6325,32 @@ function calcPrazo(){const f=parseInt(document.getElementById('r-fila').value),c
 atualizarSidebar();
 // Backup automático a cada 30min
 setInterval(()=>{localStorage.setItem('ph4-auto-backup',JSON.stringify({v:'auto',t:new Date().toISOString(),p:projs.length,c:clients.length}));},30*60*1000);
+
+// BUG-04: Indicador de status de backup no rodapé da sidebar
+function atualizarStatusBackup(){
+  const el=document.getElementById('sb-backup-status');if(!el)return;
+  const ultimo=localStorage.getItem('ph4-ultimo-backup');
+  if(!ultimo){
+    el.innerHTML=`<span style="width:6px;height:6px;border-radius:50%;background:var(--am);flex-shrink:0"></span><span style="font-family:var(--mono);font-size:10px;color:var(--t4)">Sem backup</span>`;
+    return;
+  }
+  const diasAtras=Math.floor((Date.now()-new Date(ultimo).getTime())/86400000);
+  const cor=diasAtras>7?'var(--rd)':diasAtras>2?'var(--am)':'var(--gr)';
+  const label=diasAtras===0?'Backup hoje':diasAtras===1?'Backup ontem':'Backup '+diasAtras+'d atrás';
+  el.innerHTML=`<span style="width:6px;height:6px;border-radius:50%;background:${cor};flex-shrink:0"></span><span style="font-family:var(--mono);font-size:10px;color:var(--t4)">${label}</span>`;
+}
+atualizarStatusBackup();
+// Lembrete de backup após 30 min de uso — apenas se nunca fez backup
+setTimeout(()=>{
+  const ultimoBackup=localStorage.getItem('ph4-ultimo-backup');
+  if(!ultimoBackup&&(projs.length>0||clients.length>0)){
+    const banner=document.createElement('div');
+    banner.style.cssText='position:fixed;bottom:80px;right:24px;background:var(--s2);border:1px solid var(--y);border-radius:var(--radius-lg);padding:14px 18px;z-index:500;max-width:300px;box-shadow:var(--sh4);display:flex;align-items:flex-start;gap:12px;animation:fadeIn .3s ease';
+    banner.innerHTML=`<span style="font-size:20px;flex-shrink:0">💾</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:3px">Faça um backup!</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);line-height:1.5">Seus dados ficam só no navegador. Exporte agora para não perder nada.</div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn-p" style="font-size:11px;height:28px;padding:0 12px" onclick="exportarDados();this.closest('div[style*=fixed]').remove();atualizarStatusBackup()">Exportar agora</button><button class="btn-g" style="font-size:11px;height:28px;padding:0 10px" onclick="this.closest('div[style*=fixed]').remove()">Depois</button></div></div>`;
+    document.body.appendChild(banner);
+    setTimeout(()=>banner.remove(),15000);
+  }
+},30*60*1000);
 
 
 
@@ -7229,19 +7274,18 @@ function calDiaClick(ds){
 
 // ─── P1: PIPELINE → FINANCEIRO (auto-suggest) ───────────────
 // Sobrescreve moverParaProducao para oferecer entrada financeira
+// BUG-01 fix: não deletar proposta antes de criar projeto — só deletar em criarProjeto()
 (function(){
   const _orig = moverParaProducao;
   moverParaProducao = function(){
     const p = propostas.find(x=>x.id===propAtualId);
     if(!p) return;
     if(p.contrato!=='assinado'){toast('Assine o contrato antes!','var(--am)');return;}
-    // Salva referência ao valor da proposta para pré-preencher financeiro
+    // Guarda referência para usar em criarProjeto() — NÃO deletar aqui
     window._propMoverVal = p.val;
     window._propMoverCli = p.cliente;
     window._propMoverServ = p.servico;
-    // Remove da lista de propostas (moveu para produção)
-    propostas = propostas.filter(x=>x.id!==propAtualId);
-    saveExtra();
+    window._propParaMover = propAtualId; // ID guardado para deletar após projeto criado
     closeM('m-prop-detail');
     const nn=document.getElementById('np-nome');if(nn)nn.value=p.servico+' — '+p.cliente;
     const cliSel=document.getElementById('np-cli');if(cliSel)cliSel.value=p.cliente;
