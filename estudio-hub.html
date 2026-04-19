@@ -3044,7 +3044,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v11.4.0</span>
+      <span class="version-txt" id="version-label">v11.4.1</span>
       <span class="version-date">16 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -4046,7 +4046,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v11.4.0';
+const APP_VERSION='v11.4.1';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -5207,31 +5207,31 @@ function renderPerfilDinamico(){
     <div class="card" style="text-align:center"><div style="font-size:var(--fs-2xl);font-weight:800;letter-spacing:-.05em;color:var(--y)">${lv}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500">Nível atual</div></div>
   `;
 
-  // Progressão de nível
-  const LEVELS=[
-    {n:'Iniciante',ico:'🌱',min:0,max:199,xpReq:0},
-    {n:'Júnior',ico:'✏️',min:200,max:399,xpReq:200},
-    {n:'Pleno',ico:'⚡',min:400,max:599,xpReq:400},
-    {n:'Sênior',ico:'🔥',min:600,max:799,xpReq:600},
-    {n:'Mestre',ico:'💎',min:800,max:1000,xpReq:800}
-  ];
+  // Progressão de nível — usa a tabela global NIVEIS (OS-072)
+  const nivelAtual=getNivelAtual(xp);
   const ltEl=document.getElementById('perfil-level-track');
-  if(ltEl) ltEl.innerHTML=LEVELS.map((l,i)=>{
-    const done=xp>=l.max+1||xp>l.min;
-    const current=lv===l.n;
-    const cls=current?'current':xp>=l.xpReq?'done':'';
-    return `<div class="level-step ${xp>=l.xpReq?'done':''}">
-      <div class="level-dot ${cls}">${l.ico}</div>
-      <div class="level-lbl ${cls}">${l.n}</div>
-      <div class="level-xp">${l.xpReq}xp</div>
+  if(ltEl) ltEl.innerHTML=NIVEIS.map((n,i)=>{
+    const isPast=nivelAtual.nivel>n.nivel;       // já superou este nível
+    const isCur=nivelAtual.nivel===n.nivel;      // nível atual
+    const isLocked=xp<n.xpMin;                  // ainda não atingiu
+    // step.done controla a linha conectora (só ilumina se já passou)
+    const stepCls=isPast?'done':'';
+    const dotCls=isCur?'current':isPast?'done':'';
+    return `<div class="level-step ${stepCls}">
+      <div class="level-dot ${dotCls}" style="${isCur?'border-color:'+n.cor+';background:'+n.cor+';':isPast?'border-color:'+n.cor+';background:'+n.cor+'22;':''}">
+        <span style="${isLocked?'opacity:.35':''}">${n.icone}</span>
+      </div>
+      <div class="level-lbl ${dotCls}" style="${(isCur||isPast)?'color:'+n.cor:''}">
+        ${n.titulo.toUpperCase()}
+      </div>
+      <div class="level-xp">${n.xpMin===0?'0xp':n.xpMin>=1000?(n.xpMin/1000)+'kxp':n.xpMin+'xp'}</div>
     </div>`;
   }).join('');
   const ldEl=document.getElementById('perfil-level-desc');
   if(ldEl){
-    const curLv=LEVELS.find(l=>l.n===lv);
-    const nextLv=LEVELS[LEVELS.findIndex(l=>l.n===lv)+1];
-    if(nextLv) ldEl.textContent=`${xp} XP — faltam ${nextLv.xpReq-xp} XP para ${nextLv.n}`;
-    else ldEl.textContent=`${xp} XP — Nível máximo atingido! 🏆`;
+    const nextN=NIVEIS[nivelAtual.nivel];// nivel.nivel é 1-based, NIVEIS[nivel.nivel] é o próximo
+    if(nextN) ldEl.textContent=`${xp.toLocaleString('pt-BR')} XP — faltam ${(nextN.xpMin-xp).toLocaleString('pt-BR')} XP para ${nextN.titulo}`;
+    else ldEl.textContent=`${xp.toLocaleString('pt-BR')} XP — Nível máximo atingido! 🌟`;
   }
 
   // Meta no perfil
@@ -5264,8 +5264,8 @@ function renderPerfilDinamico(){
   const CONQS=[
     {ico:'🏆',n:'Primeiro projeto',d:'Complete 1 projeto',ok:totalProjs>=1},
     {ico:'👥',n:'5 clientes',d:'Tenha 5 clientes',ok:clients.length>=5},
-    {ico:'🚀',n:'Nível Sênior',d:'Alcance 600 XP',ok:xp>=600},
-    {ico:'💎',n:'Mestre',d:'Alcance 800 XP',ok:xp>=800},
+    {ico:'🚀',n:'Nível Sênior',d:'Alcance 3.500 XP',ok:xp>=3500},
+    {ico:'💎',n:'Mestre',d:'Alcance 7.000 XP',ok:xp>=7000},
     {ico:'🌱',n:'5 florescimentos',d:'5 projetos finalizados',ok:florescimentos>=5},
     {ico:'🔥',n:'10 florescimentos',d:'10 projetos finalizados',ok:florescimentos>=10},
     {ico:'🎯',n:'Zero atrasos',d:'Nenhum projeto atrasado',ok:semAtrasos&&projs.length>0},
