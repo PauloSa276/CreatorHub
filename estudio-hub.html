@@ -892,6 +892,10 @@ button:active{transform:scale(.97)}
 .cel-box{max-width:380px}
 .cel-em{font-size:56px;margin-bottom:var(--sp-3);animation:bounce .6s ease}
 @keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes fadeOut{to{opacity:0}}
+@keyframes slideUpXP{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounceFloat{from{transform:scale(1)}to{transform:scale(1.08)}}
 .cel-title{font-size:var(--fs-2xl);font-weight:var(--fw-black);color:var(--t1);letter-spacing:-.03em;margin-bottom:var(--sp-1)}
 .cel-sub{font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--sp-2)}
 .cel-xp{font-size:var(--fs-xl);font-weight:var(--fw-black);color:var(--y);letter-spacing:-.02em;margin-bottom:var(--sp-4)}
@@ -3024,11 +3028,12 @@ button:active{transform:scale(.97);transition:transform .08s}
   </div>
   </div><!-- /nav-scroll -->
   <div class="sb-bot">
-    <div class="xp-row" style="display:none">
-      <span class="xp-lv" id="xp-lv"></span>
-      <span class="xp-num" id="xp-num"></span>
+    <div class="xp-row">
+      <span class="xp-lv" id="nivel-titulo" style="font-size:10px;font-weight:600"></span>
+      <span class="xp-num" id="xp-label"></span>
     </div>
-    <div class="xp-track" style="display:none"><div class="xp-fill" id="xp-bar" style="width:0%"></div></div>
+    <div style="padding:0 16px 3px;font-family:var(--mono);font-size:9px;color:var(--t4)" id="nivel-numero"></div>
+    <div class="xp-track"><div class="xp-fill" id="xp-bar-fill" style="width:0%"></div></div>
     <div class="user-card" onclick="nav('perfil',null)">
       <div class="user-av" id="sb-av">P</div>
       <div style="flex:1;min-width:0">
@@ -3039,7 +3044,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v11.3.2</span>
+      <span class="version-txt" id="version-label">v11.4.0</span>
       <span class="version-date">16 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -4041,7 +4046,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v11.3.2';
+const APP_VERSION='v11.4.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4244,22 +4249,110 @@ function closeM(id){const el=document.getElementById(id);if(el)el.classList.remo
 document.querySelectorAll('.moverlay').forEach(el=>el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 
 // ── XP ────────────────────────────────────────────────
+const NIVEIS=[
+  {nivel:1,titulo:'Iniciante',  xpMin:0,    xpMax:500,  cor:'#84827C',icone:'🌱'},
+  {nivel:2,titulo:'Júnior',     xpMin:500,  xpMax:1500, cor:'#60A5FA',icone:'⚡'},
+  {nivel:3,titulo:'Pleno',      xpMin:1500, xpMax:3500, cor:'#22C55E',icone:'🔥'},
+  {nivel:4,titulo:'Sênior',     xpMin:3500, xpMax:7000, cor:'#A78BFA',icone:'💎'},
+  {nivel:5,titulo:'Mestre',     xpMin:7000, xpMax:12000,cor:'#D4A017',icone:'⭐'},
+  {nivel:6,titulo:'Referência', xpMin:12000,xpMax:20000,cor:'#F472B6',icone:'🏆'},
+  {nivel:7,titulo:'Lenda',      xpMin:20000,xpMax:null, cor:'#FF6B35',icone:'🌟'},
+];
+const XP_ACOES={
+  criarProjeto:50,avancarFase:80,concluirProjeto:300,concluirModoRapido:150,
+  briefingCompleto:100,semRevisoes:200,entregaNoPrazo:150,
+  criarOrcamento:40,orcamentoAprovado:200,criarProposta:30,propostaFechada:180,
+  criarCliente:60,criarParceiro:40,
+  metaMensalAtingida:250,registrarLancamento:20,
+  abrirPlataforma:10,completarDesafio:120,registrarInsight:30,taskConcluida:15,
+  sessaoFoco30min:80,sessaoFoco60min:150,
+};
+function getXPTotal(){return xpTotal;}
+function salvarXP(v){xpTotal=v;localStorage.setItem('ph4-xp',String(v));}
+function getNivelAtual(xp){
+  for(let i=NIVEIS.length-1;i>=0;i--){if(xp>=NIVEIS[i].xpMin)return NIVEIS[i];}
+  return NIVEIS[0];
+}
+function getProgressoNivel(xp){
+  const n=getNivelAtual(xp);
+  if(!n.xpMax)return 100;
+  return Math.min(100,Math.round((xp-n.xpMin)/(n.xpMax-n.xpMin)*100));
+}
+function ganharXP(acao,quantidade){
+  const xpAtual=getXPTotal();
+  const nivelAntes=getNivelAtual(xpAtual);
+  const ganho=quantidade||(acao?XP_ACOES[acao]:0)||0;
+  if(!ganho)return;
+  const novoXP=xpAtual+ganho;
+  salvarXP(novoXP);
+  renderXPSidebar();
+  const nivelDepois=getNivelAtual(novoXP);
+  if(nivelDepois.nivel>nivelAntes.nivel){
+    setTimeout(()=>mostrarCerimoniaLevelUp(nivelDepois),400);
+  } else {
+    mostrarXPGanho(ganho);
+  }
+}
+function addXP(v){ganharXP(null,v);}// delegação retrocompat — mantém todo código existente funcionando
+function renderXP(){renderXPSidebar();}// alias retrocompat
+function renderXPSidebar(){
+  const xp=getXPTotal();
+  const nivel=getNivelAtual(xp);
+  const proximo=NIVEIS[nivel.nivel];// índice = nivel.nivel pois array é 0-based com nivel 1 em [0]
+  const pct=getProgressoNivel(xp);
+  setEl('nivel-titulo',nivel.icone+' '+nivel.titulo);
+  setEl('nivel-numero','Nível '+nivel.nivel+' de 7');
+  if(proximo){
+    setEl('xp-label',xp.toLocaleString('pt-BR')+'/'+proximo.xpMin.toLocaleString('pt-BR'));
+  } else {
+    setEl('xp-label',xp.toLocaleString('pt-BR')+' · máx');
+  }
+  const bar=document.getElementById('xp-bar-fill');
+  if(bar){bar.style.width=pct+'%';bar.style.background=nivel.cor;}
+  const tEl=document.getElementById('nivel-titulo');
+  if(tEl)tEl.style.color=nivel.cor;
+}
 function _xpLabel(xp){
-  if(xp<200) return 'Nível 1 — Iniciante';
-  if(xp<400) return 'Nível 2 — Júnior';
-  if(xp<600) return 'Nível 3 — Pleno';
-  if(xp<800) return 'Nível 4 — Sênior';
-  return 'Nível 5 — Mestre';
+  const n=getNivelAtual(xp);
+  return 'Nível '+n.nivel+' — '+n.titulo;
 }
-function renderXP(){
-  const bar=document.getElementById('xp-bar');if(bar)bar.style.width=(xpTotal/10)+'%';
-  const num=document.getElementById('xp-num');if(num)num.textContent=xpTotal+'/1000';
-  const lvEl=document.getElementById('xp-lv');if(lvEl)lvEl.textContent=_xpLabel(xpTotal);
+function mostrarCerimoniaLevelUp(nivel){
+  const ov=document.createElement('div');
+  ov.id='levelup-overlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(8,8,9,0.92);display:flex;align-items:center;justify-content:center;animation:fadeIn .3s ease';
+  ov.innerHTML=`<div style="text-align:center;max-width:420px;padding:40px;animation:scaleIn .4s cubic-bezier(.34,1.4,.64,1)">
+    <div style="font-size:72px;margin-bottom:16px;animation:bounceFloat 1s ease infinite alternate">${nivel.icone}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--y);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px">Novo nível desbloqueado</div>
+    <div style="font-size:42px;font-weight:900;letter-spacing:-.04em;color:${nivel.cor};line-height:1;margin-bottom:12px">${nivel.titulo}</div>
+    <div style="font-size:15px;color:var(--t2);line-height:1.6;margin-bottom:32px">${getMensagemNivel(nivel.nivel)}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:32px">${(nivel.xpMin).toLocaleString('pt-BR')} XP · Nível ${nivel.nivel} de 7</div>
+    <button onclick="fecharCerimoniaLevelUp()" style="height:46px;padding:0 32px;background:${nivel.cor};color:#080809;border:none;border-radius:999px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:-.01em">Continuar →</button>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('click',e=>{if(e.target===ov)fecharCerimoniaLevelUp();});
+  localStorage.setItem('ph4-nivel-celebrado',String(nivel.nivel));
 }
-function addXP(v){
-  xpTotal=Math.min(xpTotal+v,1000);
-  renderXP();
-  save();
+function fecharCerimoniaLevelUp(){
+  const el=document.getElementById('levelup-overlay');
+  if(el){el.style.animation='fadeOut .2s ease forwards';setTimeout(()=>el.remove(),200);}
+}
+function getMensagemNivel(n){
+  const msgs={
+    2:'Você está construindo ritmo. Cada projeto concluído é uma prova de que você está no caminho certo.',
+    3:'Meio caminho andado. Designers plenos sabem que processo e entrega não são opostos — são parceiros.',
+    4:'Sênior. Você já não entrega só o trabalho — entrega confiança. Clientes percebem isso.',
+    5:'Mestre do ofício. Poucos chegam aqui. Seu estúdio é prova de consistência e ambição.',
+    6:'Referência no mercado. O que você constrói hoje inspira outros designers amanhã.',
+    7:'Lenda. Não há mais nível — só legado. Continue sendo o padrão que outros querem alcançar.',
+  };
+  return msgs[n]||'Você evoluiu. Siga em frente.';
+}
+function mostrarXPGanho(quantidade){
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;bottom:80px;right:24px;z-index:999;background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-pill);padding:6px 14px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--y);display:flex;align-items:center;gap:6px;animation:slideUpXP .25s ease,fadeOut .3s ease 1.5s forwards;pointer-events:none';
+  el.innerHTML='⚡ +'+quantidade+' XP';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2000);
 }
 
 // ── CELEBRAÇÃO ────────────────────────────────────────
@@ -4770,7 +4863,7 @@ function criarProjeto(){
   document.getElementById('np-nome').value='';const bv=document.getElementById('np-brief');if(bv)bv.value='';const vv=document.getElementById('np-val');if(vv)vv.value='';const deEl=document.getElementById('np-data-entrega');if(deEl)deEl.value='';
   selTipoV='';_npModo='completo';_npUrg='normal';document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));
   const bfEl=document.getElementById('np-brief-fields');if(bfEl)bfEl.innerHTML='';
-  addXP(50);toast('Projeto criado! +50 XP 🎉');curProjId=np.id;renderDash();openProj(np.id);
+  ganharXP('criarProjeto');toast('Projeto criado! +50 XP 🎉');curProjId=np.id;renderDash();openProj(np.id);
   setTimeout(()=>feedbackInline(document.querySelector('.proj-card')),200);
   setTimeout(()=>{const row=document.querySelector('.proj-row');if(row)row.classList.add('new-entry');},100);
 }
@@ -4870,7 +4963,7 @@ function criarCliente(){
   }
   save();closeM('m-cliente');renderCRM();renderDash();
   if(projTipo){renderProjs();if(typeof renderPipeline==='function')renderPipeline();}
-  addXP(projTipo?80:30);toast(projTipo?'Cliente + projeto criados! +80 XP 🎉':'Cliente adicionado! +30 XP');
+  ganharXP('criarCliente');toast(projTipo?'Cliente + projeto criados! 🎉':'Cliente adicionado!');
 }
 
 // ── FICHA RPG ─────────────────────────────────────────
@@ -5348,6 +5441,8 @@ function stopFocus(){
   if(focusState.projId&&secs>10){
     const p=projs.find(x=>x.id===focusState.projId);
     if(p){if(!p.sessions)p.sessions=[];p.sessions.push({ts:Date.now(),secs,date:new Date().toLocaleDateString('pt-BR')});save();toast('Sessão de '+fmtTime(secs)+' registrada!');}
+    if(secs>=3600){ganharXP('sessaoFoco60min');}
+    else if(secs>=1800){ganharXP('sessaoFoco30min');}
   }
   focusState={running:false,paused:false,projId:null,_start:null,_elapsed:0,_iv:null};
   document.getElementById('qa-fab').classList.remove('running');
@@ -6002,7 +6097,7 @@ function salvarOrcamento(){
     if(orc){Object.assign(orc,{cliente:cli,titulo,itens,subtotal,horas,descPct,descVal,total,validade,obs});}
   }else{
     orcamentos.unshift({id:Date.now(),cliente:cli,titulo,itens,subtotal,horas,descPct,descVal,total,validade,obs,status:'rascunho',data:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})});
-    addXP(40);toast('Orçamento criado! +40 XP 🎉');
+    ganharXP('criarOrcamento');toast('Orçamento criado! +40 XP 🎉');
   }
   saveExtra();closeM('m-orcamento');renderOrcamentos();
 }
@@ -6075,7 +6170,7 @@ function setOrcStatus(st){
     o.projId=npId; // rastreabilidade bidirecional
     projs.unshift({id:npId,nome:o.titulo,cli:o.cliente,tipo:tipo,val:o.total,ini,prazo:ed.toISOString().split('T')[0],dias,fi:0,pct:0,st:'Em andamento',pausado:false,pMot:'',pObs:'',cor:pcores[tipo]||'#60A5FA',tasks:new Array(30).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo:'completo',briefing:{},notasFase:[],feedbackFase:[],origemOrcamentoId:orcAtualId,origemPropostaId:null});
     save();saveExtra();renderProjs();
-    addXP(80);toast('Projeto criado automaticamente! +80 XP 🎉');
+    ganharXP('orcamentoAprovado');toast('Orçamento aprovado! Projeto criado 🎉');
   }
 }
 function salvarOrcStatus(){
@@ -6986,9 +7081,8 @@ function abrirTelaRPG(p){
     save();
   }
 
-  // XP baseado na nota
-  const xpGanho = Math.round(nota * 20);
-  addXP(xpGanho);
+  // XP por conclusão de projeto
+  ganharXP('concluirProjeto');
 
   // Confetti proporcional à nota
   if(nota >= 4){
@@ -7252,7 +7346,7 @@ function toggleDesafio(){
   localStorage.setItem('ph4-desafio-' + semana, desafioFeito ? '1' : '0');
   const chkEl = document.getElementById('desafio-chk');
   if(chkEl){ chkEl.classList.toggle('done', desafioFeito); chkEl.textContent = ''; }
-  if(desafioFeito){ addXP(20); toast('Desafio concluído! +20 XP 🎨'); }
+  if(desafioFeito){ ganharXP('completarDesafio'); toast('Desafio concluído! +120 XP 🎨'); }
   else toast('Desafio desmarcado');
 }
 
@@ -7307,7 +7401,7 @@ function addInsight(){
   localStorage.setItem('ph4-insights', JSON.stringify(insightsList));
   inp.value = '';
   renderInsights();
-  toast('Insight registrado! 💡');
+  ganharXP('registrarInsight');toast('Insight registrado! 💡');
 }
 
 function editarInsight(id){
@@ -7385,6 +7479,15 @@ renderDash();
 atualizarBadgeCases();
 // Inicializa Lucide icons em toda a página (sidebar + inicial)
 setTimeout(refreshIcons, 100);
+// XP diário por abrir a plataforma (1x por dia)
+(function(){
+  const hoje=new Date().toISOString().split('T')[0];
+  const ultimo=localStorage.getItem('ph4-ultimo-acesso');
+  if(ultimo!==hoje){
+    localStorage.setItem('ph4-ultimo-acesso',hoje);
+    setTimeout(()=>ganharXP('abrirPlataforma'),1200);
+  }
+})();
 
 // ═══════════════════════════════════════════════════════════════
 // MELHORIAS UX — PRIORIDADE 1, 2 e 3
