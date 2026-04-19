@@ -3044,7 +3044,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v11.4.1</span>
+      <span class="version-txt" id="version-label">v12.0.0</span>
       <span class="version-date">16 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -4046,7 +4046,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v11.4.1';
+const APP_VERSION='v12.0.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4384,7 +4384,7 @@ function nav(id,el){
   document.querySelectorAll('.mob-tab').forEach(t=>t.classList.toggle('active',t.dataset.page===id));
   // Scroll main area to top on page change
   const mainEl=document.querySelector('.main');if(mainEl)mainEl.scrollTop=0;
-  const R={dashboard:renderDash,projetos:renderProjs,gestao:renderGestao,calendario:renderCal,crm:renderCRM,financeiro:renderFin,hub:renderHub,metricas:renderMetricas,cases:renderCases,pipeline:renderPipeline,orcamentos:renderOrcamentos,perfil:renderPerfilDinamico};
+  const R={dashboard:renderDash,projetos:renderProjs,gestao:renderGestao,calendario:renderCal,crm:renderCRM,financeiro:renderFin,hub:renderHub,metricas:renderMetricas,cases:renderCases,pipeline:renderPipeline,orcamentos:renderOrcamentos,perfil:renderPerfilDinamico,templates:renderMeusTemplates};
   if(R[id])R[id]();
   if(id==='config'){
     const ub=document.getElementById('ultimo-backup');if(ub)ub.textContent=localStorage.getItem('ph4-ultimo-backup')||'Nunca';
@@ -5403,7 +5403,7 @@ function qaAction(type){
   switch(type){
     case 'timer':toggleFocusWidget();break;
     case 'notas':abrirNotas();break;
-    case 'projeto':openM('m-novo');break;
+    case 'projeto':openM('m-proj');break;
     case 'busca':abrirBusca();break;
     case 'relatorio':gerarRelatorio();break;
   }
@@ -7753,6 +7753,10 @@ function renderBusca(){
   const rHub=[];hubData.forEach(cat=>cat.tools.filter(t=>_match(t.n)||_match(t.d)).forEach(t=>rHub.push(_item('🔧',t.n,cat.n+(t.d?' · '+t.d:''),`fecharBusca();nav('hub',null)`))));
   if(rHub.length)grupos.push({label:'Hub Criativo',items:rHub.slice(0,4)});
 
+  // Templates do usuário
+  const rTpl=meusTemplates.filter(t=>_match(t.nome)||_match(t.tipo)||_match(t.descricao)).map(t=>_item('⊟',t.nome,(t.tipo||'Template')+(t.modo?' · '+(t.modo==='rapido'?'⚡ Rápido':'Completo'):''),`fecharBusca();nav('templates',null)`));
+  if(rTpl.length)grupos.push({label:'Templates',items:rTpl.slice(0,4)});
+
   if(grupos.length===0){
     res.innerHTML='<div style="padding:24px 12px;text-align:center"><div style="font-size:24px;margin-bottom:8px">🔎</div><div style="font-size:var(--fs-sm);font-weight:600;color:var(--t2);margin-bottom:4px">Nenhum resultado</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Nada encontrado para "'+q+'"</div></div>';
     return;
@@ -7802,7 +7806,8 @@ function _obRender(){
         <div class="fg"><label class="flbl">Especialidade *</label><input class="fi" id="ob-espec" placeholder="Ex: Branding & Identidade Visual" value="${localStorage.getItem('ph4-espec')||''}"></div>
         <div class="fg"><label class="flbl">Site</label><input class="fi" id="ob-site" placeholder="Ex: meuestudio.com" value="${localStorage.getItem('ph4-site')||''}"></div>
       </div>
-      <button class="btn-p" style="width:100%;height:44px;font-size:14px;margin-top:20px" onclick="_obNext1()">Continuar</button>`;
+      <button class="btn-p" style="width:100%;height:44px;font-size:14px;margin-top:20px" onclick="_obNext1()">Continuar</button>
+      <div style="text-align:center;margin-top:12px"><span onclick="pularOnboarding()" style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);cursor:pointer;text-decoration:underline;text-underline-offset:3px">Pular configuração</span></div>`;
   } else if(_obStep===2){
     content=`${stepLabel}${dots}
       <div style="font-size:48px;margin-bottom:16px">👤</div>
@@ -7865,6 +7870,14 @@ function _obFinish(){
   if(crmBadge)crmBadge.textContent=clients.length;
   const projBadge=document.querySelector('[data-page="projetos"] .badge');
   if(projBadge)projBadge.textContent=projs.length;
+}
+function pularOnboarding(){
+  // Definir mínimos para não deixar o app sem dados essenciais
+  if(!localStorage.getItem('ph4-studio'))localStorage.setItem('ph4-studio','Meu Estúdio');
+  if(!localStorage.getItem('ph4-espec'))localStorage.setItem('ph4-espec','Design');
+  localStorage.setItem('ph4-onboarded','1');
+  const ov=document.getElementById('ob-overlay');if(ov)ov.remove();
+  nav('dashboard',null);renderDash();atualizarSidebar();
 }
 (function(){
   if(localStorage.getItem('ph4-onboarded')) return;
