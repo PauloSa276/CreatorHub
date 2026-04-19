@@ -2908,11 +2908,11 @@ button:active{transform:scale(.97);transition:transform .08s}
       <label class="flbl">Retomar a partir de qual fase?</label>
       <div id="rej-fases-opts" style="margin-top:4px">
         <div class="rej-opt" onclick="selRejFase(this,1)" data-fi="1">
-          <div class="rej-opt-ico">◐</div>
+          <div class="rej-opt-ico"><i data-lucide="lightbulb" style="width:18px;height:18px"></i></div>
           <div><div class="rej-opt-title">Definição — Reconceitar</div><div class="rej-opt-desc">Voltar ao conceito criativo central e redefinir a direção</div></div>
         </div>
         <div class="rej-opt" onclick="selRejFase(this,2)" data-fi="2">
-          <div class="rej-opt-ico">◈</div>
+          <div class="rej-opt-ico"><i data-lucide="pencil-ruler" style="width:18px;height:18px"></i></div>
           <div><div class="rej-opt-title">Desenvolvimento — Recriar</div><div class="rej-opt-desc">Manter o conceito mas recriar os elementos visuais</div></div>
         </div>
         <div class="rej-opt" onclick="selRejFase(this,3)" data-fi="3">
@@ -2974,19 +2974,19 @@ button:active{transform:scale(.97);transition:transform .08s}
   <!-- MOBILE BOTTOM NAV -->
   <div class="sidebar-nav-mobile" style="display:none">
     <div class="mob-tab active" onclick="nav('dashboard',this)" data-page="dashboard">
-      <div style="font-size:var(--fs-xl)">▣</div>
+      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
       <div style="font-family:var(--mono);font-size:var(--fs-2xs);margin-top:2px;color:var(--t3)">Home</div>
     </div>
     <div class="mob-tab" onclick="nav('projetos',this)" data-page="projetos">
-      <div style="font-size:var(--fs-xl)">◈</div>
+      <i data-lucide="folders" style="width:20px;height:20px"></i>
       <div style="font-family:var(--mono);font-size:var(--fs-2xs);margin-top:2px;color:var(--t3)">Projetos</div>
     </div>
     <div class="mob-tab" onclick="nav('crm',this)" data-page="crm">
-      <div style="font-size:var(--fs-xl)">◉</div>
+      <i data-lucide="users" style="width:20px;height:20px"></i>
       <div style="font-family:var(--mono);font-size:var(--fs-2xs);margin-top:2px;color:var(--t3)">CRM</div>
     </div>
     <div class="mob-tab" onclick="nav('pipeline',this)" data-page="pipeline">
-      <div style="font-size:var(--fs-xl)">◐</div>
+      <i data-lucide="arrow-right-circle" style="width:20px;height:20px"></i>
       <div style="font-family:var(--mono);font-size:var(--fs-2xs);margin-top:2px;color:var(--t3)">Pipeline</div>
     </div>
     <div class="mob-tab" onclick="toggleMobileMenu()" id="mob-more-btn">
@@ -3044,7 +3044,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v12.0.0</span>
+      <span class="version-txt" id="version-label">v12.1.0</span>
       <span class="version-date">16 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -3055,7 +3055,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 <!-- ═══════════ MAIN ═══════════ -->
 <div class="content">
   <div class="topbar">
-    <button class="mob-hamburger" onclick="toggleSidebarMobile()" style="display:none;align-items:center;justify-content:center;width:36px;height:36px;background:none;border:none;cursor:pointer;color:var(--t2);flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <button class="mob-hamburger" onclick="toggleSidebarMobile()" aria-label="Abrir menu" style="display:none;align-items:center;justify-content:center;width:36px;height:36px;background:none;border:none;cursor:pointer;color:var(--t2);flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     <div class="pg-title" id="pg-title">Dashboard</div>
     <div class="tb-search-wrap">
       <span class="tb-search-icon">⌕</span>
@@ -3065,7 +3065,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div class="tb-spacer"></div>
     <div class="tb-right">
       <div class="tb-date" id="tb-date"></div>
-      <div class="notif-bell" onclick="toggleNotif()" id="notif-bell" style="display:none;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r2);cursor:pointer;transition:all .12s">
+      <div class="notif-bell" onclick="toggleNotif()" id="notif-bell" role="button" aria-label="Notificações" aria-haspopup="true" style="display:none;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r2);cursor:pointer;transition:all .12s">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
         </svg>
@@ -3075,8 +3075,8 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div style="padding:10px 14px;border-bottom:1px solid var(--e1);font-family:var(--mono);font-size:var(--fs-2xs);font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.1em">Alertas</div>
         <div id="notif-list"></div>
       </div>
-      <div class="theme-btn tt-btn" onclick="toggleTheme()" title="Alternar tema">
-        <span style="font-size:14px;color:var(--t2)">◑</span>
+      <div class="theme-btn tt-btn" onclick="toggleTheme()" title="Alternar tema" aria-label="Alternar tema">
+        <i data-lucide="moon" style="width:14px;height:14px;color:var(--t2)" id="tt-icon"></i>
         <span class="tt-lbl" id="tt-lbl">DARK</span>
       </div>
       <button class="btn-g btn-g-templates" onclick="nav('templates',null)" style="display:none">Templates</button>
@@ -3200,7 +3200,7 @@ button:active{transform:scale(.97);transition:transform .08s}
               <span style="width:4px;height:4px;border-radius:50%;background:var(--y);display:inline-block"></span>Dose do dia
             </div>
             <div class="dose-card" id="dose-card" onclick="abrirDose()">
-              <div class="dose-ico" id="dose-ico">◈</div>
+              <div class="dose-ico" id="dose-ico">🎨</div>
               <div style="flex:1;min-width:0">
                 <div class="dose-nome" id="dose-nome">Carregando...</div>
                 <div class="dose-desc" id="dose-desc">inspiração diária</div>
@@ -3540,7 +3540,7 @@ button:active{transform:scale(.97);transition:transform .08s}
         <!-- COLUNA: Portfólio & Case -->
         <div class="card">
           <div class="card-title">
-            <span style="color:var(--y)">◈</span>&nbsp; Portfólio & Case
+            <i data-lucide="award" style="width:14px;height:14px;color:var(--y)"></i>&nbsp; Portfólio & Case
             <span id="lanc-port-prog" style="color:var(--t4)">0/5</span>
           </div>
           <div id="lanc-port-tasks">
@@ -3562,7 +3562,7 @@ button:active{transform:scale(.97);transition:transform .08s}
         <!-- COLUNA: Redes Sociais -->
         <div class="card">
           <div class="card-title">
-            <span style="color:var(--gr)">◉</span>&nbsp; Redes Sociais & Relacionamento
+            <i data-lucide="share-2" style="width:14px;height:14px;color:var(--gr)"></i>&nbsp; Redes Sociais & Relacionamento
             <span id="lanc-red-prog" style="color:var(--t4)">0/5</span>
           </div>
           <div id="lanc-red-tasks">
@@ -4046,7 +4046,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v12.0.0';
+const APP_VERSION='v12.1.0';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4190,8 +4190,15 @@ function saveExtra(){
 }
 
 // ── THEME ─────────────────────────────────────────────
-function toggleTheme(){const h=document.documentElement,d=h.dataset.theme==='dark';h.dataset.theme=d?'light':'dark';document.getElementById('tt-lbl').textContent=d?'LIGHT':'DARK';localStorage.setItem('ph4-theme',d?'light':'dark');}
-(()=>{const t=localStorage.getItem('ph4-theme');if(t){document.documentElement.dataset.theme=t;const el=document.getElementById('tt-lbl');if(el)el.textContent=t.toUpperCase();}})();
+function toggleTheme(){
+  const h=document.documentElement,d=h.dataset.theme==='dark';
+  h.dataset.theme=d?'light':'dark';
+  document.getElementById('tt-lbl').textContent=d?'LIGHT':'DARK';
+  const ico=document.getElementById('tt-icon');
+  if(ico){ico.setAttribute('data-lucide',d?'sun':'moon');lucide.createIcons({nodes:[ico]});}
+  localStorage.setItem('ph4-theme',d?'light':'dark');
+}
+(()=>{const t=localStorage.getItem('ph4-theme');if(t){document.documentElement.dataset.theme=t;const el=document.getElementById('tt-lbl');if(el)el.textContent=t.toUpperCase();const ico=document.getElementById('tt-icon');if(ico&&t==='light'){ico.setAttribute('data-lucide','sun');lucide.createIcons({nodes:[ico]});}}})();
 
 // ── GREETING ──────────────────────────────────────────
 const now=new Date(),hr=now.getHours();
@@ -4244,9 +4251,40 @@ function openM(id){
       calcOrcTotais();
     }
   }
+  // OS-075: mover foco para dentro do modal
+  const _modalEl=document.getElementById(id);
+  if(_modalEl){
+    const _focusable=_modalEl.querySelector('button,input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if(_focusable)setTimeout(()=>_focusable.focus(),60);
+  }
 }
 function closeM(id){const el=document.getElementById(id);if(el)el.classList.remove('open');if(id==='m-orcamento'){const eid=document.getElementById('orc-edit-id');if(eid)eid.value='';}}
 document.querySelectorAll('.moverlay').forEach(el=>el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+// ── CONFIRM CUSTOMIZADO (OS-073) ──────────────────────
+function showConfirm({titulo,desc,icone='⚠️',labelOk='Confirmar',onOk}){
+  setEl('m-confirm-title',titulo);
+  setEl('m-confirm-desc',desc);
+  setEl('m-confirm-icon',icone);
+  const btn=document.getElementById('m-confirm-ok');
+  if(btn){
+    btn.textContent=labelOk;
+    btn.onclick=()=>{closeM('m-confirm');if(onOk)onOk();};
+  }
+  openM('m-confirm');
+}
+
+// ── ESC FECHA MODAL ATIVO (OS-075) ────────────────────
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape'){
+    const modais=document.querySelectorAll('.moverlay');
+    for(let i=modais.length-1;i>=0;i--){
+      if(modais[i].classList.contains('open')){
+        const mid=modais[i].id;closeM(mid);break;
+      }
+    }
+  }
+});
 
 // ── XP ────────────────────────────────────────────────
 const NIVEIS=[
@@ -4623,7 +4661,7 @@ function renderProjs(){
     const dColor=_d<=2?'color:var(--rd)':_d<=5?'color:var(--am)':'';
     const urgTag=_d<=2?'<span class="pc-tag tag-rd">🚨 Urgente</span>':p.modo==='rapido'?'<span class="pc-tag tag-gr">⚡ Rápido</span>':'';
     const faseTag='<span class="pc-tag tag-n">'+(fn[p.fi]||fn[0])+'</span>';
-    const pIcon=_d<=2?'🔥':p.modo==='rapido'?'⚡':'◈';
+    const pIcon=_d<=2?'🔥':p.modo==='rapido'?'⚡':'📁';
     const pIconBg=_d<=2?'rgba(239,68,68,0.1)':p.modo==='rapido'?'rgba(34,197,94,0.1)':'rgba(212,160,23,0.1)';
     const opacity=p.pausado?'opacity:0.55':'';
     return `<div class="proj-card" onclick="openProj(${p.id})" style="${opacity}">
@@ -5107,7 +5145,7 @@ function criarParceiro(){
   parceiros.unshift({id:Date.now(),nome,tipo:document.getElementById('par-tipo').value,wpp:document.getElementById('par-wpp').value,email:document.getElementById('par-email').value,site:document.getElementById('par-site').value,valor:parseFloat(document.getElementById('par-valor').value)||0,obs:document.getElementById('par-obs').value});
   saveParceiros();closeM('m-parceiro');renderParceiros();toast('Parceiro adicionado!');
 }
-function deletarParceiro(id){if(!confirm('Remover este parceiro?'))return;parceiros=parceiros.filter(p=>p.id!==id);saveParceiros();renderParceiros();}
+function deletarParceiro(id){showConfirm({titulo:'Remover parceiro',desc:'Esta ação não pode ser desfeita.',icone:'🗑️',labelOk:'Remover',onOk:()=>{parceiros=parceiros.filter(p=>p.id!==id);saveParceiros();renderParceiros();}});}
 function renderParceiros(){
   const el=document.getElementById('parceiros-list');if(!el)return;
   if(parceiros.length===0){el.innerHTML='<div class="empty-state"><div class="empty-icon empty-float"><i data-lucide="handshake" style="width:48px;height:48px;color:var(--t4)"></i></div><div class="empty-title">Nenhum parceiro cadastrado</div><div class="empty-desc">Adicione gráficas, fotógrafos, devs e outros fornecedores que fazem parte do seu fluxo.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-parceiro\')">+ Novo parceiro</button></div>';setTimeout(refreshIcons,50);return;}
@@ -5558,10 +5596,11 @@ function salvarNota(){
   renderQNotes();atualizarBadgeNotas();toast('Nota salva!');
 }
 function excluirQNote(id){
-  if(!confirm('Excluir esta nota?'))return;
-  qNotes=qNotes.filter(n=>n.id!==id);
-  localStorage.setItem('ph4-qnotes',JSON.stringify(qNotes));
-  renderQNotes();atualizarBadgeNotas();toast('Nota removida','var(--t3)');
+  showConfirm({titulo:'Excluir nota',desc:'Esta ação não pode ser desfeita.',icone:'🗑️',labelOk:'Excluir',onOk:()=>{
+    qNotes=qNotes.filter(n=>n.id!==id);
+    localStorage.setItem('ph4-qnotes',JSON.stringify(qNotes));
+    renderQNotes();atualizarBadgeNotas();toast('Nota removida','var(--t3)');
+  }});
 }
 function deletarNota(id){excluirQNote(id);}// alias retrocompat
 function atualizarBadgeNotas(){
@@ -5587,8 +5626,8 @@ function renderQNotes(){
           <span id="qnote-txt-${n.id}" style="font-size:var(--fs-sm);color:var(--t1);line-height:1.5;white-space:pre-wrap">${(n.texto||'').replace(/</g,'&lt;')}</span>
         </div>
         <div class="insight-actions" style="display:flex;gap:4px;opacity:0;transition:opacity .12s;flex-shrink:0">
-          <button onclick="editarQNote(${n.id})" style="font-family:var(--mono);font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:2px 4px" title="Editar">✎</button>
-          <button onclick="excluirQNote(${n.id})" style="font-family:var(--mono);font-size:14px;color:var(--rd);background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1" title="Excluir">×</button>
+          <button onclick="editarQNote(${n.id})" aria-label="Editar nota" style="font-family:var(--mono);font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:2px 4px" title="Editar">✎</button>
+          <button onclick="excluirQNote(${n.id})" aria-label="Excluir nota" style="font-family:var(--mono);font-size:14px;color:var(--rd);background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1" title="Excluir">×</button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
@@ -5894,14 +5933,15 @@ function usarMeuTemplate(id){
   toast('Template carregado — preencha os campos');
 }
 function removeMeuTemplate(id){
-  if(!confirm('Remover este template?'))return;
-  meusTemplates=meusTemplates.filter(x=>x.id!==id);
-  saveMeusTemplates();renderMeusTemplates();toast('Template removido','var(--am)');
+  showConfirm({titulo:'Remover template',desc:'Esta ação não pode ser desfeita.',icone:'🗑️',labelOk:'Remover',onOk:()=>{
+    meusTemplates=meusTemplates.filter(x=>x.id!==id);
+    saveMeusTemplates();renderMeusTemplates();toast('Template removido','var(--am)');
+  }});
 }
 function renderMeusTemplates(){
   const el=document.getElementById('meus-templates-list');if(!el)return;
   if(meusTemplates.length===0){el.innerHTML='<div class="card empty-state"><div class="empty-icon empty-float">📄</div><div class="empty-title">Nenhum template salvo</div><div class="empty-desc">Crie templates ou salve a partir de projetos existentes.</div></div>';return;}
-  el.innerHTML=meusTemplates.map(t=>`<div class="card" style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:600;color:var(--t1);font-size:var(--fs-sm)">${t.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${t.tipo} · ${t.modo==='rapido'?'⚡ Rápido':'Completo'} · ${t.tarefas.length} tarefas</div></div><div style="display:flex;gap:6px"><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="usarMeuTemplate(${t.id})">Usar</button><span style="cursor:pointer;color:var(--t4);font-size:14px" onclick="removeMeuTemplate(${t.id})" title="Remover">×</span></div></div></div>`).join('');
+  el.innerHTML=meusTemplates.map(t=>`<div class="card" style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:600;color:var(--t1);font-size:var(--fs-sm)">${t.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${t.tipo} · ${t.modo==='rapido'?'⚡ Rápido':'Completo'} · ${t.tarefas.length} tarefas</div></div><div style="display:flex;gap:6px"><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="usarMeuTemplate(${t.id})">Usar</button><button class="btn-g" style="font-size:14px;width:28px;padding:0;color:var(--t4)" aria-label="Remover template" onclick="removeMeuTemplate(${t.id})">×</button></div></div></div>`).join('');
 }
 function toggleTplTab(tab){
   const meusEl=document.getElementById('tpl-tab-meus');
@@ -5927,15 +5967,16 @@ function addCustoFixo(){
   renderCustosFixos();renderSaudeMes();toast('Custo fixo adicionado!');
 }
 function removeCustoFixo(id){
-  if(!confirm('Remover este custo fixo?'))return;
-  custosFixos=custosFixos.filter(c=>c.id!==id);
-  saveCustosFixos();renderCustosFixos();renderSaudeMes();toast('Removido','var(--am)');
+  showConfirm({titulo:'Remover custo fixo',desc:'Esta ação não pode ser desfeita.',icone:'🗑️',labelOk:'Remover',onOk:()=>{
+    custosFixos=custosFixos.filter(c=>c.id!==id);
+    saveCustosFixos();renderCustosFixos();renderSaudeMes();toast('Removido','var(--am)');
+  }});
 }
 function renderCustosFixos(){
   const el=document.getElementById('custos-fixos-list');if(!el)return;
   const catCor={'Ferramentas':'var(--pu)','Infraestrutura':'var(--y)','Educação':'var(--gr)','Outros':'var(--t4)'};
   if(custosFixos.length===0){el.innerHTML='<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:8px 0">Nenhum custo fixo cadastrado.</div>';
-  }else{el.innerHTML=custosFixos.map(c=>`<div class="fin-row" style="padding:6px 0"><div style="width:3px;height:28px;border-radius:2px;background:${catCor[c.cat]||'var(--t4)'};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:var(--fs-sm);font-weight:500;color:var(--t1)">${c.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${c.cat}${c.obs?' · '+c.obs:''}</div></div><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--am);min-width:68px;text-align:right">${fmt(c.val)}</div><span style="cursor:pointer;color:var(--t4);font-size:14px;margin-left:8px" onclick="removeCustoFixo(${c.id})" title="Remover">×</span></div>`).join('');}
+  }else{el.innerHTML=custosFixos.map(c=>`<div class="fin-row" style="padding:6px 0"><div style="width:3px;height:28px;border-radius:2px;background:${catCor[c.cat]||'var(--t4)'};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:var(--fs-sm);font-weight:500;color:var(--t1)">${c.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${c.cat}${c.obs?' · '+c.obs:''}</div></div><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--am);min-width:68px;text-align:right">${fmt(c.val)}</div><button style="background:none;border:none;cursor:pointer;color:var(--t4);font-size:14px;margin-left:8px;padding:0 4px" aria-label="Remover custo fixo" onclick="removeCustoFixo(${c.id})">×</button></div>`).join('');}
   const total=custosFixos.reduce((s,c)=>s+c.val,0);
   setEl('custos-fixos-total',fmt(total));
 }
@@ -6038,7 +6079,7 @@ function abrirProposta(id){
 }
 function setPropStatus(st){const p=propostas.find(x=>x.id===propAtualId);if(!p)return;p.status=st;const aprov=document.getElementById('pd-aprovado-actions');if(aprov)aprov.style.display=st==='aprovado'?'block':'none';document.querySelectorAll('#pd-status-btns button').forEach((btn,i)=>{const isA=['lead','aguardando','negociacao','aprovado','rejeitado'][i]===st;btn.style.background=isA?'var(--y)':'';btn.style.color=isA?'#0C0C0E':'';btn.style.borderColor=isA?'var(--y)':'';});}
 function salvarProposta(){const p=propostas.find(x=>x.id===propAtualId);if(!p)return;const pc=document.getElementById('pd-contrato'),pe=document.getElementById('pd-entrada');if(pc)p.contrato=pc.value;if(pe)p.entrada=pe.value;saveExtra();closeM('m-prop-detail');renderPipeline();toast('Proposta atualizada!');}
-function deletarProposta(){if(!confirm('Deletar esta proposta?'))return;propostas=propostas.filter(x=>x.id!==propAtualId);saveExtra();closeM('m-prop-detail');renderPipeline();toast('Proposta deletada','var(--am)');}
+function deletarProposta(){showConfirm({titulo:'Deletar proposta',desc:'Esta ação não pode ser desfeita.',icone:'🗑️',labelOk:'Deletar',onOk:()=>{propostas=propostas.filter(x=>x.id!==propAtualId);saveExtra();closeM('m-prop-detail');renderPipeline();toast('Proposta deletada','var(--am)');}});}
 function moverParaProducao(){const p=propostas.find(x=>x.id===propAtualId);if(!p)return;if(p.contrato!=='assinado'){toast('Assine o contrato antes!','var(--am)');return;}closeM('m-prop-detail');const nn=document.getElementById('np-nome');if(nn)nn.value=p.servico+' — '+p.cliente;const cliSel=document.getElementById('np-cli');if(cliSel)cliSel.value=p.cliente;const vv=document.getElementById('np-val');if(vv)vv.value=p.val||0;openM('m-proj');toast('Preencha os detalhes e clique em Criar projeto');}
 
 // ── ORÇAMENTOS (OS-045) ──────────────────────────────
@@ -6051,7 +6092,7 @@ function addOrcItem(){
   const idx=list.children.length;
   const row=document.createElement('div');
   row.style.cssText='display:grid;grid-template-columns:1fr 90px 70px 28px;gap:6px;align-items:center;margin-bottom:6px';
-  row.innerHTML=`<input class="fi" placeholder="Descrição do item" data-orc-desc="${idx}"><input class="fi" type="number" placeholder="Valor" data-orc-val="${idx}" oninput="calcOrcTotais()"><input class="fi" type="number" placeholder="Horas" data-orc-hrs="${idx}" oninput="calcOrcTotais()"><span style="cursor:pointer;color:var(--t4);font-size:16px;text-align:center" onclick="this.parentElement.remove();calcOrcTotais()">×</span>`;
+  row.innerHTML=`<input class="fi" placeholder="Descrição do item" data-orc-desc="${idx}"><input class="fi" type="number" placeholder="Valor" data-orc-val="${idx}" oninput="calcOrcTotais()"><input class="fi" type="number" placeholder="Horas" data-orc-hrs="${idx}" oninput="calcOrcTotais()"><button style="background:none;border:none;cursor:pointer;color:var(--t4);font-size:16px;text-align:center;padding:0" aria-label="Remover item" onclick="this.parentElement.remove();calcOrcTotais()">×</button>`;
   list.appendChild(row);
 }
 function getOrcItens(){
@@ -6178,9 +6219,10 @@ function salvarOrcStatus(){
   setTimeout(()=>{const cards=document.querySelectorAll('#orc-list .card');if(cards.length)feedbackInline(cards[0]);},150);
 }
 function deletarOrcamento(){
-  if(!confirm('Deletar este orçamento?'))return;
-  orcamentos=orcamentos.filter(x=>x.id!==orcAtualId);
-  saveExtra();closeM('m-orc-detail');renderOrcamentos();toast('Orçamento deletado','var(--am)');
+  showConfirm({titulo:'Deletar orçamento',desc:'Esta ação não pode ser desfeita.',icone:'🗑️',labelOk:'Deletar',onOk:()=>{
+    orcamentos=orcamentos.filter(x=>x.id!==orcAtualId);
+    saveExtra();closeM('m-orc-detail');renderOrcamentos();toast('Orçamento deletado','var(--am)');
+  }});
 }
 function editarOrcamento(){
   const o=orcamentos.find(x=>x.id===orcAtualId);if(!o)return;
@@ -6310,10 +6352,11 @@ function followUpProp(id){
   navigator.clipboard.writeText(txt).then(()=>toast('Texto de follow-up copiado!')).catch(()=>toast('Erro ao copiar','var(--am)'));
 }
 function descartaProp(id){
-  if(!confirm('Descartar esta proposta vencida?'))return;
-  const p=propostas.find(x=>x.id===id);if(!p)return;
-  p.status='rejeitado';
-  saveExtra();renderPipeline();toast('Proposta descartada','var(--am)');
+  showConfirm({titulo:'Descartar proposta',desc:'A proposta será marcada como rejeitada.',icone:'🗑️',labelOk:'Descartar',onOk:()=>{
+    const p=propostas.find(x=>x.id===id);if(!p)return;
+    p.status='rejeitado';
+    saveExtra();renderPipeline();toast('Proposta descartada','var(--am)');
+  }});
 }
 
 // ── HUB ───────────────────────────────────────────────
@@ -6493,7 +6536,7 @@ function exportarDados(){
 }
 function importarDados(event){
   const file=event.target.files[0];if(!file)return;const reader=new FileReader();
-  reader.onload=e=>{try{const dados=JSON.parse(e.target.result);if(!dados.versao?.startsWith('paulosahub')){toast('Arquivo inválido!','var(--rd)');return;}if(!confirm('Substituir todos os dados?'))return;if(dados.projetos){projs=dados.projetos;localStorage.setItem('ph4-projs',JSON.stringify(projs));}if(dados.clientes){clients=dados.clientes;localStorage.setItem('ph4-cli',JSON.stringify(clients));}if(dados.lancamentos){lancs=dados.lancamentos;localStorage.setItem('ph4-fin',JSON.stringify(lancs));}if(dados.propostas){propostas=dados.propostas;}if(dados.finalizados){projsFinalizados=dados.finalizados;}if(dados.cases){cases=dados.cases;}if(dados.hub){hubData=dados.hub;localStorage.setItem('ph4-hub',JSON.stringify(hubData));}if(dados.xp)xpTotal=dados.xp;if(dados.dayTasks)dayTasks=dados.dayTasks;if(dados.calEvs)calEvs=dados.calEvs;saveExtra();save();toast('Dados importados!');renderDash();renderCRM();renderPipeline();}catch(err){toast('Erro: '+err.message,'var(--rd)');}};reader.readAsText(file);
+  reader.onload=e=>{try{const dados=JSON.parse(e.target.result);if(!dados.versao?.startsWith('paulosahub')){toast('Arquivo inválido!','var(--rd)');return;}showConfirm({titulo:'Substituir todos os dados?',desc:'Esta ação sobrescreve todos os dados locais com o arquivo selecionado.',icone:'⚠️',labelOk:'Substituir',onOk:()=>{if(dados.projetos){projs=dados.projetos;localStorage.setItem('ph4-projs',JSON.stringify(projs));}if(dados.clientes){clients=dados.clientes;localStorage.setItem('ph4-cli',JSON.stringify(clients));}if(dados.lancamentos){lancs=dados.lancamentos;localStorage.setItem('ph4-fin',JSON.stringify(lancs));}if(dados.propostas){propostas=dados.propostas;}if(dados.finalizados){projsFinalizados=dados.finalizados;}if(dados.cases){cases=dados.cases;}if(dados.hub){hubData=dados.hub;localStorage.setItem('ph4-hub',JSON.stringify(hubData));}if(dados.xp)xpTotal=dados.xp;if(dados.dayTasks)dayTasks=dados.dayTasks;if(dados.calEvs)calEvs=dados.calEvs;saveExtra();save();toast('Dados importados!');renderDash();renderCRM();renderPipeline();}});}catch(err){toast('Erro: '+err.message,'var(--rd)');}};reader.readAsText(file);
 }
 function salvarConfig(){
   const p = getPerfilData();
@@ -6508,8 +6551,8 @@ function salvarConfig(){
   atualizarPaginaPerfil();
   toast('Configurações salvas!');
 }
-function resetarDados(){if(!confirm('ATENÇÃO: Apagar TODOS os dados?'))return;if(!confirm('Última chance. Exportou o backup?'))return;['ph4-projs','ph4-cli','ph4-fin','ph4-propostas','ph4-finalizados','ph4-cases','ph4-hub','ph4-xp','ph4-day','ph4-cal','ph4-onboarded','ph4-auto-backup','ph4-perfil','ph4-qnotes','ph4-feedbacks','ph4-insights','ph4-lanc','ph4-meta-fin','ph4-studio','ph4-espec','ph4-site','ph4-dose-idx','ph4-dose-date','ph4-desafio-sem','ph4-desafio-streak','ph4-criativo-open','ph4-ultimo-backup'].forEach(k=>localStorage.removeItem(k));location.reload();}
-function limparFinalizados(){if(!confirm('Apagar finalizados e cases?'))return;projsFinalizados=[];cases=[];saveExtra();toast('Removidos','var(--am)');atualizarBadgeCases();}
+function resetarDados(){showConfirm({titulo:'Apagar TODOS os dados?',desc:'Esta ação é irreversível. Todos os projetos, clientes e configurações serão perdidos.',icone:'🚨',labelOk:'Continuar',onOk:()=>{showConfirm({titulo:'Última confirmação',desc:'Você exportou o backup? Esta ação não pode ser desfeita.',icone:'⚠️',labelOk:'Apagar tudo',onOk:()=>{['ph4-projs','ph4-cli','ph4-fin','ph4-propostas','ph4-finalizados','ph4-cases','ph4-hub','ph4-xp','ph4-day','ph4-cal','ph4-onboarded','ph4-auto-backup','ph4-perfil','ph4-qnotes','ph4-feedbacks','ph4-insights','ph4-lanc','ph4-meta-fin','ph4-studio','ph4-espec','ph4-site','ph4-dose-idx','ph4-dose-date','ph4-desafio-sem','ph4-desafio-streak','ph4-criativo-open','ph4-ultimo-backup'].forEach(k=>localStorage.removeItem(k));location.reload();}});}}); }
+function limparFinalizados(){showConfirm({titulo:'Apagar finalizados e cases?',desc:'Projetos finalizados e cases serão removidos permanentemente.',icone:'🗑️',labelOk:'Apagar',onOk:()=>{projsFinalizados=[];cases=[];saveExtra();toast('Removidos','var(--am)');atualizarBadgeCases();}});}
 
 // ── TEMPLATES ─────────────────────────────────────────
 const TPLS={pb:'[PROPOSTA — IDENTIDADE VISUAL]\npaulosa.studio\n\nOlá, [Nome]!\n\nESCOPO\n• Pesquisa e imersão de marca\n• Naming e conceito visual\n• Logotipo e variações\n• Paleta de cores e tipografia\n• Manual de identidade\n\nPRAZO: [X] dias\nINVESTIMENTO: R$ [valor]\nPAGAMENTO: 50% na assinatura + 50% na entrega\n\nPaulo | paulosa.studio',ps:'[PROPOSTA — SOCIAL KIT]\npaulosa.studio\n\nOlá, [Nome]!\n\nESCOPO\n• [X] posts feed · [X] stories\n• Arquivo editável (Canva/Figma)\n\nPRAZO: [X] dias\nINVESTIMENTO: R$ [valor]\n\nPaulo | paulosa.studio',pe:'[PROPOSTA — ESTRATÉGIA DE MARCA]\npaulosa.studio\n\nOlá, [Nome]!\n\nENTREGÁVEIS\n• Diagnóstico de marca · Posicionamento\n• Público-alvo e persona · Tom de voz\n\nPRAZO: [X] dias\nINVESTIMENTO: R$ [valor]\n\nPaulo | paulosa.studio',br:'[BRIEFING — paulosa.studio]\n\n1. Nome do negócio?\n2. O que vende ou oferece?\n3. Público-alvo?\n4. 3 principais concorrentes?\n5. Como quer ser sentido pela marca?\n6. 3 marcas que admira visualmente?\n7. Cores/estilos que NÃO quer?\n8. Prazo ideal?\n9. Orçamento aproximado?',fb:'Olá, [Nome]!\n\nSegue o material para avaliação:\n🔗 [link]\n\n✅ O que você amou?\n🔄 O que gostaria de ajustar?\n❌ Algo que não funcionou?\n\nPrazo para feedback: [data].\nPaulo | paulosa.studio',en:'Olá, [Nome]!\n\nProjeto finalizado! 🎉\n\nARQUIVOS: [link]\n\n• Logotipo (AI, PDF, PNG, SVG)\n• Manual de uso\n\nPaulo | paulosa.studio',dep:'Olá, [Nome]!\n\nFoi incrível trabalhar no projeto da [marca]!\n\nUm depoimento rápido me ajudaria muito.\n\nPaulo | paulosa.studio'};
@@ -6520,6 +6563,15 @@ function calcPrazo(){const f=parseInt(document.getElementById('r-fila').value),c
 
 // ── INIT ──────────────────────────────────────────────
 atualizarSidebar();
+
+// ── ACESSIBILIDADE BASELINE (OS-075) ─────────────────
+// role="dialog" + aria-modal em todos os modais existentes
+document.querySelectorAll('.moverlay .modal').forEach(function(m){
+  m.setAttribute('role','dialog');
+  m.setAttribute('aria-modal','true');
+  const t=m.querySelector('.modal-title');
+  if(t){if(!t.id){t.id='_dlg-title-'+Math.random().toString(36).slice(2,7);}m.setAttribute('aria-labelledby',t.id);}
+});
 // Backup automático a cada 30min
 setInterval(()=>{localStorage.setItem('ph4-auto-backup',JSON.stringify({v:'auto',t:new Date().toISOString(),p:projs.length,c:clients.length}));},30*60*1000);
 
@@ -7255,20 +7307,20 @@ const DESAFIOS = [
 
 // Ferramentas de inspiração para a Dose do Dia (das suas ferramentas reais)
 const DOSES = [
-  {n:'Designer Daily Report',d:'Novos visuais todo dia — abra e se deixe inspirar',u:'https://designerdailyreport.com/',ico:'◈',tipo:'Inspiração'},
-  {n:'BP&O',d:'Análise crítica de branding — leia pelo menos 1 case',u:'https://bpando.org/',ico:'◐',tipo:'Análise'},
-  {n:'Visual Journal',d:'Notícias e tendências do mundo do design',u:'https://visualjournal.it/',ico:'◎',tipo:'Tendências'},
-  {n:'Logo System',d:'Estude logotipos famosos — perceba os padrões',u:'https://logosystem.co/',ico:'◆',tipo:'Logotipos'},
-  {n:'Deck Gallery',d:'Brandbooks e pitch decks de referência',u:'https://www.deck.gallery/',ico:'◧',tipo:'Apresentação'},
-  {n:'Trending Design',d:'As melhores referências da web hoje',u:'https://trending.design/',ico:'◉',tipo:'Tendências'},
-  {n:'Pafolios',d:'Portfolios criativos — veja como outros contam suas histórias',u:'https://pafolios.com/',ico:'◈',tipo:'Portfólio'},
-  {n:'Site of Sites',d:'Os sites mais criativos do momento',u:'https://www.siteofsites.co/',ico:'◎',tipo:'Web Design'},
-  {n:'Dribbble',d:'UI, motion e direção criativa — busque pelo seu nicho',u:'https://dribbble.com',ico:'◐',tipo:'Inspiração'},
-  {n:'Behance',d:'Portfolios e cases completos — mergulhe em um projeto',u:'https://www.behance.net',ico:'◆',tipo:'Portfólio'},
-  {n:'Headers Club',d:'Os melhores headers criativos — estude composição',u:'https://headers.club/',ico:'◧',tipo:'Composição'},
-  {n:'Awwwards',d:'Web design premiado — o que os melhores estão fazendo',u:'https://www.awwwards.com',ico:'◉',tipo:'Web Design'},
-  {n:'Logobook',d:'Referências históricas de logos — estude a evolução',u:'https://logobook.com',ico:'◈',tipo:'História'},
-  {n:'Curated Design',d:'Galeria curada de inspirações — qualidade acima de quantidade',u:'https://craftwork.design/',ico:'◎',tipo:'Curadoria'},
+  {n:'Designer Daily Report',d:'Novos visuais todo dia — abra e se deixe inspirar',u:'https://designerdailyreport.com/',ico:'🎨',tipo:'Inspiração'},
+  {n:'BP&O',d:'Análise crítica de branding — leia pelo menos 1 case',u:'https://bpando.org/',ico:'📊',tipo:'Análise'},
+  {n:'Visual Journal',d:'Notícias e tendências do mundo do design',u:'https://visualjournal.it/',ico:'📰',tipo:'Tendências'},
+  {n:'Logo System',d:'Estude logotipos famosos — perceba os padrões',u:'https://logosystem.co/',ico:'✏️',tipo:'Logotipos'},
+  {n:'Deck Gallery',d:'Brandbooks e pitch decks de referência',u:'https://www.deck.gallery/',ico:'📋',tipo:'Apresentação'},
+  {n:'Trending Design',d:'As melhores referências da web hoje',u:'https://trending.design/',ico:'🌐',tipo:'Tendências'},
+  {n:'Pafolios',d:'Portfolios criativos — veja como outros contam suas histórias',u:'https://pafolios.com/',ico:'🖼️',tipo:'Portfólio'},
+  {n:'Site of Sites',d:'Os sites mais criativos do momento',u:'https://www.siteofsites.co/',ico:'💻',tipo:'Web Design'},
+  {n:'Dribbble',d:'UI, motion e direção criativa — busque pelo seu nicho',u:'https://dribbble.com',ico:'🎯',tipo:'Inspiração'},
+  {n:'Behance',d:'Portfolios e cases completos — mergulhe em um projeto',u:'https://www.behance.net',ico:'🖼️',tipo:'Portfólio'},
+  {n:'Headers Club',d:'Os melhores headers criativos — estude composição',u:'https://headers.club/',ico:'🔲',tipo:'Composição'},
+  {n:'Awwwards',d:'Web design premiado — o que os melhores estão fazendo',u:'https://www.awwwards.com',ico:'🏆',tipo:'Web Design'},
+  {n:'Logobook',d:'Referências históricas de logos — estude a evolução',u:'https://logobook.com',ico:'📚',tipo:'História'},
+  {n:'Curated Design',d:'Galeria curada de inspirações — qualidade acima de quantidade',u:'https://craftwork.design/',ico:'✨',tipo:'Curadoria'},
 ];
 
 function getSemanaAno(){
@@ -7370,8 +7422,8 @@ function renderInsights(){
           <span id="insight-txt-${item.id}" style="font-size:var(--fs-sm);color:var(--t1);line-height:1.5">${(item.texto||'').replace(/</g,'&lt;')}</span>
         </div>
         <div class="insight-actions">
-          <button onclick="editarInsight(${item.id})" style="font-family:var(--mono);font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:2px 4px" title="Editar">✎</button>
-          <button onclick="excluirInsight(${item.id})" style="font-family:var(--mono);font-size:14px;color:var(--rd);background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1" title="Excluir">×</button>
+          <button onclick="editarInsight(${item.id})" aria-label="Editar insight" style="font-family:var(--mono);font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:2px 4px" title="Editar">✎</button>
+          <button onclick="excluirInsight(${item.id})" aria-label="Excluir insight" style="font-family:var(--mono);font-size:14px;color:var(--rd);background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1" title="Excluir">×</button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-top:5px">
@@ -7420,13 +7472,14 @@ function editarInsight(id){
 }
 
 function excluirInsight(id){
-  if(!confirm('Excluir este insight?')) return;
-  insightsList = insightsList.filter(x => x.id !== id);
-  localStorage.setItem('ph4-insights', JSON.stringify(insightsList));
-  renderInsights();
-  const cnt = document.getElementById('insight-count');
-  if(cnt) cnt.textContent = insightsList.length + ' insight' + (insightsList.length !== 1 ? 's' : '');
-  toast('Insight removido', 'var(--t3)');
+  showConfirm({titulo:'Excluir insight',desc:'Esta ação não pode ser desfeita.',icone:'🗑️',labelOk:'Excluir',onOk:()=>{
+    insightsList = insightsList.filter(x => x.id !== id);
+    localStorage.setItem('ph4-insights', JSON.stringify(insightsList));
+    renderInsights();
+    const cnt = document.getElementById('insight-count');
+    if(cnt) cnt.textContent = insightsList.length + ' insight' + (insightsList.length !== 1 ? 's' : '');
+    toast('Insight removido', 'var(--t3)');
+  }});
 }
 
 function filtrarInsights(cat){
@@ -7570,13 +7623,12 @@ function calDiaClick(ds){
       const jaTemLanc = lancs.some(l=>l.proj===p.nome&&l.tipo==='entrada');
       if(!jaTemLanc){
         setTimeout(()=>{
-          const ok = confirm(`Registrar recebimento de ${fmt(p.val)} de "${p.cli}"?`);
-          if(ok){
+          showConfirm({titulo:'Registrar recebimento?',desc:`${fmt(p.val)} de "${p.cli}"`,icone:'💰',labelOk:'Registrar',onOk:()=>{
             lancs.unshift({id:Date.now(),tipo:'entrada',desc:'Pagamento — '+p.nome,val:p.val,proj:p.nome,data:new Date().toISOString().split('T')[0],cat:'Projeto'});
             saveExtra();
             toast('Lançamento criado! +'+fmt(p.val));
             renderMetricas && renderMetricas();
-          }
+          }});
         },400);
       }
     }
@@ -7754,7 +7806,7 @@ function renderBusca(){
   if(rHub.length)grupos.push({label:'Hub Criativo',items:rHub.slice(0,4)});
 
   // Templates do usuário
-  const rTpl=meusTemplates.filter(t=>_match(t.nome)||_match(t.tipo)||_match(t.descricao)).map(t=>_item('⊟',t.nome,(t.tipo||'Template')+(t.modo?' · '+(t.modo==='rapido'?'⚡ Rápido':'Completo'):''),`fecharBusca();nav('templates',null)`));
+  const rTpl=meusTemplates.filter(t=>_match(t.nome)||_match(t.tipo)||_match(t.descricao)).map(t=>_item('📄',t.nome,(t.tipo||'Template')+(t.modo?' · '+(t.modo==='rapido'?'⚡ Rápido':'Completo'):''),`fecharBusca();nav('templates',null)`));
   if(rTpl.length)grupos.push({label:'Templates',items:rTpl.slice(0,4)});
 
   if(grupos.length===0){
@@ -7798,7 +7850,7 @@ function _obRender(){
   let content='';
   if(_obStep===1){
     content=`${stepLabel}${dots}
-      <div style="font-size:48px;margin-bottom:16px">✦</div>
+      <div style="font-size:48px;margin-bottom:16px">✨</div>
       <div style="font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:6px">Configure seu estúdio</div>
       <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:24px;line-height:1.6">Personalize o hub com os dados do seu negócio.</div>
       <div style="text-align:left;display:flex;flex-direction:column;gap:12px">
@@ -8092,6 +8144,19 @@ function copiarFeedback(){
     <div style="display:flex;gap:8px;margin-top:14px">
       <button class="btn-g" style="flex:1" onclick="copiarFeedback()">Copiar</button>
       <button class="btn-p" style="flex:1" onclick="salvarFeedback()">Salvar feedback</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONFIRM MODAL (OS-073) ══ -->
+<div class="moverlay" id="m-confirm" onclick="if(event.target===this)closeM('m-confirm')">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div style="font-size:32px;margin-bottom:12px" id="m-confirm-icon">⚠️</div>
+    <div class="modal-title" id="m-confirm-title">Confirmar ação</div>
+    <div class="modal-sub" id="m-confirm-desc" style="margin-top:6px;line-height:1.5"></div>
+    <div style="display:flex;gap:10px;margin-top:24px;justify-content:center">
+      <button class="btn-g" onclick="closeM('m-confirm')" id="m-confirm-cancel">Cancelar</button>
+      <button class="btn-g btn-danger" id="m-confirm-ok">Confirmar</button>
     </div>
   </div>
 </div>
