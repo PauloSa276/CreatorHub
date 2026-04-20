@@ -2098,9 +2098,23 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="type-opt" onclick="selT(this,'Site')"><div style="margin-bottom:3px"><i data-lucide="globe" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Site</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Design & desenvolvimento</div></div>
         <div class="type-opt" onclick="selT(this,'Landing Page')"><div style="margin-bottom:3px"><i data-lucide="mouse-pointer-click" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Landing Page</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Página de conversão</div></div>
         <div class="type-opt" onclick="selT(this,'Outros')"><div style="margin-bottom:3px"><i data-lucide="shapes" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Outros</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Personalizado</div></div>
+        <div class="type-opt" onclick="selT(this,'custom')" id="tipo-custom"><div style="margin-bottom:3px"><i data-lucide="sliders" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Meu Fluxo</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Crie seu fluxo</div></div>
       </div>
       <div id="np-outros-wrap" style="display:none;margin-top:8px">
         <input class="fi" id="np-outros-txt" placeholder="Descreva o tipo de demanda..." oninput="selTipoV=this.value">
+      </div>
+      <!-- OS-080: Builder de fluxo customizado -->
+      <div id="custom-flow-builder" style="display:none;margin-top:16px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Monte seu fluxo</div>
+        <div id="custom-stages-list"></div>
+        <button onclick="addCustomStage()" style="display:flex;align-items:center;gap:6px;width:100%;height:36px;padding:0 14px;margin-top:8px;background:transparent;border:1px dashed var(--e2);border-radius:var(--radius-md);font-family:var(--mono);font-size:11px;color:var(--t3);cursor:pointer;transition:all .12s;justify-content:center" onmouseenter="this.style.borderColor='var(--y)';this.style.color='var(--y)'" onmouseleave="this.style.borderColor='var(--e2)';this.style.color='var(--t3)'">+ Adicionar etapa</button>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+          <input type="checkbox" id="custom-save-template" style="accent-color:var(--y)">
+          <label for="custom-save-template" style="font-family:var(--mono);font-size:11px;color:var(--t3);cursor:pointer">Salvar este fluxo como template para usar depois</label>
+        </div>
+        <div id="custom-template-name-wrap" style="display:none;margin-top:8px">
+          <input class="fi" id="custom-template-name" placeholder="Nome do template (ex: Fluxo de Roteiro)" style="height:32px;font-size:var(--fs-xs)">
+        </div>
       </div>
     </div>
     <div class="g2" style="gap:11px">
@@ -3057,7 +3071,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v12.2.6</span>
+      <span class="version-txt" id="version-label">v12.3.0</span>
       <span class="version-date">20 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -4059,7 +4073,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v12.2.6';
+const APP_VERSION='v12.3.0';
 const APP_DATE='20 abr 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4590,7 +4604,7 @@ function renderDashProjs(){
         <div class="p-meta">${p.cli} · ${p.tipo}</div>
         <div class="p-prog"><div class="p-prog-fill" style="width:${p.pct}%;background:${p.cor}"></div></div>
       </div>
-      <span class="ftag ${FT[p.fi]||'f-briefing'}">${FN[p.fi]||'—'}</span>
+      <span class="ftag ${FT[p.fi]||'f-briefing'}">${p._faseNomes?.[p.fi]||FN[p.fi]||'—'}</span>
       <div class="p-pct">${p.pct}%</div>
       <div class="p-days ${p.urg}">${(()=>{const _d=getDiasRestantes(p);return _d>0?_d+'d':_d===0?'hoje':'—';})()}</div>
     </div>`).join('');
@@ -4672,7 +4686,7 @@ function renderProjs(){
   el.className='cards-grid';
   const fColors={0:'var(--bl)',1:'var(--pu)',2:'var(--y)',3:'var(--am)',4:'var(--gr)',5:'var(--t4)'};
   let html=projs.map(p=>{
-    const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;const fn=fases.map(f=>f.n);
+    const fases=p._faseNomes?p._faseNomes.map((_,i)=>getSyntheticFase(p,i)):(p.modo==='rapido'?FASES_RAPIDO:FASES);const fn=fases.map(f=>f.n);
     const _d=getDiasRestantes(p);const dLbl=_d>0?_d+'d':_d===0?'hoje':'vencido';
     const dColor=_d<=2?'color:var(--rd)':_d<=5?'color:var(--am)':'';
     const urgTag=_d<=2?'<span class="pc-tag tag-rd">🚨 Urgente</span>':p.modo==='rapido'?'<span class="pc-tag tag-gr">⚡ Rápido</span>':'';
@@ -4733,7 +4747,7 @@ function renderGestao(){
   }
   const ga=document.getElementById('g-actions');if(ga)ga.innerHTML=`<div style="display:flex;align-items:center;gap:8px">${!p.pausado?`<button class="pause-btn" onclick="abrirPausa()" style="display:inline-flex;align-items:center;gap:4px"><i data-lucide="pause-circle" style="width:13px;height:13px"></i>Pausar</button>`:`<button class="pause-btn" style="background:var(--gb);color:var(--gr);border-color:rgba(34,197,94,.28);display:inline-flex;align-items:center;gap:4px" onclick="retomar()"><i data-lucide="play-circle" style="width:13px;height:13px"></i>Retomar</button>`}</div><div style="text-align:right"><div style="font-size:var(--fs-2xl);font-weight:900;letter-spacing:-.05em;color:var(--y)">${p.pct}%</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">CONCLUÍDO</div></div>`;
   const bn=document.getElementById('g-pausa-banner');if(bn)bn.innerHTML=p.pausado?`<div class="pausa-banner"><i data-lucide="pause-circle" style="width:16px;height:16px;color:var(--am);flex-shrink:0"></i><div><div style="font-size:var(--fs-xs);font-weight:600;color:var(--am)">Projeto pausado</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t2)">${p.pMot}${p.pObs?' — '+p.pObs:''}</div></div></div>`:'';
-  const _gFases=p.modo==='rapido'?FASES_RAPIDO:FASES;
+  const _gFases=p._faseNomes?p._faseNomes.map((_,i)=>getSyntheticFase(p,i)):(p.modo==='rapido'?FASES_RAPIDO:FASES);
   let pxp=0;for(let f=0;f<p.fi;f++)pxp+=(_gFases[f]||{xp:0}).xp;
   const totalXpProj=_gFases.reduce((s,f)=>s+f.xp,0);
   setEl('g-xp-tot',pxp+' XP');
@@ -4749,28 +4763,28 @@ function renderGestao(){
 function clkFase(i){const p=projs.find(x=>x.id===curProjId);if(!p)return;if(i>p.fi){toast('Complete a fase atual antes','var(--am)');return;}renderFase(p,i);}
 
 function renderFase(p,fi){
-  const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;
-  const fase=fases[fi],off=fi*5;
-  const pd=p.tasks.slice(off,off+5),dc=pd.filter(Boolean).length,all=dc===5,isCur=fi===p.fi;
+  const fases=p._faseNomes?p._faseNomes.map((_,i)=>getSyntheticFase(p,i)):(p.modo==='rapido'?FASES_RAPIDO:FASES);
+  const fase=fases[fi];const off=getFaseOffset(p,fi),taskCount=getFaseTaskCount(p,fi);
+  const pd=p.tasks.slice(off,off+taskCount),dc=pd.filter(Boolean).length,all=dc===taskCount,isCur=fi===p.fi;
   const flor='';
   const gf=document.getElementById('g-fase');
   const faseIconHtml=`<i data-lucide="${fase.i}" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:5px"></i>`;
-  if(gf)gf.innerHTML=`<div class="fase-block"><div class="fase-hdr"><div><div style="font-size:14px;font-weight:700;letter-spacing:-.02em;color:var(--t1);display:flex;align-items:center">${faseIconHtml}${fase.n.toUpperCase()}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${fase.desc}</div></div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:5px"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${dc}/5 tarefas</div>${isCur&&!p.pausado?`
+  if(gf)gf.innerHTML=`<div class="fase-block"><div class="fase-hdr"><div><div style="font-size:14px;font-weight:700;letter-spacing:-.02em;color:var(--t1);display:flex;align-items:center">${faseIconHtml}${fase.n.toUpperCase()}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${fase.desc}</div></div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:5px"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${dc}/${taskCount} tarefas</div>${isCur&&!p.pausado?`
   <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-    <button class="adv-btn ${all?'rdy':''}" onclick="avancar()" style="display:inline-flex;align-items:center;gap:5px">${fi===4?`<i data-lucide="send" style="width:12px;height:12px"></i>IR PARA LANÇAMENTO`:`<i data-lucide="chevron-right" style="width:12px;height:12px"></i>AVANÇAR`}</button>
-    ${fi===4?`<button onclick="openM('m-rejeicao')" style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--rd);background:var(--rb);border:1px solid rgba(239,68,68,.25);padding:4px 10px;border-radius:var(--r2);cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:4px"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i>Entrega rejeitada</button>`:''}
+    <button class="adv-btn ${all?'rdy':''}" onclick="avancar()" style="display:inline-flex;align-items:center;gap:5px">${fi===fases.length-2?`<i data-lucide="send" style="width:12px;height:12px"></i>IR PARA LANÇAMENTO`:`<i data-lucide="chevron-right" style="width:12px;height:12px"></i>AVANÇAR`}</button>
+    ${fi===fases.length-2?`<button onclick="openM('m-rejeicao')" style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--rd);background:var(--rb);border:1px solid rgba(239,68,68,.25);padding:4px 10px;border-radius:var(--r2);cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:4px"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i>Entrega rejeitada</button>`:''}
   </div>
-`:''}</div></div><div class="xts" style="margin-bottom:9px"><div class="xfs" style="width:${dc/5*100}%;background:${isCur?'var(--y)':'var(--gr)'}"></div></div>${fase.tasks.map((t,i)=>`<div class="task-row" style="cursor:pointer" onclick="togglePT(${fi},${i})"><div class="chk ${pd[i]?'done':''}">${pd[i]?'<i data-lucide="check" style="width:11px;height:11px"></i>':''}</div><div class="task-txt ${pd[i]?'done':''}">${t}</div></div>`).join('')}</div><div class="g2" style="gap:11px"><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="sticky-note" style="width:12px;height:12px"></i>Notas da fase</div><textarea class="fta" id="g-notas-fase-${fi}" style="margin-top:0" placeholder="Decisões criativas, referências..." oninput="salvarNotaFase(${fi},this.value)">${p.notasFase?.[fi]||''}</textarea></div><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="message-circle" style="width:12px;height:12px"></i>Feedback do cliente</div><textarea class="fta" id="g-feedback-fase-${fi}" style="margin-top:0" placeholder="Cole aqui o feedback recebido..." oninput="salvarFeedbackFase(${fi},this.value)">${p.feedbackFase?.[fi]||''}</textarea></div></div>${flor}`;
+`:''}</div></div><div class="xts" style="margin-bottom:9px"><div class="xfs" style="width:${taskCount>0?dc/taskCount*100:0}%;background:${isCur?'var(--y)':'var(--gr)'}"></div></div>${fase.tasks.map((t,i)=>`<div class="task-row" style="cursor:pointer" onclick="togglePT(${fi},${i})"><div class="chk ${pd[i]?'done':''}">${pd[i]?'<i data-lucide="check" style="width:11px;height:11px"></i>':''}</div><div class="task-txt ${pd[i]?'done':''}">${t}</div></div>`).join('')}</div><div class="g2" style="gap:11px"><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="sticky-note" style="width:12px;height:12px"></i>Notas da fase</div><textarea class="fta" id="g-notas-fase-${fi}" style="margin-top:0" placeholder="Decisões criativas, referências..." oninput="salvarNotaFase(${fi},this.value)">${p.notasFase?.[fi]||''}</textarea></div><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="message-circle" style="width:12px;height:12px"></i>Feedback do cliente</div><textarea class="fta" id="g-feedback-fase-${fi}" style="margin-top:0" placeholder="Cole aqui o feedback recebido..." oninput="salvarFeedbackFase(${fi},this.value)">${p.feedbackFase?.[fi]||''}</textarea></div></div>${flor}`;
 }
 
 function togglePT(fi,ti){
   const p=projs.find(x=>x.id===curProjId);if(!p)return;
-  const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;
-  const off=fi*5;p.tasks[off+ti]=!p.tasks[off+ti];
-  const tot=p.tasks.filter(Boolean).length;p.pct=Math.round(tot/(fases.length*5)*100);
+  const off=getFaseOffset(p,fi);const taskCount=getFaseTaskCount(p,fi);
+  p.tasks[off+ti]=!p.tasks[off+ti];
+  const tot=p.tasks.filter(Boolean).length;p.pct=p.tasks.length>0?Math.round(tot/p.tasks.length*100):0;
   save();renderFase(p,fi);setTimeout(refreshIcons,50);
-  const dc=p.tasks.slice(off,off+5).filter(Boolean).length;
-  if(dc===5&&fi===p.fi&&!p.pausado)toast('Todas as tarefas concluídas! Clique em AVANÇAR','var(--y)');
+  const dc=p.tasks.slice(off,off+taskCount).filter(Boolean).length;
+  if(dc===taskCount&&fi===p.fi&&!p.pausado)toast('Todas as tarefas concluídas! Clique em AVANÇAR','var(--y)');
 }
 
 // OS-068 — Feedback inline nível 2
@@ -4793,11 +4807,12 @@ function salvarFeedbackFase(fi,val){
 }
 function avancar(){
   const p=projs.find(x=>x.id===curProjId);if(!p)return;
-  const off=p.fi*5,dc=p.tasks.slice(off,off+5).filter(Boolean).length;
-  if(dc<5){toast('Complete todas as tarefas antes!','var(--am)');return;}
+  const _aOff=getFaseOffset(p,p.fi),_aCount=getFaseTaskCount(p,p.fi);
+  const off=_aOff,dc=p.tasks.slice(off,off+_aCount).filter(Boolean).length;
+  if(dc<_aCount){toast('Complete todas as tarefas antes!','var(--am)');return;}
   if(p.pausado){toast('Retome o projeto antes!','var(--am)');return;}
-  // Briefing checkpoint na fase Imersão (fi===0)
-  if(p.fi===0&&!p._briefingAvisado){
+  // Briefing checkpoint na fase Imersão (fi===0) — apenas projetos não customizados
+  if(p.fi===0&&!p._briefingAvisado&&!p._customFases){
     const b=p.briefing||{};
     const missing=[];
     if(!b.objetivo)missing.push('Objetivo do projeto');
@@ -4810,13 +4825,13 @@ function avancar(){
       openM('m-brief-check');return;
     }
   }
-  const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;
+  const fases=p._faseNomes?p._faseNomes.map((_,i)=>getSyntheticFase(p,i)):(p.modo==='rapido'?FASES_RAPIDO:FASES);
   const fase=fases[p.fi];
   const lastDelivery=fases.length-2; // penúltima fase = entrega
   const lastPhase=fases.length-1;
   // Penúltima fase: revelar seção de Lançamento
   if(p.fi===lastDelivery){
-    p.fi=lastPhase;p.pct=Math.round(p.tasks.filter(Boolean).length/(fases.length*5)*100);
+    p.fi=lastPhase;p.pct=p.tasks.length>0?Math.round(p.tasks.filter(Boolean).length/p.tasks.length*100):0;
     save();celebrar(fase.n,fase.xp);
     setTimeout(()=>{
       renderGestao();renderDash();
@@ -4827,7 +4842,7 @@ function avancar(){
   }
   // Última fase: abrir modal finalizar
   if(p.fi>=lastPhase){abrirModalFinalizar(p);return;}
-  p.fi++;p.pct=Math.round(p.tasks.filter(Boolean).length/(fases.length*5)*100);
+  p.fi++;p.pct=p.tasks.length>0?Math.round(p.tasks.filter(Boolean).length/p.tasks.length*100):0;
   save();celebrar(fase.n,fase.xp);setTimeout(()=>{renderGestao();renderDash();},300);
 }
 function _skipBriefCheck(){
@@ -4849,6 +4864,81 @@ function retomar(){
 }
 
 // ── NOVO PROJETO ──────────────────────────────────────
+// ── OS-080: MEU FLUXO — Builder de fluxo customizado ──
+let customStages=[];
+function getFaseOffset(p,fi){
+  if(p._faseOffsets&&p._faseOffsets[fi]!==undefined)return p._faseOffsets[fi];
+  return fi*5;
+}
+function getFaseTaskCount(p,fi){
+  if(p._faseTasks)return(p._faseTasks[fi]||[]).length;
+  return 5;
+}
+function getFaseCount(p){
+  if(p._faseNomes)return p._faseNomes.length;
+  return(p.modo==='rapido'?FASES_RAPIDO:FASES).length;
+}
+function getSyntheticFase(p,fi){
+  if(!p._faseNomes)return null;
+  return{id:'custom_'+fi,n:p._faseNomes[fi]||`Etapa ${fi+1}`,i:'circle-dot',xp:50,desc:(p._faseTasks?.[fi]||[]).filter(t=>t).join(' · ')||'',tasks:p._faseTasks?.[fi]||[]};
+}
+function initCustomFlow(){
+  customStages=[
+    {id:Date.now(),nome:'Etapa 1',tarefas:['']},
+    {id:Date.now()+1,nome:'Etapa 2',tarefas:['']},
+    {id:Date.now()+2,nome:'Etapa 3',tarefas:['']}
+  ];
+  renderCustomStages();
+}
+function renderCustomStages(){
+  const el=document.getElementById('custom-stages-list');if(!el)return;
+  el.innerHTML=customStages.map((stage,si)=>`
+    <div style="background:var(--s2);border:1px solid var(--e1);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t4);min-width:50px">Etapa ${si+1}</div>
+        <input class="fi" value="${stage.nome.replace(/"/g,'&quot;').replace(/'/g,'&#39;')}" placeholder="Nome da etapa" style="height:30px;font-size:var(--fs-xs);flex:1" oninput="customStages[${si}].nome=this.value">
+        ${customStages.length>1?`<button onclick="removeCustomStage(${si})" style="background:none;border:none;color:var(--t4);cursor:pointer;font-size:16px;padding:0 4px;line-height:1" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'">×</button>`:''}
+      </div>
+      <div id="custom-tasks-${si}">
+        ${stage.tarefas.map((t,ti)=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+          <div style="width:16px;height:16px;border:1px solid var(--e2);border-radius:3px;flex-shrink:0;background:var(--s3)"></div>
+          <input class="fi" value="${t.replace(/"/g,'&quot;').replace(/'/g,'&#39;')}" placeholder="Descreva a tarefa..." style="height:26px;font-size:var(--fs-xs);flex:1;background:transparent;border-color:transparent" onfocus="this.style.borderColor='var(--e2)'" onblur="this.style.borderColor='transparent'" oninput="customStages[${si}].tarefas[${ti}]=this.value" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomTask(${si})}">
+          ${stage.tarefas.length>1?`<button onclick="removeCustomTask(${si},${ti})" style="background:none;border:none;color:var(--t4);cursor:pointer;font-size:13px;opacity:0;transition:opacity .12s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">×</button>`:''}
+        </div>`).join('')}
+      </div>
+      <button onclick="addCustomTask(${si})" style="margin-top:4px;background:none;border:none;font-family:var(--mono);font-size:10px;color:var(--t4);cursor:pointer;padding:2px 0;display:flex;align-items:center;gap:4px" onmouseenter="this.style.color='var(--t2)'" onmouseleave="this.style.color='var(--t4)'">+ tarefa</button>
+    </div>`).join('');
+  const cb=document.getElementById('custom-save-template');
+  const wrap=document.getElementById('custom-template-name-wrap');
+  if(cb&&wrap)cb.onchange=()=>{wrap.style.display=cb.checked?'block':'none';};
+}
+function addCustomStage(){
+  if(customStages.length>=8){toast('Máximo de 8 etapas','var(--am)');return;}
+  customStages.push({id:Date.now(),nome:`Etapa ${customStages.length+1}`,tarefas:['']});
+  renderCustomStages();
+  setTimeout(()=>{const inputs=document.querySelectorAll('#custom-stages-list .fi');if(inputs.length>0)inputs[inputs.length-1].focus();},50);
+}
+function removeCustomStage(si){
+  if(customStages.length<=1)return;
+  customStages.splice(si,1);renderCustomStages();
+}
+function addCustomTask(si){
+  if(customStages[si].tarefas.length>=10){toast('Máximo de 10 tarefas por etapa','var(--am)');return;}
+  customStages[si].tarefas.push('');renderCustomStages();
+  setTimeout(()=>{const taskInputs=document.querySelectorAll(`#custom-tasks-${si} .fi`);if(taskInputs.length>0)taskInputs[taskInputs.length-1].focus();},50);
+}
+function removeCustomTask(si,ti){
+  if(customStages[si].tarefas.length<=1)return;
+  customStages[si].tarefas.splice(ti,1);renderCustomStages();
+}
+function salvarFluxoComoTemplate(nome,fases){
+  const templates=JSON.parse(localStorage.getItem('ph4-meus-templates')||'[]');
+  const novo={id:Date.now(),nome,tipo:'Personalizado',descricao:`${fases.length} etapas customizadas`,fases,criadoEm:new Date().toLocaleDateString('pt-BR'),_isCustomFlow:true};
+  templates.push(novo);
+  localStorage.setItem('ph4-meus-templates',JSON.stringify(templates));
+  toast(`Template "${nome}" salvo! ✓`);
+}
+
 function selT(el,v){
   document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));
   el.classList.add('sel');
@@ -4865,7 +4955,13 @@ function selT(el,v){
       if(outrosTxt) outrosTxt.value = '';
     }
   }
-  renderBriefFields();
+  // Mostrar builder de fluxo customizado se "custom"
+  const cfb=document.getElementById('custom-flow-builder');
+  if(cfb){
+    if(v==='custom'){cfb.style.display='block';initCustomFlow();}
+    else cfb.style.display='none';
+  }
+  if(v!=='custom') renderBriefFields();
 }
 function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
 function getDiasRestantes(p){
@@ -4899,6 +4995,16 @@ function criarProjeto(){
     }
   }
   if(!selTipoV){toast('Selecione o tipo!','var(--am)');return;}
+  // OS-080: Meu Fluxo — build custom phases
+  let _customFasesData=null;
+  if(selTipoV==='custom'){
+    const validas=customStages.filter(s=>s.nome.trim());
+    if(validas.length===0){toast('Defina pelo menos 1 etapa com nome','var(--am)');return;}
+    _customFasesData=validas.map(s=>({
+      nome:s.nome.trim(),
+      tasks:s.tarefas.map(t=>t.trim()).filter(t=>t).slice(0,5)
+    })).map(f=>({...f,tasks:f.tasks.length>0?f.tasks:[`Realizar ${f.nome}`]}));
+  }
   const c2=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;
   const dias=Math.round(([0,14,21,30][c2]+(f-1)*3)*1.3);
   const ini=document.getElementById('np-ini').value||new Date().toISOString().split('T')[0];
@@ -4907,7 +5013,14 @@ function criarProjeto(){
   const modo=_npModo||'completo';
   const numTasks=modo==='rapido'?15:30;
   const deVal=document.getElementById('np-data-entrega')?.value||'';
-  const np={id:Date.now(),nome,cli,tipo:selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#D4A017',urg:_npUrg!=='normal'?_npUrg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(numTasks).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo,briefing:getBriefData(),dataEntrega:deVal||undefined,notasFase:[],feedbackFase:[],origemPropostaId:window._propParaMover||null,origemOrcamentoId:window._orcParaMover||null};
+  // Compute custom offsets
+  let _faseOffsets=null,_faseNomes=null,_faseTasks=null;
+  if(_customFasesData){
+    let off=0;_faseOffsets=[];_faseNomes=[];_faseTasks=[];
+    _customFasesData.forEach(f=>{_faseOffsets.push(off);_faseNomes.push(f.nome);_faseTasks.push(f.tasks);off+=f.tasks.length;});
+  }
+  const totalTasks=_customFasesData?_customFasesData.reduce((s,f)=>s+f.tasks.length,0):numTasks;
+  const np={id:Date.now(),nome,cli,tipo:_customFasesData?'Personalizado':selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#7C3AED',urg:_npUrg!=='normal'?_npUrg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(totalTasks).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo,briefing:getBriefData(),dataEntrega:deVal||undefined,notasFase:[],feedbackFase:[],origemPropostaId:window._propParaMover||null,origemOrcamentoId:window._orcParaMover||null,...(_customFasesData?{_customFases:true,_faseNomes,_faseTasks,_faseOffsets}:{})};
   projs.unshift(np);
   // BUG-01: deletar proposta só após projeto criado com sucesso
   if(window._propParaMover){propostas=propostas.filter(x=>x.id!==window._propParaMover);saveExtra();window._propParaMover=null;}
@@ -4915,7 +5028,8 @@ function criarProjeto(){
   if(document.getElementById('np-gcal').checked){const d=new Date(ini),gs=d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Kickoff: '+nome)}&dates=${gs}/${gs}&details=${encodeURIComponent('paulosa.studio')}` ,'_blank');}
   save();closeM('m-proj');
   document.getElementById('np-nome').value='';const bv=document.getElementById('np-brief');if(bv)bv.value='';const vv=document.getElementById('np-val');if(vv)vv.value='';const deEl=document.getElementById('np-data-entrega');if(deEl)deEl.value='';
-  selTipoV='';_npModo='completo';_npUrg='normal';document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));
+  if(_customFasesData){const saveAsTemplate=document.getElementById('custom-save-template')?.checked;const templateName=document.getElementById('custom-template-name')?.value?.trim();if(saveAsTemplate&&templateName)salvarFluxoComoTemplate(templateName,_customFasesData);}
+  selTipoV='';_npModo='completo';_npUrg='normal';document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));customStages=[];const _cfb=document.getElementById('custom-flow-builder');if(_cfb)_cfb.style.display='none';const _ctcb=document.getElementById('custom-save-template');if(_ctcb)_ctcb.checked=false;const _ctw=document.getElementById('custom-template-name-wrap');if(_ctw)_ctw.style.display='none';
   const bfEl=document.getElementById('np-brief-fields');if(bfEl)bfEl.innerHTML='';
   ganharXP('criarProjeto');toast('Projeto criado! +50 XP 🎉');curProjId=np.id;renderDash();openProj(np.id);
   setTimeout(()=>feedbackInline(document.querySelector('.proj-card')),200);
@@ -6018,6 +6132,8 @@ function getDescForType(tipo, fi){
 (function(){
   const _orig=renderFase;
   renderFase=function(p,fi){
+    // OS-080: projetos de fluxo customizado usam seus próprios dados — pular patch
+    if(p._customFases){_orig(p,fi);return;}
     const origTasks=FASES[fi].tasks;
     const origDesc=FASES[fi].desc;
     FASES[fi].tasks=getTasksForType(p.tipo,fi);
@@ -6192,12 +6308,20 @@ function usarMeuTemplate(id){
   const t=meusTemplates.find(x=>x.id===id);if(!t)return;
   openM('m-proj');
   setTimeout(()=>{
-    _npModo=t.modo||'completo';setModoProj(_npModo);
-    selTipoV=t.tipo;
-    document.querySelectorAll('.type-opt').forEach(o=>{
-      o.classList.toggle('sel',o.getAttribute('onclick')?.includes(t.tipo));
-    });
-    renderBriefFields();
+    if(t._isCustomFlow&&t.fases){
+      // OS-080: Template de fluxo customizado
+      selTipoV='custom';
+      const cfbEl=document.getElementById('tipo-custom');if(cfbEl)selT(cfbEl,'custom');
+      customStages=t.fases.map(f=>({id:Date.now()+Math.random(),nome:f.nome,tarefas:f.tasks.length>0?[...f.tasks]:['']}));
+      renderCustomStages();
+    } else {
+      _npModo=t.modo||'completo';setModoProj(_npModo);
+      selTipoV=t.tipo;
+      document.querySelectorAll('.type-opt').forEach(o=>{
+        o.classList.toggle('sel',o.getAttribute('onclick')?.includes(t.tipo));
+      });
+      renderBriefFields();
+    }
     const nome=document.getElementById('np-nome');if(nome)nome.placeholder='Projeto usando: '+t.nome;
   },100);
   toast('Template carregado — preencha os campos');
@@ -6211,7 +6335,7 @@ function removeMeuTemplate(id){
 function renderMeusTemplates(){
   const el=document.getElementById('meus-templates-list');if(!el)return;
   if(meusTemplates.length===0){el.innerHTML='<div class="card empty-state"><div class="empty-icon empty-float">📄</div><div class="empty-title">Nenhum template salvo</div><div class="empty-desc">Crie templates ou salve a partir de projetos existentes.</div></div>';return;}
-  el.innerHTML=meusTemplates.map(t=>`<div class="card" style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:600;color:var(--t1);font-size:var(--fs-sm)">${t.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${t.tipo} · ${t.modo==='rapido'?'⚡ Rápido':'Completo'} · ${t.tarefas.length} tarefas</div></div><div style="display:flex;gap:6px"><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="usarMeuTemplate(${t.id})">Usar</button><button class="btn-g" style="font-size:14px;width:28px;padding:0;color:var(--t4)" aria-label="Remover template" onclick="removeMeuTemplate(${t.id})">×</button></div></div></div>`).join('');
+  el.innerHTML=meusTemplates.map(t=>`<div class="card" style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:600;color:var(--t1);font-size:var(--fs-sm)">${t.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${t._isCustomFlow?`Meu Fluxo · ${t.fases?.length||0} etapas`:`${t.tipo} · ${t.modo==='rapido'?'⚡ Rápido':'Completo'} · ${t.tarefas?.length||0} tarefas`}</div></div><div style="display:flex;gap:6px"><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="usarMeuTemplate(${t.id})">Usar</button><button class="btn-g" style="font-size:14px;width:28px;padding:0;color:var(--t4)" aria-label="Remover template" onclick="removeMeuTemplate(${t.id})">×</button></div></div></div>`).join('');
 }
 function toggleTplTab(tab){
   const meusEl=document.getElementById('tpl-tab-meus');
