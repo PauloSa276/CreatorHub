@@ -1983,6 +1983,9 @@ button:active{transform:scale(.97);transition:transform .08s}
 .card-anim:nth-child(4){animation-delay:.16s}
 .card-anim:nth-child(5){animation-delay:.2s}
 .card-anim:nth-child(6){animation-delay:.24s}
+/* Conquistas: fade-in only — não usa transform para não bloquear hover lift */
+@keyframes conqFadeIn{from{opacity:0}to{opacity:1}}
+.conq-enter{animation:conqFadeIn .35s ease both}
 
 /* ── PROGRESS BARS: smooth fill ── */
 .prog-fill,.p-prog-fill,.xfs,.xfg,.bar-v-fill,.bar-h-fill,.meta-prog-fill,.prog-fill-anim{
@@ -3054,8 +3057,8 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v12.2.5</span>
-      <span class="version-date">16 abr 2026</span>
+      <span class="version-txt" id="version-label">v12.2.6</span>
+      <span class="version-date">20 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
   </div>
@@ -4056,8 +4059,8 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v12.2.5';
-const APP_DATE='22 mar 2026';
+const APP_VERSION='v12.2.6';
+const APP_DATE='20 abr 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
   {id:'definicao',n:'Definição',i:'lightbulb',xp:80,desc:'Organize o aprendido. Defina o conceito criativo central.',tasks:['Sintetizar insights da imersão','Definir conceito criativo central','Criar mapa de palavras e atributos','Alinhar direção criativa com o cliente','Validar briefing criativo final']},
@@ -5578,12 +5581,18 @@ function renderPerfilDinamico(){
   const ccEl=document.getElementById('conq-count');
   if(ccEl) ccEl.textContent=`${unlocked}/${CONQS.length}`;
   const cqEl=document.getElementById('perfil-conquistas');
-  if(cqEl) cqEl.innerHTML=CONQS.map((c,i)=>`
-    <div class="conq-item ${c.ok?'unlocked':'locked'} card-anim" style="animation-delay:${(i*0.04).toFixed(2)}s" title="${c.d}">
-      <div class="conq-ico">${c.ico}</div>
-      <div class="conq-name">${c.n}</div>
-    </div>
-  `).join('');
+  if(cqEl){
+    cqEl.innerHTML=CONQS.map((c,i)=>`
+      <div class="conq-item ${c.ok?'unlocked':'locked'} conq-enter" style="animation-delay:${(i*0.04).toFixed(2)}s" title="${c.d}">
+        <div class="conq-ico">${c.ico}</div>
+        <div class="conq-name">${c.n}</div>
+      </div>
+    `).join('');
+    // Remove a classe de animação após conclusão para liberar o hover transform
+    cqEl.querySelectorAll('.conq-enter').forEach(el=>{
+      el.addEventListener('animationend',()=>el.classList.remove('conq-enter'),{once:true});
+    });
+  }
   renderSkills();
 }
 
@@ -6891,7 +6900,7 @@ function saveSkills(skills){const p=getPerfilData();p.skills=skills;savePerfilDa
 function renderSkills(){
   const el=document.getElementById('perfil-skills');if(!el)return;
   const skills=getSkills();
-  if(skills.length===0){el.innerHTML='<div style="text-align:center;padding:16px 0"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-bottom:8px">Nenhuma habilidade cadastrada</div><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="nav(\'perfil\');setTimeout(()=>{const btn=document.querySelector(\'[onclick*=openEditPerfil]\');if(btn)btn.click();},200)">+ adicionar agora</button></div>';return;}
+  if(skills.length===0){el.innerHTML='<div style="text-align:center;padding:16px 0"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-bottom:8px">Nenhuma habilidade cadastrada</div><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="openM(\'m-edit-perfil\')">+ adicionar agora</button></div>';return;}
   const boosts=JSON.parse(localStorage.getItem('ph4-skill-boosts')||'{}');
   el.innerHTML=skills.map((s,i)=>{
     const total=Math.min(100,s.v+(boosts[s.n]||0));
