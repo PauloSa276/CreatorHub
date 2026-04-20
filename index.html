@@ -3054,7 +3054,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v12.2.4</span>
+      <span class="version-txt" id="version-label">v12.2.5</span>
       <span class="version-date">16 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -4056,7 +4056,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v12.2.4';
+const APP_VERSION='v12.2.5';
 const APP_DATE='22 mar 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
@@ -4225,7 +4225,7 @@ function openM(id){
   const el=document.getElementById(id);if(!el)return;
   el.classList.add('open');
   if(id==='m-proj'){populateNpCli();updateFilaAuto();calcPrev();const d=new Date().toISOString().split('T')[0];const ini=document.getElementById('np-ini');if(ini)ini.value=d;checkCapAlert();setModoProj('completo');setUrgProj('normal');renderBriefFields();}
-  if(id==='m-edit-perfil'){const p=getPerfilData();const en=document.getElementById('ep-nome');if(en)en.value=p.nome;const ee=document.getElementById('ep-espec');if(ee)ee.value=p.espec||'';const es=document.getElementById('ep-site');if(es)es.value=p.site||'';const eb=document.getElementById('ep-bio');if(eb)eb.value=p.bio||'';const ep2=document.getElementById('ep-pass');if(ep2)ep2.value='';renderSkillsEditor();}
+  if(id==='m-edit-perfil'){const p=getPerfilData();const en=document.getElementById('ep-nome');if(en)en.value=p.nome;const ee=document.getElementById('ep-espec');if(ee)ee.value=p.espec||'';const es=document.getElementById('ep-site');if(es)es.value=p.site||'';const eb=document.getElementById('ep-bio');if(eb)eb.value=p.bio||'';const ep2=document.getElementById('ep-pass');if(ep2)ep2.value='';window._epSkills=getSkills().map(s=>({...s}));renderSkillsEditor();}
   if(id==='m-feedback'){const ap=document.querySelector('.page.active');const fbp=document.getElementById('fb-page');if(fbp&&ap)fbp.textContent=ap.id.replace('page-','');document.querySelectorAll('.fb-type-btn').forEach(b=>b.style.background='');document.getElementById('fb-desc').value='';window._fbType=null;}
   if(id==='m-lanc'){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];}
   // Focar no campo de nome ao abrir modal de cliente
@@ -6903,14 +6903,17 @@ function renderSkills(){
 
 function renderSkillsEditor(){
   const el=document.getElementById('ep-skills-list');if(!el)return;
-  const skills=getSkills();
-  el.innerHTML=skills.map((s,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+  // Usar sempre a cópia em memória — nunca reler do localStorage durante a edição
+  if(!window._epSkills)window._epSkills=getSkills().map(s=>({...s}));
+  const skills=window._epSkills;
+  el.innerHTML=skills.length===0
+    ?`<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);padding:8px 0">Nenhuma habilidade adicionada ainda.</div>`
+    :skills.map((s,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
     <input class="fi" value="${s.n}" style="height:30px;font-size:var(--fs-xs);flex:1" onchange="window._epSkills[${i}].n=this.value">
     <input type="range" min="0" max="100" value="${s.v}" style="width:80px;accent-color:var(--y)" oninput="this.nextElementSibling.textContent=this.value+'%';window._epSkills[${i}].v=parseInt(this.value)">
     <span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t2);min-width:30px">${s.v}%</span>
     <span style="cursor:pointer;color:var(--t4);font-size:var(--fs-xs)" onclick="window._epSkills.splice(${i},1);renderSkillsEditor()" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'">×</span>
   </div>`).join('');
-  window._epSkills=skills;
 }
 
 function addSkillField(){
