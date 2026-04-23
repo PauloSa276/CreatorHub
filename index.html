@@ -2544,6 +2544,8 @@ button:active{transform:scale(.97);transition:transform .08s}
 
     <div class="mob-drawer-item" onclick="navMob('dashboard')"><span><i data-lucide="layout-dashboard"></i></span>Dashboard</div>
     <div class="mob-drawer-item" onclick="navMob('projetos')"><span><i data-lucide="folder-kanban"></i></span>Projetos</div>
+    <div class="mob-drawer-item" onclick="navMob('pipeline')"><span><i data-lucide="git-branch"></i></span>Pipeline</div>
+    <div class="mob-drawer-item" onclick="navMob('orcamentos')"><span><i data-lucide="file-spreadsheet"></i></span>Orçamentos</div>
     <div class="mob-drawer-item" onclick="navMob('gestao')"><span><i data-lucide="layers"></i></span>Gestão de projeto</div>
     <div class="mob-drawer-item" onclick="navMob('calendario')"><span><i data-lucide="calendar"></i></span>Calendário</div>
     <div class="mob-drawer-item" onclick="navMob('templates')"><span><i data-lucide="file-text"></i></span>Templates</div>
@@ -4201,19 +4203,29 @@ function DEF_HUB_DATA(){return[
 const PG={dashboard:'Dashboard',projetos:'Projetos',gestao:'Gestão de projeto',pipeline:'Pipeline de Propostas',orcamentos:'Orçamentos',calendario:'Calendário',templates:'Templates',crm:'CRM · Clientes',financeiro:'Financeiro',hub:'Hub criativo',metricas:'Métricas',cases:'Cases & Portfólio',perfil:'Meu perfil',config:'Configurações'};
 
 function save(){
-  localStorage.setItem('ph4-projs',JSON.stringify(projs));
-  localStorage.setItem('ph4-cli',JSON.stringify(clients));
-  localStorage.setItem('ph4-cal',JSON.stringify(calEvs));
-  localStorage.setItem('ph4-fin',JSON.stringify(lancs));
-  localStorage.setItem('ph4-day',JSON.stringify(dayTasks));
-  localStorage.setItem('ph4-hub',JSON.stringify(hubData));
-  localStorage.setItem('ph4-xp',xpTotal);
+  try{
+    localStorage.setItem('ph4-projs',JSON.stringify(projs));
+    localStorage.setItem('ph4-cli',JSON.stringify(clients));
+    localStorage.setItem('ph4-cal',JSON.stringify(calEvs));
+    localStorage.setItem('ph4-fin',JSON.stringify(lancs));
+    localStorage.setItem('ph4-day',JSON.stringify(dayTasks));
+    localStorage.setItem('ph4-hub',JSON.stringify(hubData));
+    localStorage.setItem('ph4-xp',xpTotal);
+  }catch(e){
+    if(e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED')
+      toast('⚠️ Armazenamento quase cheio — faça um backup agora!','var(--rd)',6000);
+  }
 }
 function saveExtra(){
-  localStorage.setItem('ph4-finalizados',JSON.stringify(projsFinalizados));
-  localStorage.setItem('ph4-cases',JSON.stringify(cases));
-  localStorage.setItem('ph4-propostas',JSON.stringify(propostas));
-  localStorage.setItem('ph4-orcamentos',JSON.stringify(orcamentos));
+  try{
+    localStorage.setItem('ph4-finalizados',JSON.stringify(projsFinalizados));
+    localStorage.setItem('ph4-cases',JSON.stringify(cases));
+    localStorage.setItem('ph4-propostas',JSON.stringify(propostas));
+    localStorage.setItem('ph4-orcamentos',JSON.stringify(orcamentos));
+  }catch(e){
+    if(e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED')
+      toast('⚠️ Armazenamento quase cheio — faça um backup agora!','var(--rd)',6000);
+  }
 }
 
 // ── THEME ─────────────────────────────────────────────
@@ -4234,8 +4246,32 @@ if(grEl)grEl.textContent=(hr<12?'Bom dia':hr<18?'Boa tarde':'Boa noite')+', Paul
 const dateEl=document.getElementById('tb-date');
 if(dateEl)dateEl.textContent=now.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'}).toUpperCase();
 
+// ── INPUT MODAL (substitui todos os prompt() nativos) ──
+function openInputModal(opts){
+  const existing=document.getElementById('m-input-modal');if(existing)existing.remove();
+  const overlay=document.createElement('div');
+  overlay.className='moverlay open';overlay.id='m-input-modal';
+  overlay.innerHTML=`<div class="modal" style="max-width:400px" role="dialog" aria-modal="true">
+    <div class="modal-title">${opts.titulo||'Informação necessária'}</div>
+    <div class="fg" style="margin-top:16px">
+      <label class="flbl">${opts.label||''}</label>
+      <input class="fi" id="m-input-field" type="${opts.tipo||'text'}" placeholder="${opts.placeholder||''}" value="${opts.valor||''}" style="margin-top:6px">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
+      <button class="btn-g" onclick="document.getElementById('m-input-modal').remove()">Cancelar</button>
+      <button class="btn-p" id="m-input-ok">Confirmar</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const field=document.getElementById('m-input-field');
+  const okBtn=document.getElementById('m-input-ok');
+  if(field)setTimeout(()=>field.focus(),60);
+  if(okBtn)okBtn.onclick=()=>{const val=field?field.value.trim():'';if(!val){if(field)field.focus();return;}overlay.remove();if(opts.onOk)opts.onOk(val);};
+  if(field)field.onkeydown=(e)=>{if(e.key==='Enter'){if(okBtn)okBtn.click();}if(e.key==='Escape')overlay.remove();};
+}
+
 // ── TOAST ──────────────────────────────────────────────
-function toast(m,c){const t=document.getElementById('toast');if(!t)return;t.textContent=m;t.style.borderColor=c||'var(--gr)';t.style.color=c||'var(--gr)';t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);}
+function toast(m,c,duracao){const t=document.getElementById('toast');if(!t)return;t.textContent=m;t.style.borderColor=c||'var(--gr)';t.style.color=c||'var(--gr)';t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),duracao||3200);}
 
 // ── MODALS ────────────────────────────────────────────
 function openM(id){
@@ -4963,7 +4999,7 @@ function selT(el,v){
   }
   if(v!=='custom') renderBriefFields();
 }
-function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
+function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=projs.filter(p=>!p.pausado&&p.fi<(FASES?FASES.length-1:5)).length+1;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
 function getDiasRestantes(p){
   const ref=p.dataEntrega||p.prazo;
   if(!ref)return p.dias||0;
@@ -4973,13 +5009,10 @@ function getDiasRestantes(p){
 }
 function editarDataEntrega(){
   const p=projs.find(x=>x.id===curProjId);if(!p)return;
-  const atual=p.dataEntrega||p.prazo||'';
-  const nova=prompt('Data de entrega combinada (AAAA-MM-DD):',atual);
-  if(nova===null)return;
-  if(nova===''){p.dataEntrega=undefined;toast('Data de entrega removida — usando prazo estimado');}
-  else if(/^\d{4}-\d{2}-\d{2}$/.test(nova)){p.dataEntrega=nova;toast('Data de entrega atualizada!');}
-  else{toast('Formato inválido — use AAAA-MM-DD','var(--am)');return;}
-  save();renderGestao();setTimeout(refreshIcons,60);
+  openInputModal({titulo:'Data de entrega',label:'Data combinada com o cliente',tipo:'date',valor:p.dataEntrega||p.prazo||'',onOk:(nova)=>{
+    p.dataEntrega=nova;toast('Data de entrega atualizada!');
+    save();renderGestao();setTimeout(refreshIcons,60);
+  }});
 }
 function updateFilaAuto(){const projAtivos=projs.filter(p=>!p.pausado&&p.fi<5).length;const el=document.getElementById('np-fila-auto');if(!el)return;el.textContent=projAtivos+' projeto'+(projAtivos!==1?'s':'')+' ativo'+(projAtivos!==1?'s':'')+' agora';el.style.color=projAtivos>=4?'var(--rd)':projAtivos>=3?'var(--am)':'var(--t3)';}
 function criarProjeto(){
@@ -5005,7 +5038,7 @@ function criarProjeto(){
       tasks:s.tarefas.map(t=>t.trim()).filter(t=>t).slice(0,5)
     })).map(f=>({...f,tasks:f.tasks.length>0?f.tasks:[`Realizar ${f.nome}`]}));
   }
-  const c2=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;
+  const c2=parseInt(document.getElementById('np-comp').value)||2,f=projs.filter(p=>!p.pausado&&p.fi<(FASES?FASES.length-1:5)).length+1;
   const dias=Math.round(([0,14,21,30][c2]+(f-1)*3)*1.3);
   const ini=document.getElementById('np-ini').value||new Date().toISOString().split('T')[0];
   const ed=new Date(ini);ed.setDate(ed.getDate()+dias);
@@ -5228,11 +5261,13 @@ function renderCpopDocs(cl){
 }
 function addDocLink(){
   const cl=clients.find(x=>x.id===crmPopupId);if(!cl)return;
-  const titulo=prompt('Título do documento:');if(!titulo)return;
-  const url=prompt('URL (Drive, Dropbox, Notion...):');if(!url)return;
-  if(!cl.docs)cl.docs=[];
-  cl.docs.push({titulo,url});
-  save();renderCpopDocs(cl);toast('Link adicionado!');
+  openInputModal({titulo:'Adicionar documento',label:'Título',placeholder:'Ex: Contrato, Brief, Drive...',onOk:(titulo)=>{
+    openInputModal({titulo:'Adicionar documento',label:'URL',tipo:'url',placeholder:'https://...',onOk:(url)=>{
+      if(!cl.docs)cl.docs=[];
+      cl.docs.push({titulo,url});
+      save();renderCpopDocs(cl);toast('Link adicionado!');
+    }});
+  }});
 }
 function removeDocLink(idx){
   const cl=clients.find(x=>x.id===crmPopupId);if(!cl||!cl.docs)return;
@@ -5492,11 +5527,13 @@ function editarClientePanel(){
 
 function addDocLinkPanel(){
   const cl=clients.find(x=>x.id===crmPanelCliId);if(!cl)return;
-  const titulo=prompt('Título do documento:');if(!titulo)return;
-  const url=prompt('URL (Drive, Dropbox, Notion...):');if(!url)return;
-  if(!cl.docs)cl.docs=[];
-  cl.docs.push({titulo,url});
-  save();setCRMPanelAba('docs');toast('Link adicionado!');
+  openInputModal({titulo:'Adicionar documento',label:'Título',placeholder:'Ex: Contrato, Brief, Drive...',onOk:(titulo)=>{
+    openInputModal({titulo:'Adicionar documento',label:'URL',tipo:'url',placeholder:'https://...',onOk:(url)=>{
+      if(!cl.docs)cl.docs=[];
+      cl.docs.push({titulo,url});
+      save();setCRMPanelAba('docs');toast('Link adicionado!');
+    }});
+  }});
 }
 
 function removeDocLinkPanel(idx){
@@ -6179,7 +6216,18 @@ function renderRevisoes(p){
 function addRevisao(){const p=projs.find(x=>x.id===curProjId);if(!p)return;p.revisoes=(p.revisoes||0)+1;if(!p.revisaoHist)p.revisaoHist=[];p.revisaoHist.push({data:new Date().toLocaleDateString('pt-BR'),motivo:''});if(p.revisoes>(p.maxRevisoes||2))toast('⚠ Revisão fora do escopo!','var(--rd)');else toast('Revisão registrada');save();renderRevisoes(p);}
 function setMaxRev(n){const p=projs.find(x=>x.id===curProjId);if(!p)return;p.maxRevisoes=n;save();renderRevisoes(p);}
 function renderFileLinks(p){const el=document.getElementById('g-file-links');if(!el)return;const links=p.fileLinks||[];if(links.length===0){el.innerHTML='<div style="text-align:center;padding:12px 8px"><div style="font-size:16px;margin-bottom:4px">🔗</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Adicione links do Figma, Drive, etc.</div></div>';return;}const icons={Drive:'📁',Figma:'🎨',Behance:'🎭',Apresentação:'📊',Contrato:'📄',Outro:'🔗'};el.innerHTML=links.map((l,i)=>`<div class="file-link-row"><span class="file-link-icon">${icons[l.tipo]||'🔗'}</span><div class="file-link-name">${l.nome||l.tipo}</div><a href="${l.url}" target="_blank" class="file-link-url"><i data-lucide="external-link" style="width:14px;height:14px"></i></a><span style="cursor:pointer;color:var(--t4);font-size:var(--fs-2xs);padding:1px 5px;transition:color .12s" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'" onclick="removeFileLink(${i})"><i data-lucide="x" style="width:12px;height:12px"></i></span></div>`).join('');}
-function addFileLink(){const p=projs.find(x=>x.id===curProjId);if(!p)return;const tipo=prompt('Tipo (Drive, Figma, Behance, Apresentação, Contrato, Outro):','Drive');if(!tipo)return;const url=prompt('URL:','https://');if(!url||url==='https://')return;const nome=prompt('Nome:','')||tipo;if(!p.fileLinks)p.fileLinks=[];p.fileLinks.push({tipo,url,nome});save();renderFileLinks(p);toast('Link adicionado!');}
+function addFileLink(){
+  const p=projs.find(x=>x.id===curProjId);if(!p)return;
+  openInputModal({titulo:'Adicionar link',label:'Tipo',placeholder:'Drive, Figma, Behance, Notion...',valor:'Drive',onOk:(tipo)=>{
+    openInputModal({titulo:'Adicionar link',label:'URL',tipo:'url',placeholder:'https://',onOk:(url)=>{
+      openInputModal({titulo:'Adicionar link',label:'Nome (opcional)',placeholder:tipo,onOk:(nome)=>{
+        if(!p.fileLinks)p.fileLinks=[];
+        p.fileLinks.push({tipo,url,nome:nome||tipo});
+        save();renderFileLinks(p);toast('Link adicionado!');
+      }});
+    }});
+  }});
+}
 function removeFileLink(i){const p=projs.find(x=>x.id===curProjId);if(!p||!p.fileLinks)return;p.fileLinks.splice(i,1);save();renderFileLinks(p);}
 
 // ── FINANCEIRO ────────────────────────────────────────
@@ -6733,10 +6781,11 @@ function reenviaProp(id){
 }
 function reajustaProp(id){
   const p=propostas.find(x=>x.id===id);if(!p)return;
-  const novoVal=prompt('Novo valor (R$):',p.val);if(novoVal===null)return;
-  p.val=parseFloat(novoVal)||p.val;
-  p.validade=new Date(Date.now()+15*86400000).toISOString().split('T')[0];
-  saveExtra();renderPipeline();toast('Valor reajustado!');
+  openInputModal({titulo:'Reajustar proposta',label:'Novo valor (R$)',tipo:'number',valor:p.val,placeholder:'0.00',onOk:(v)=>{
+    p.val=parseFloat(v)||p.val;
+    p.validade=new Date(Date.now()+15*86400000).toISOString().split('T')[0];
+    saveExtra();renderPipeline();toast('Valor reajustado!');
+  }});
 }
 function followUpProp(id){
   const p=propostas.find(x=>x.id===id);if(!p)return;
@@ -7893,35 +7942,10 @@ function delInsight(i){ // alias retrocompat — index-based fallback
   renderInsights();
 }
 
-// Inicializar sistema criativo junto com o dashboard
-
-function toggleCriativo(){
-  const body = document.getElementById('criativo-body');
-  const chev = document.getElementById('criativo-chevron');
-  if(!body) return;
-  const isOpen = body.style.display !== 'none';
-  body.style.display = isOpen ? 'none' : 'block';
-  if(chev) chev.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
-  localStorage.setItem('ph4-criativo-open', isOpen ? '0' : '1');
-}
-
-// Restaurar estado do combustível ao iniciar
-function initCriativoState(){
-  const saved = localStorage.getItem('ph4-criativo-open');
-  const body = document.getElementById('criativo-body');
-  const chev = document.getElementById('criativo-chevron');
-  // Por padrão: colapsado (economiza espaço)
-  if(body && saved !== '1'){
-    body.style.display = 'none';
-    if(chev) chev.style.transform = 'rotate(-90deg)';
-  }
-}
-
 function initCriativo(){
   renderDose();
   renderDesafio();
   renderInsights();
-  initCriativoState();
 }
 
 // ── INICIALIZAÇÃO ──────────────────────────────────────
@@ -8648,6 +8672,9 @@ function copiarFeedback(){
     </div>
   </div>
 </div>
+
+<!-- BUG-1: Toast element -->
+<div id="toast" class="toast"></div>
 
 </body>
 </html>
