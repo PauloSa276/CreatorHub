@@ -4127,6 +4127,34 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ── DADOS & CONSTANTES ──────────────────────────────────
 const APP_VERSION='v13.0.0';
 const APP_DATE='25 abr 2026';
+
+// ── CHANGELOG — adicionar entrada a cada sprint ────────
+const CHANGELOG=[
+  {
+    versao:'v13.0.0',
+    data:'25 abr 2026',
+    titulo:'Parceiro de Carreira Criativa',
+    emoji:'🎯',
+    novidades:[
+      {ico:'🌱',titulo:'Projetos Pessoais',desc:'Marque projetos como pessoais — aparecem com badge verde e não entram no financeiro.'},
+      {ico:'📋',titulo:'Portfólio Tracker',desc:'Dashboard mostra quais projetos finalizados ainda não foram documentados como case.'},
+      {ico:'🎯',titulo:'Metas de Carreira',desc:'Defina metas no Perfil com prazo e marque como concluídas (+150 XP cada).'},
+      {ico:'⏰',titulo:'Proteção de Tempo',desc:'Configure horas semanais para projetos pessoais — lembrete gentil nos fins de semana.'},
+      {ico:'🏆',titulo:'Desafios de Carreira',desc:'Novo card no Hub Criativo com desafios semanais de desenvolvimento profissional e XP.'},
+    ]
+  },
+  {
+    versao:'v12.3.0',
+    data:'20 abr 2026',
+    titulo:'Meu Fluxo',
+    emoji:'🔀',
+    novidades:[
+      {ico:'🔀',titulo:'Tipo "Meu Fluxo"',desc:'Crie projetos com etapas e tarefas totalmente personalizadas.'},
+      {ico:'💾',titulo:'Templates de fluxo',desc:'Salve seu fluxo customizado como template para reutilizar depois.'},
+    ]
+  },
+];
+
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
   {id:'definicao',n:'Definição',i:'lightbulb',xp:80,desc:'Organize o aprendido. Defina o conceito criativo central.',tasks:['Sintetizar insights da imersão','Definir conceito criativo central','Criar mapa de palavras e atributos','Alinhar direção criativa com o cliente','Validar briefing criativo final']},
@@ -8228,6 +8256,36 @@ function renderDesafioCarreira(){
   `;
 }
 
+// ── WHAT'S NEW ────────────────────────────────────────
+function checkWhatsNew(){
+  const lastSeen=localStorage.getItem('ph4-last-seen-version');
+  if(lastSeen===APP_VERSION)return; // já viu esta versão
+  const entry=CHANGELOG.find(c=>c.versao===APP_VERSION);
+  if(!entry)return;
+  // popular o modal
+  const setEl2=(id,v)=>{const e=document.getElementById(id);if(e)e.innerHTML=v;};
+  setEl2('wn-emoji',entry.emoji);
+  setEl2('wn-versao','Novidades · '+entry.versao);
+  setEl2('wn-titulo',entry.titulo);
+  setEl2('wn-data',entry.data);
+  setEl2('wn-ver-badge',entry.versao);
+  const novEl=document.getElementById('wn-novidades');
+  if(novEl)novEl.innerHTML=entry.novidades.map(n=>`
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;background:var(--s2);border:1px solid var(--e1);border-radius:var(--radius-md)">
+      <div style="font-size:18px;flex-shrink:0;line-height:1;margin-top:1px">${n.ico}</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px">${n.titulo}</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--t3);line-height:1.5">${n.desc}</div>
+      </div>
+    </div>`).join('');
+  setTimeout(()=>openM('m-whats-new'),900);
+}
+
+function fecharWhatsNew(){
+  localStorage.setItem('ph4-last-seen-version',APP_VERSION);
+  closeM('m-whats-new');
+}
+
 // ── INICIALIZAÇÃO ──────────────────────────────────────
 renderDash();
 atualizarBadgeCases();
@@ -8244,6 +8302,8 @@ setTimeout(refreshIcons, 100);
 })();
 // OS-084: verificação de proteção de tempo (fins de semana)
 checkProtecaoTempo();
+// What's New — mostra pop-up quando a versão muda
+checkWhatsNew();
 
 // ═══════════════════════════════════════════════════════════════
 // MELHORIAS UX — PRIORIDADE 1, 2 e 3
@@ -8957,6 +9017,25 @@ function copiarFeedback(){
 
 <!-- BUG-1: Toast element -->
 <div id="toast" class="toast"></div>
+
+<!-- M: O QUE HÁ DE NOVO -->
+<div class="moverlay" id="m-whats-new">
+  <div class="modal" style="max-width:460px" role="dialog" aria-modal="true">
+    <div id="wn-header" style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--e1)">
+      <div id="wn-emoji" style="font-size:32px;line-height:1"></div>
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--y);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px" id="wn-versao"></div>
+        <div style="font-size:17px;font-weight:800;letter-spacing:-.03em;color:var(--t1)" id="wn-titulo"></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:2px" id="wn-data"></div>
+      </div>
+    </div>
+    <div id="wn-novidades" style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--t4)">creator.hub · <span id="wn-ver-badge"></span></span>
+      <button class="btn-p" onclick="fecharWhatsNew()" style="min-width:120px">Entendido! 🚀</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
