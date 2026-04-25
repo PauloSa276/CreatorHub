@@ -1983,6 +1983,9 @@ button:active{transform:scale(.97);transition:transform .08s}
 .card-anim:nth-child(4){animation-delay:.16s}
 .card-anim:nth-child(5){animation-delay:.2s}
 .card-anim:nth-child(6){animation-delay:.24s}
+/* Conquistas: fade-in only — não usa transform para não bloquear hover lift */
+@keyframes conqFadeIn{from{opacity:0}to{opacity:1}}
+.conq-enter{animation:conqFadeIn .35s ease both}
 
 /* ── PROGRESS BARS: smooth fill ── */
 .prog-fill,.p-prog-fill,.xfs,.xfg,.bar-v-fill,.bar-h-fill,.meta-prog-fill,.prog-fill-anim{
@@ -2084,6 +2087,10 @@ button:active{transform:scale(.97);transition:transform .08s}
         <option value="">Selecione...</option>
         <option value="_novo">+ Novo cliente</option>
       </select>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <input type="checkbox" id="np-pessoal" style="accent-color:var(--y)">
+        <label for="np-pessoal" style="font-family:var(--mono);font-size:11px;color:var(--t3);cursor:pointer">🌱 Este é um projeto pessoal (portfólio, site, experimento...)</label>
+      </div>
     </div>
     <div class="fg"><label class="flbl">Tipo de demanda *</label>
       <div class="type-grid">
@@ -2095,9 +2102,23 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="type-opt" onclick="selT(this,'Site')"><div style="margin-bottom:3px"><i data-lucide="globe" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Site</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Design & desenvolvimento</div></div>
         <div class="type-opt" onclick="selT(this,'Landing Page')"><div style="margin-bottom:3px"><i data-lucide="mouse-pointer-click" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Landing Page</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Página de conversão</div></div>
         <div class="type-opt" onclick="selT(this,'Outros')"><div style="margin-bottom:3px"><i data-lucide="shapes" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Outros</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Personalizado</div></div>
+        <div class="type-opt" onclick="selT(this,'custom')" id="tipo-custom"><div style="margin-bottom:3px"><i data-lucide="sliders" style="width:18px;height:18px;color:var(--t2)"></i></div><div style="font-size:var(--fs-2xs);font-weight:600;color:var(--t1)">Meu Fluxo</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Crie seu fluxo</div></div>
       </div>
       <div id="np-outros-wrap" style="display:none;margin-top:8px">
         <input class="fi" id="np-outros-txt" placeholder="Descreva o tipo de demanda..." oninput="selTipoV=this.value">
+      </div>
+      <!-- OS-080: Builder de fluxo customizado -->
+      <div id="custom-flow-builder" style="display:none;margin-top:16px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Monte seu fluxo</div>
+        <div id="custom-stages-list"></div>
+        <button onclick="addCustomStage()" style="display:flex;align-items:center;gap:6px;width:100%;height:36px;padding:0 14px;margin-top:8px;background:transparent;border:1px dashed var(--e2);border-radius:var(--radius-md);font-family:var(--mono);font-size:11px;color:var(--t3);cursor:pointer;transition:all .12s;justify-content:center" onmouseenter="this.style.borderColor='var(--y)';this.style.color='var(--y)'" onmouseleave="this.style.borderColor='var(--e2)';this.style.color='var(--t3)'">+ Adicionar etapa</button>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+          <input type="checkbox" id="custom-save-template" style="accent-color:var(--y)">
+          <label for="custom-save-template" style="font-family:var(--mono);font-size:11px;color:var(--t3);cursor:pointer">Salvar este fluxo como template para usar depois</label>
+        </div>
+        <div id="custom-template-name-wrap" style="display:none;margin-top:8px">
+          <input class="fi" id="custom-template-name" placeholder="Nome do template (ex: Fluxo de Roteiro)" style="height:32px;font-size:var(--fs-xs)">
+        </div>
       </div>
     </div>
     <div class="g2" style="gap:11px">
@@ -2125,6 +2146,25 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="fg"><label class="flbl" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="np-gcal" style="width:14px;height:14px;cursor:pointer;accent-color:var(--y)"><span>Criar evento de kickoff no Google Calendar</span></label></div>
     <div class="modal-footer"><button class="btn-g" onclick="window._propParaMover=null;window._orcParaMover=null;closeM('m-proj')">Cancelar</button><button class="btn-p" onclick="criarProjeto()">Criar projeto</button></div>
+  </div>
+</div>
+
+<!-- M: NOVA META DE CARREIRA (OS-083) -->
+<div class="moverlay" id="m-nova-meta">
+  <div class="modal" style="max-width:420px" role="dialog" aria-modal="true">
+    <div class="modal-title">🎯 Nova meta de carreira</div>
+    <div class="fg" style="margin-top:16px">
+      <label class="flbl">O que você quer conquistar?</label>
+      <input class="fi" id="nm-texto" style="margin-top:6px" placeholder="Ex: Publicar meu site pessoal, documentar 3 cases...">
+    </div>
+    <div class="fg" style="margin-top:12px">
+      <label class="flbl">Prazo (opcional)</label>
+      <input class="fi" id="nm-prazo" type="date" style="margin-top:6px">
+    </div>
+    <div class="modal-footer" style="margin-top:20px">
+      <button class="btn-g" onclick="closeM('m-nova-meta')">Cancelar</button>
+      <button class="btn-p" onclick="salvarNovaMeta()">Adicionar meta</button>
+    </div>
   </div>
 </div>
 
@@ -2527,6 +2567,8 @@ button:active{transform:scale(.97);transition:transform .08s}
 
     <div class="mob-drawer-item" onclick="navMob('dashboard')"><span><i data-lucide="layout-dashboard"></i></span>Dashboard</div>
     <div class="mob-drawer-item" onclick="navMob('projetos')"><span><i data-lucide="folder-kanban"></i></span>Projetos</div>
+    <div class="mob-drawer-item" onclick="navMob('pipeline')"><span><i data-lucide="git-branch"></i></span>Pipeline</div>
+    <div class="mob-drawer-item" onclick="navMob('orcamentos')"><span><i data-lucide="file-spreadsheet"></i></span>Orçamentos</div>
     <div class="mob-drawer-item" onclick="navMob('gestao')"><span><i data-lucide="layers"></i></span>Gestão de projeto</div>
     <div class="mob-drawer-item" onclick="navMob('calendario')"><span><i data-lucide="calendar"></i></span>Calendário</div>
     <div class="mob-drawer-item" onclick="navMob('templates')"><span><i data-lucide="file-text"></i></span>Templates</div>
@@ -3054,8 +3096,8 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v12.2.5</span>
-      <span class="version-date">16 abr 2026</span>
+      <span class="version-txt" id="version-label">v12.3.0</span>
+      <span class="version-date">20 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
   </div>
@@ -3303,6 +3345,9 @@ button:active{transform:scale(.97);transition:transform .08s}
           </div>
           <div id="alertas"></div>
         </div>
+
+        <!-- OS-082: Portfolio Tracker -->
+        <div class="card" id="portfolio-tracker"></div>
 
         <!-- CALCULADORA DE PRAZO -->
         <div class="card">
@@ -3777,6 +3822,8 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div style="padding:0 24px 24px;display:flex;flex-direction:column;flex:1;overflow:hidden">
     <div style="padding:16px 0 12px;display:flex;justify-content:flex-end;flex-shrink:0"><button class="btn-p" onclick="openM('m-add-tool')">+ Adicionar</button></div>
+    <!-- OS-085: Desafio de Carreira -->
+    <div class="card" id="desafio-carreira-card" style="margin-bottom:14px;border-color:rgba(212,160,23,0.15)"></div>
     <div class="hub-layout" id="hub-layout"></div>
     </div><!-- /padding wrapper -->
   </div>
@@ -3899,6 +3946,9 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="card-title">Evolução — últimos 6 meses</div>
         <div id="ch-evolucao"></div>
       </div>
+
+      <!-- OS-081: Investimento em você -->
+      <div class="card" style="grid-column:1/-1;border-color:rgba(34,197,94,0.2)" id="met-investimento-voce"></div>
     </div>
 
     </div><!-- /padding wrapper -->
@@ -3953,6 +4003,14 @@ button:active{transform:scale(.97);transition:transform .08s}
           <div class="conq-grid" id="perfil-conquistas"></div>
         </div>
       </div>
+    </div>
+    <!-- OS-083: Metas de Carreira -->
+    <div class="card" style="margin-top:16px" id="metas-carreira-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:700;color:var(--t1)">🎯 Metas de Carreira</div>
+        <button onclick="openM('m-nova-meta')" style="margin-left:auto;height:28px;padding:0 12px;background:var(--y);border:none;border-radius:var(--radius-md);font-family:var(--mono);font-size:10px;font-weight:700;color:#080809;cursor:pointer">+ Nova meta</button>
+      </div>
+      <div id="metas-list"></div>
     </div>
     </div><!-- /padding wrapper -->
   </div>
@@ -4033,6 +4091,17 @@ button:active{transform:scale(.97);transition:transform .08s}
       <button class="btn-p" onclick="salvarCapacidade()">Salvar capacidade</button>
     </div>
 
+    <!-- OS-084: Proteção de tempo pessoal -->
+    <div class="card" style="margin-bottom:11px">
+      <div class="card-title">🌱 Proteção de tempo pessoal</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Reserve horas semanais para seus próprios projetos. A plataforma vai lembrar você se a semana fechar sem esse investimento.</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input type="number" id="cfg-horas-pessoal" min="0" max="40" class="fi" style="width:80px;height:36px;text-align:center" value="0" onchange="salvarCfgHorasPessoal(this.value)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--t2)">horas por semana para projetos pessoais</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:8px">0 = proteção de tempo desativada</div>
+    </div>
+
     <!-- LIMPAR DADOS -->
     <div class="card">
       <div class="card-title" style="color:var(--rd)">Zona de perigo</div>
@@ -4056,8 +4125,8 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v12.2.5';
-const APP_DATE='22 mar 2026';
+const APP_VERSION='v13.0.0';
+const APP_DATE='25 abr 2026';
 const FASES=[
   {id:'imersao',n:'Imersão',i:'search',xp:60,desc:'Pesquise, converse, mergulhe no universo do cliente.',tasks:['Reunião de briefing com o cliente','Pesquisar mercado e concorrentes','Mapear referências visuais','Definir público-alvo e personas','Documentar insights e descobertas']},
   {id:'definicao',n:'Definição',i:'lightbulb',xp:80,desc:'Organize o aprendido. Defina o conceito criativo central.',tasks:['Sintetizar insights da imersão','Definir conceito criativo central','Criar mapa de palavras e atributos','Alinhar direção criativa com o cliente','Validar briefing criativo final']},
@@ -4184,19 +4253,29 @@ function DEF_HUB_DATA(){return[
 const PG={dashboard:'Dashboard',projetos:'Projetos',gestao:'Gestão de projeto',pipeline:'Pipeline de Propostas',orcamentos:'Orçamentos',calendario:'Calendário',templates:'Templates',crm:'CRM · Clientes',financeiro:'Financeiro',hub:'Hub criativo',metricas:'Métricas',cases:'Cases & Portfólio',perfil:'Meu perfil',config:'Configurações'};
 
 function save(){
-  localStorage.setItem('ph4-projs',JSON.stringify(projs));
-  localStorage.setItem('ph4-cli',JSON.stringify(clients));
-  localStorage.setItem('ph4-cal',JSON.stringify(calEvs));
-  localStorage.setItem('ph4-fin',JSON.stringify(lancs));
-  localStorage.setItem('ph4-day',JSON.stringify(dayTasks));
-  localStorage.setItem('ph4-hub',JSON.stringify(hubData));
-  localStorage.setItem('ph4-xp',xpTotal);
+  try{
+    localStorage.setItem('ph4-projs',JSON.stringify(projs));
+    localStorage.setItem('ph4-cli',JSON.stringify(clients));
+    localStorage.setItem('ph4-cal',JSON.stringify(calEvs));
+    localStorage.setItem('ph4-fin',JSON.stringify(lancs));
+    localStorage.setItem('ph4-day',JSON.stringify(dayTasks));
+    localStorage.setItem('ph4-hub',JSON.stringify(hubData));
+    localStorage.setItem('ph4-xp',xpTotal);
+  }catch(e){
+    if(e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED')
+      toast('⚠️ Armazenamento quase cheio — faça um backup agora!','var(--rd)',6000);
+  }
 }
 function saveExtra(){
-  localStorage.setItem('ph4-finalizados',JSON.stringify(projsFinalizados));
-  localStorage.setItem('ph4-cases',JSON.stringify(cases));
-  localStorage.setItem('ph4-propostas',JSON.stringify(propostas));
-  localStorage.setItem('ph4-orcamentos',JSON.stringify(orcamentos));
+  try{
+    localStorage.setItem('ph4-finalizados',JSON.stringify(projsFinalizados));
+    localStorage.setItem('ph4-cases',JSON.stringify(cases));
+    localStorage.setItem('ph4-propostas',JSON.stringify(propostas));
+    localStorage.setItem('ph4-orcamentos',JSON.stringify(orcamentos));
+  }catch(e){
+    if(e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED')
+      toast('⚠️ Armazenamento quase cheio — faça um backup agora!','var(--rd)',6000);
+  }
 }
 
 // ── THEME ─────────────────────────────────────────────
@@ -4217,8 +4296,32 @@ if(grEl)grEl.textContent=(hr<12?'Bom dia':hr<18?'Boa tarde':'Boa noite')+', Paul
 const dateEl=document.getElementById('tb-date');
 if(dateEl)dateEl.textContent=now.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'}).toUpperCase();
 
+// ── INPUT MODAL (substitui todos os prompt() nativos) ──
+function openInputModal(opts){
+  const existing=document.getElementById('m-input-modal');if(existing)existing.remove();
+  const overlay=document.createElement('div');
+  overlay.className='moverlay open';overlay.id='m-input-modal';
+  overlay.innerHTML=`<div class="modal" style="max-width:400px" role="dialog" aria-modal="true">
+    <div class="modal-title">${opts.titulo||'Informação necessária'}</div>
+    <div class="fg" style="margin-top:16px">
+      <label class="flbl">${opts.label||''}</label>
+      <input class="fi" id="m-input-field" type="${opts.tipo||'text'}" placeholder="${opts.placeholder||''}" value="${opts.valor||''}" style="margin-top:6px">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
+      <button class="btn-g" onclick="document.getElementById('m-input-modal').remove()">Cancelar</button>
+      <button class="btn-p" id="m-input-ok">Confirmar</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const field=document.getElementById('m-input-field');
+  const okBtn=document.getElementById('m-input-ok');
+  if(field)setTimeout(()=>field.focus(),60);
+  if(okBtn)okBtn.onclick=()=>{const val=field?field.value.trim():'';if(!val){if(field)field.focus();return;}overlay.remove();if(opts.onOk)opts.onOk(val);};
+  if(field)field.onkeydown=(e)=>{if(e.key==='Enter'){if(okBtn)okBtn.click();}if(e.key==='Escape')overlay.remove();};
+}
+
 // ── TOAST ──────────────────────────────────────────────
-function toast(m,c){const t=document.getElementById('toast');if(!t)return;t.textContent=m;t.style.borderColor=c||'var(--gr)';t.style.color=c||'var(--gr)';t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);}
+function toast(m,c,duracao){const t=document.getElementById('toast');if(!t)return;t.textContent=m;t.style.borderColor=c||'var(--gr)';t.style.color=c||'var(--gr)';t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),duracao||3200);}
 
 // ── MODALS ────────────────────────────────────────────
 function openM(id){
@@ -4317,6 +4420,7 @@ const XP_ACOES={
   metaMensalAtingida:250,registrarLancamento:20,
   abrirPlataforma:10,completarDesafio:120,registrarInsight:30,taskConcluida:15,
   sessaoFoco30min:80,sessaoFoco60min:150,
+  concluirMeta:150,desafioCarreira:0,
 };
 function getXPTotal(){return xpTotal;}
 function salvarXP(v){xpTotal=v;localStorage.setItem('ph4-xp',String(v));}
@@ -4443,6 +4547,7 @@ function nav(id,el){
     const cn=document.getElementById('cfg-nome');if(cn)cn.value=p.nome||'';
     const cs=document.getElementById('cfg-site');if(cs)cs.value=p.site||'';
     const cm=document.getElementById('cfg-cap-max');if(cm)cm.value=capMax;
+    const inputHP=document.getElementById('cfg-horas-pessoal');if(inputHP)inputHP.value=localStorage.getItem('ph4-horas-pessoal-meta')||'0';
   }
   // Animate number counters after render
   setTimeout(()=>animateCounters(pg),80);
@@ -4571,7 +4676,7 @@ function renderDash(){
       } else if(c3){c3.style.display='none';}
     } else { nsEl.style.display='none'; }
   }
-  renderDashProjs();renderAgenda();renderAlertas();renderDayTasks();atualizarNotificacoes();initCriativo();renderCarga();
+  renderDashProjs();renderAgenda();renderAlertas();renderDayTasks();atualizarNotificacoes();initCriativo();renderCarga();renderPortfolioTracker();
 }
 
 function setEl(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
@@ -4587,7 +4692,7 @@ function renderDashProjs(){
         <div class="p-meta">${p.cli} · ${p.tipo}</div>
         <div class="p-prog"><div class="p-prog-fill" style="width:${p.pct}%;background:${p.cor}"></div></div>
       </div>
-      <span class="ftag ${FT[p.fi]||'f-briefing'}">${FN[p.fi]||'—'}</span>
+      <span class="ftag ${FT[p.fi]||'f-briefing'}">${p._faseNomes?.[p.fi]||FN[p.fi]||'—'}</span>
       <div class="p-pct">${p.pct}%</div>
       <div class="p-days ${p.urg}">${(()=>{const _d=getDiasRestantes(p);return _d>0?_d+'d':_d===0?'hoje':'—';})()}</div>
     </div>`).join('');
@@ -4669,11 +4774,12 @@ function renderProjs(){
   el.className='cards-grid';
   const fColors={0:'var(--bl)',1:'var(--pu)',2:'var(--y)',3:'var(--am)',4:'var(--gr)',5:'var(--t4)'};
   let html=projs.map(p=>{
-    const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;const fn=fases.map(f=>f.n);
+    const fases=p._faseNomes?p._faseNomes.map((_,i)=>getSyntheticFase(p,i)):(p.modo==='rapido'?FASES_RAPIDO:FASES);const fn=fases.map(f=>f.n);
     const _d=getDiasRestantes(p);const dLbl=_d>0?_d+'d':_d===0?'hoje':'vencido';
     const dColor=_d<=2?'color:var(--rd)':_d<=5?'color:var(--am)':'';
     const urgTag=_d<=2?'<span class="pc-tag tag-rd">🚨 Urgente</span>':p.modo==='rapido'?'<span class="pc-tag tag-gr">⚡ Rápido</span>':'';
     const faseTag='<span class="pc-tag tag-n">'+(fn[p.fi]||fn[0])+'</span>';
+    const badgePessoal=p._pessoal?'<span style="font-family:var(--mono);font-size:9px;padding:1px 7px;border-radius:999px;background:rgba(34,197,94,0.1);color:#22C55E;border:1px solid rgba(34,197,94,0.18)">🌱 Pessoal</span>':'';
     const pIcon=_d<=2?'🔥':p.modo==='rapido'?'⚡':'📁';
     const pIconBg=_d<=2?'rgba(239,68,68,0.1)':p.modo==='rapido'?'rgba(34,197,94,0.1)':'rgba(212,160,23,0.1)';
     const opacity=p.pausado?'opacity:0.55':'';
@@ -4687,7 +4793,7 @@ function renderProjs(){
       </div>
       <div class="pc-progress"><div class="pc-progress-fill" style="width:${p.pct}%;background:${p.cor||fColors[p.fi]||'var(--y)'}"></div></div>
       <div class="pc-bottom">
-        ${urgTag}${faseTag}
+        ${urgTag}${faseTag}${badgePessoal}
         <div class="pc-spacer"></div>
         <div class="pc-count" style="${dColor}"><span>↓</span> ${p.pausado?'—':dLbl}</div>
       </div>
@@ -4730,7 +4836,7 @@ function renderGestao(){
   }
   const ga=document.getElementById('g-actions');if(ga)ga.innerHTML=`<div style="display:flex;align-items:center;gap:8px">${!p.pausado?`<button class="pause-btn" onclick="abrirPausa()" style="display:inline-flex;align-items:center;gap:4px"><i data-lucide="pause-circle" style="width:13px;height:13px"></i>Pausar</button>`:`<button class="pause-btn" style="background:var(--gb);color:var(--gr);border-color:rgba(34,197,94,.28);display:inline-flex;align-items:center;gap:4px" onclick="retomar()"><i data-lucide="play-circle" style="width:13px;height:13px"></i>Retomar</button>`}</div><div style="text-align:right"><div style="font-size:var(--fs-2xl);font-weight:900;letter-spacing:-.05em;color:var(--y)">${p.pct}%</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">CONCLUÍDO</div></div>`;
   const bn=document.getElementById('g-pausa-banner');if(bn)bn.innerHTML=p.pausado?`<div class="pausa-banner"><i data-lucide="pause-circle" style="width:16px;height:16px;color:var(--am);flex-shrink:0"></i><div><div style="font-size:var(--fs-xs);font-weight:600;color:var(--am)">Projeto pausado</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t2)">${p.pMot}${p.pObs?' — '+p.pObs:''}</div></div></div>`:'';
-  const _gFases=p.modo==='rapido'?FASES_RAPIDO:FASES;
+  const _gFases=p._faseNomes?p._faseNomes.map((_,i)=>getSyntheticFase(p,i)):(p.modo==='rapido'?FASES_RAPIDO:FASES);
   let pxp=0;for(let f=0;f<p.fi;f++)pxp+=(_gFases[f]||{xp:0}).xp;
   const totalXpProj=_gFases.reduce((s,f)=>s+f.xp,0);
   setEl('g-xp-tot',pxp+' XP');
@@ -4746,28 +4852,28 @@ function renderGestao(){
 function clkFase(i){const p=projs.find(x=>x.id===curProjId);if(!p)return;if(i>p.fi){toast('Complete a fase atual antes','var(--am)');return;}renderFase(p,i);}
 
 function renderFase(p,fi){
-  const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;
-  const fase=fases[fi],off=fi*5;
-  const pd=p.tasks.slice(off,off+5),dc=pd.filter(Boolean).length,all=dc===5,isCur=fi===p.fi;
+  const fases=p._faseNomes?p._faseNomes.map((_,i)=>getSyntheticFase(p,i)):(p.modo==='rapido'?FASES_RAPIDO:FASES);
+  const fase=fases[fi];const off=getFaseOffset(p,fi),taskCount=getFaseTaskCount(p,fi);
+  const pd=p.tasks.slice(off,off+taskCount),dc=pd.filter(Boolean).length,all=dc===taskCount,isCur=fi===p.fi;
   const flor='';
   const gf=document.getElementById('g-fase');
   const faseIconHtml=`<i data-lucide="${fase.i}" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:5px"></i>`;
-  if(gf)gf.innerHTML=`<div class="fase-block"><div class="fase-hdr"><div><div style="font-size:14px;font-weight:700;letter-spacing:-.02em;color:var(--t1);display:flex;align-items:center">${faseIconHtml}${fase.n.toUpperCase()}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${fase.desc}</div></div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:5px"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${dc}/5 tarefas</div>${isCur&&!p.pausado?`
+  if(gf)gf.innerHTML=`<div class="fase-block"><div class="fase-hdr"><div><div style="font-size:14px;font-weight:700;letter-spacing:-.02em;color:var(--t1);display:flex;align-items:center">${faseIconHtml}${fase.n.toUpperCase()}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${fase.desc}</div></div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:5px"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${dc}/${taskCount} tarefas</div>${isCur&&!p.pausado?`
   <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-    <button class="adv-btn ${all?'rdy':''}" onclick="avancar()" style="display:inline-flex;align-items:center;gap:5px">${fi===4?`<i data-lucide="send" style="width:12px;height:12px"></i>IR PARA LANÇAMENTO`:`<i data-lucide="chevron-right" style="width:12px;height:12px"></i>AVANÇAR`}</button>
-    ${fi===4?`<button onclick="openM('m-rejeicao')" style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--rd);background:var(--rb);border:1px solid rgba(239,68,68,.25);padding:4px 10px;border-radius:var(--r2);cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:4px"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i>Entrega rejeitada</button>`:''}
+    <button class="adv-btn ${all?'rdy':''}" onclick="avancar()" style="display:inline-flex;align-items:center;gap:5px">${fi===fases.length-2?`<i data-lucide="send" style="width:12px;height:12px"></i>IR PARA LANÇAMENTO`:`<i data-lucide="chevron-right" style="width:12px;height:12px"></i>AVANÇAR`}</button>
+    ${fi===fases.length-2?`<button onclick="openM('m-rejeicao')" style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--rd);background:var(--rb);border:1px solid rgba(239,68,68,.25);padding:4px 10px;border-radius:var(--r2);cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:4px"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i>Entrega rejeitada</button>`:''}
   </div>
-`:''}</div></div><div class="xts" style="margin-bottom:9px"><div class="xfs" style="width:${dc/5*100}%;background:${isCur?'var(--y)':'var(--gr)'}"></div></div>${fase.tasks.map((t,i)=>`<div class="task-row" style="cursor:pointer" onclick="togglePT(${fi},${i})"><div class="chk ${pd[i]?'done':''}">${pd[i]?'<i data-lucide="check" style="width:11px;height:11px"></i>':''}</div><div class="task-txt ${pd[i]?'done':''}">${t}</div></div>`).join('')}</div><div class="g2" style="gap:11px"><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="sticky-note" style="width:12px;height:12px"></i>Notas da fase</div><textarea class="fta" id="g-notas-fase-${fi}" style="margin-top:0" placeholder="Decisões criativas, referências..." oninput="salvarNotaFase(${fi},this.value)">${p.notasFase?.[fi]||''}</textarea></div><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="message-circle" style="width:12px;height:12px"></i>Feedback do cliente</div><textarea class="fta" id="g-feedback-fase-${fi}" style="margin-top:0" placeholder="Cole aqui o feedback recebido..." oninput="salvarFeedbackFase(${fi},this.value)">${p.feedbackFase?.[fi]||''}</textarea></div></div>${flor}`;
+`:''}</div></div><div class="xts" style="margin-bottom:9px"><div class="xfs" style="width:${taskCount>0?dc/taskCount*100:0}%;background:${isCur?'var(--y)':'var(--gr)'}"></div></div>${fase.tasks.map((t,i)=>`<div class="task-row" style="cursor:pointer" onclick="togglePT(${fi},${i})"><div class="chk ${pd[i]?'done':''}">${pd[i]?'<i data-lucide="check" style="width:11px;height:11px"></i>':''}</div><div class="task-txt ${pd[i]?'done':''}">${t}</div></div>`).join('')}</div><div class="g2" style="gap:11px"><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="sticky-note" style="width:12px;height:12px"></i>Notas da fase</div><textarea class="fta" id="g-notas-fase-${fi}" style="margin-top:0" placeholder="Decisões criativas, referências..." oninput="salvarNotaFase(${fi},this.value)">${p.notasFase?.[fi]||''}</textarea></div><div class="card"><div class="card-title" style="display:flex;align-items:center;gap:5px"><i data-lucide="message-circle" style="width:12px;height:12px"></i>Feedback do cliente</div><textarea class="fta" id="g-feedback-fase-${fi}" style="margin-top:0" placeholder="Cole aqui o feedback recebido..." oninput="salvarFeedbackFase(${fi},this.value)">${p.feedbackFase?.[fi]||''}</textarea></div></div>${flor}`;
 }
 
 function togglePT(fi,ti){
   const p=projs.find(x=>x.id===curProjId);if(!p)return;
-  const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;
-  const off=fi*5;p.tasks[off+ti]=!p.tasks[off+ti];
-  const tot=p.tasks.filter(Boolean).length;p.pct=Math.round(tot/(fases.length*5)*100);
+  const off=getFaseOffset(p,fi);const taskCount=getFaseTaskCount(p,fi);
+  p.tasks[off+ti]=!p.tasks[off+ti];
+  const tot=p.tasks.filter(Boolean).length;p.pct=p.tasks.length>0?Math.round(tot/p.tasks.length*100):0;
   save();renderFase(p,fi);setTimeout(refreshIcons,50);
-  const dc=p.tasks.slice(off,off+5).filter(Boolean).length;
-  if(dc===5&&fi===p.fi&&!p.pausado)toast('Todas as tarefas concluídas! Clique em AVANÇAR','var(--y)');
+  const dc=p.tasks.slice(off,off+taskCount).filter(Boolean).length;
+  if(dc===taskCount&&fi===p.fi&&!p.pausado)toast('Todas as tarefas concluídas! Clique em AVANÇAR','var(--y)');
 }
 
 // OS-068 — Feedback inline nível 2
@@ -4790,11 +4896,12 @@ function salvarFeedbackFase(fi,val){
 }
 function avancar(){
   const p=projs.find(x=>x.id===curProjId);if(!p)return;
-  const off=p.fi*5,dc=p.tasks.slice(off,off+5).filter(Boolean).length;
-  if(dc<5){toast('Complete todas as tarefas antes!','var(--am)');return;}
+  const _aOff=getFaseOffset(p,p.fi),_aCount=getFaseTaskCount(p,p.fi);
+  const off=_aOff,dc=p.tasks.slice(off,off+_aCount).filter(Boolean).length;
+  if(dc<_aCount){toast('Complete todas as tarefas antes!','var(--am)');return;}
   if(p.pausado){toast('Retome o projeto antes!','var(--am)');return;}
-  // Briefing checkpoint na fase Imersão (fi===0)
-  if(p.fi===0&&!p._briefingAvisado){
+  // Briefing checkpoint na fase Imersão (fi===0) — apenas projetos não customizados
+  if(p.fi===0&&!p._briefingAvisado&&!p._customFases){
     const b=p.briefing||{};
     const missing=[];
     if(!b.objetivo)missing.push('Objetivo do projeto');
@@ -4807,13 +4914,13 @@ function avancar(){
       openM('m-brief-check');return;
     }
   }
-  const fases=p.modo==='rapido'?FASES_RAPIDO:FASES;
+  const fases=p._faseNomes?p._faseNomes.map((_,i)=>getSyntheticFase(p,i)):(p.modo==='rapido'?FASES_RAPIDO:FASES);
   const fase=fases[p.fi];
   const lastDelivery=fases.length-2; // penúltima fase = entrega
   const lastPhase=fases.length-1;
   // Penúltima fase: revelar seção de Lançamento
   if(p.fi===lastDelivery){
-    p.fi=lastPhase;p.pct=Math.round(p.tasks.filter(Boolean).length/(fases.length*5)*100);
+    p.fi=lastPhase;p.pct=p.tasks.length>0?Math.round(p.tasks.filter(Boolean).length/p.tasks.length*100):0;
     save();celebrar(fase.n,fase.xp);
     setTimeout(()=>{
       renderGestao();renderDash();
@@ -4824,7 +4931,7 @@ function avancar(){
   }
   // Última fase: abrir modal finalizar
   if(p.fi>=lastPhase){abrirModalFinalizar(p);return;}
-  p.fi++;p.pct=Math.round(p.tasks.filter(Boolean).length/(fases.length*5)*100);
+  p.fi++;p.pct=p.tasks.length>0?Math.round(p.tasks.filter(Boolean).length/p.tasks.length*100):0;
   save();celebrar(fase.n,fase.xp);setTimeout(()=>{renderGestao();renderDash();},300);
 }
 function _skipBriefCheck(){
@@ -4846,6 +4953,81 @@ function retomar(){
 }
 
 // ── NOVO PROJETO ──────────────────────────────────────
+// ── OS-080: MEU FLUXO — Builder de fluxo customizado ──
+let customStages=[];
+function getFaseOffset(p,fi){
+  if(p._faseOffsets&&p._faseOffsets[fi]!==undefined)return p._faseOffsets[fi];
+  return fi*5;
+}
+function getFaseTaskCount(p,fi){
+  if(p._faseTasks)return(p._faseTasks[fi]||[]).length;
+  return 5;
+}
+function getFaseCount(p){
+  if(p._faseNomes)return p._faseNomes.length;
+  return(p.modo==='rapido'?FASES_RAPIDO:FASES).length;
+}
+function getSyntheticFase(p,fi){
+  if(!p._faseNomes)return null;
+  return{id:'custom_'+fi,n:p._faseNomes[fi]||`Etapa ${fi+1}`,i:'circle-dot',xp:50,desc:(p._faseTasks?.[fi]||[]).filter(t=>t).join(' · ')||'',tasks:p._faseTasks?.[fi]||[]};
+}
+function initCustomFlow(){
+  customStages=[
+    {id:Date.now(),nome:'Etapa 1',tarefas:['']},
+    {id:Date.now()+1,nome:'Etapa 2',tarefas:['']},
+    {id:Date.now()+2,nome:'Etapa 3',tarefas:['']}
+  ];
+  renderCustomStages();
+}
+function renderCustomStages(){
+  const el=document.getElementById('custom-stages-list');if(!el)return;
+  el.innerHTML=customStages.map((stage,si)=>`
+    <div style="background:var(--s2);border:1px solid var(--e1);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t4);min-width:50px">Etapa ${si+1}</div>
+        <input class="fi" value="${stage.nome.replace(/"/g,'&quot;').replace(/'/g,'&#39;')}" placeholder="Nome da etapa" style="height:30px;font-size:var(--fs-xs);flex:1" oninput="customStages[${si}].nome=this.value">
+        ${customStages.length>1?`<button onclick="removeCustomStage(${si})" style="background:none;border:none;color:var(--t4);cursor:pointer;font-size:16px;padding:0 4px;line-height:1" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'">×</button>`:''}
+      </div>
+      <div id="custom-tasks-${si}">
+        ${stage.tarefas.map((t,ti)=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+          <div style="width:16px;height:16px;border:1px solid var(--e2);border-radius:3px;flex-shrink:0;background:var(--s3)"></div>
+          <input class="fi" value="${t.replace(/"/g,'&quot;').replace(/'/g,'&#39;')}" placeholder="Descreva a tarefa..." style="height:26px;font-size:var(--fs-xs);flex:1;background:transparent;border-color:transparent" onfocus="this.style.borderColor='var(--e2)'" onblur="this.style.borderColor='transparent'" oninput="customStages[${si}].tarefas[${ti}]=this.value" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomTask(${si})}">
+          ${stage.tarefas.length>1?`<button onclick="removeCustomTask(${si},${ti})" style="background:none;border:none;color:var(--t4);cursor:pointer;font-size:13px;opacity:0;transition:opacity .12s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">×</button>`:''}
+        </div>`).join('')}
+      </div>
+      <button onclick="addCustomTask(${si})" style="margin-top:4px;background:none;border:none;font-family:var(--mono);font-size:10px;color:var(--t4);cursor:pointer;padding:2px 0;display:flex;align-items:center;gap:4px" onmouseenter="this.style.color='var(--t2)'" onmouseleave="this.style.color='var(--t4)'">+ tarefa</button>
+    </div>`).join('');
+  const cb=document.getElementById('custom-save-template');
+  const wrap=document.getElementById('custom-template-name-wrap');
+  if(cb&&wrap)cb.onchange=()=>{wrap.style.display=cb.checked?'block':'none';};
+}
+function addCustomStage(){
+  if(customStages.length>=8){toast('Máximo de 8 etapas','var(--am)');return;}
+  customStages.push({id:Date.now(),nome:`Etapa ${customStages.length+1}`,tarefas:['']});
+  renderCustomStages();
+  setTimeout(()=>{const inputs=document.querySelectorAll('#custom-stages-list .fi');if(inputs.length>0)inputs[inputs.length-1].focus();},50);
+}
+function removeCustomStage(si){
+  if(customStages.length<=1)return;
+  customStages.splice(si,1);renderCustomStages();
+}
+function addCustomTask(si){
+  if(customStages[si].tarefas.length>=10){toast('Máximo de 10 tarefas por etapa','var(--am)');return;}
+  customStages[si].tarefas.push('');renderCustomStages();
+  setTimeout(()=>{const taskInputs=document.querySelectorAll(`#custom-tasks-${si} .fi`);if(taskInputs.length>0)taskInputs[taskInputs.length-1].focus();},50);
+}
+function removeCustomTask(si,ti){
+  if(customStages[si].tarefas.length<=1)return;
+  customStages[si].tarefas.splice(ti,1);renderCustomStages();
+}
+function salvarFluxoComoTemplate(nome,fases){
+  const templates=JSON.parse(localStorage.getItem('ph4-meus-templates')||'[]');
+  const novo={id:Date.now(),nome,tipo:'Personalizado',descricao:`${fases.length} etapas customizadas`,fases,criadoEm:new Date().toLocaleDateString('pt-BR'),_isCustomFlow:true};
+  templates.push(novo);
+  localStorage.setItem('ph4-meus-templates',JSON.stringify(templates));
+  toast(`Template "${nome}" salvo! ✓`);
+}
+
 function selT(el,v){
   document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));
   el.classList.add('sel');
@@ -4862,9 +5044,15 @@ function selT(el,v){
       if(outrosTxt) outrosTxt.value = '';
     }
   }
-  renderBriefFields();
+  // Mostrar builder de fluxo customizado se "custom"
+  const cfb=document.getElementById('custom-flow-builder');
+  if(cfb){
+    if(v==='custom'){cfb.style.display='block';initCustomFlow();}
+    else cfb.style.display='none';
+  }
+  if(v!=='custom') renderBriefFields();
 }
-function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
+function calcPrev(){const c=parseInt(document.getElementById('np-comp').value)||2,f=projs.filter(p=>!p.pausado&&p.fi<(FASES?FASES.length-1:5)).length+1;const el=document.getElementById('np-prazo');if(el)el.textContent=Math.round(([0,14,21,30][c]+(f-1)*3)*1.3)+' dias';}
 function getDiasRestantes(p){
   const ref=p.dataEntrega||p.prazo;
   if(!ref)return p.dias||0;
@@ -4874,13 +5062,10 @@ function getDiasRestantes(p){
 }
 function editarDataEntrega(){
   const p=projs.find(x=>x.id===curProjId);if(!p)return;
-  const atual=p.dataEntrega||p.prazo||'';
-  const nova=prompt('Data de entrega combinada (AAAA-MM-DD):',atual);
-  if(nova===null)return;
-  if(nova===''){p.dataEntrega=undefined;toast('Data de entrega removida — usando prazo estimado');}
-  else if(/^\d{4}-\d{2}-\d{2}$/.test(nova)){p.dataEntrega=nova;toast('Data de entrega atualizada!');}
-  else{toast('Formato inválido — use AAAA-MM-DD','var(--am)');return;}
-  save();renderGestao();setTimeout(refreshIcons,60);
+  openInputModal({titulo:'Data de entrega',label:'Data combinada com o cliente',tipo:'date',valor:p.dataEntrega||p.prazo||'',onOk:(nova)=>{
+    p.dataEntrega=nova;toast('Data de entrega atualizada!');
+    save();renderGestao();setTimeout(refreshIcons,60);
+  }});
 }
 function updateFilaAuto(){const projAtivos=projs.filter(p=>!p.pausado&&p.fi<5).length;const el=document.getElementById('np-fila-auto');if(!el)return;el.textContent=projAtivos+' projeto'+(projAtivos!==1?'s':'')+' ativo'+(projAtivos!==1?'s':'')+' agora';el.style.color=projAtivos>=4?'var(--rd)':projAtivos>=3?'var(--am)':'var(--t3)';}
 function criarProjeto(){
@@ -4896,7 +5081,17 @@ function criarProjeto(){
     }
   }
   if(!selTipoV){toast('Selecione o tipo!','var(--am)');return;}
-  const c2=parseInt(document.getElementById('np-comp').value)||2,f=projs.length+1;
+  // OS-080: Meu Fluxo — build custom phases
+  let _customFasesData=null;
+  if(selTipoV==='custom'){
+    const validas=customStages.filter(s=>s.nome.trim());
+    if(validas.length===0){toast('Defina pelo menos 1 etapa com nome','var(--am)');return;}
+    _customFasesData=validas.map(s=>({
+      nome:s.nome.trim(),
+      tasks:s.tarefas.map(t=>t.trim()).filter(t=>t).slice(0,5)
+    })).map(f=>({...f,tasks:f.tasks.length>0?f.tasks:[`Realizar ${f.nome}`]}));
+  }
+  const c2=parseInt(document.getElementById('np-comp').value)||2,f=projs.filter(p=>!p.pausado&&p.fi<(FASES?FASES.length-1:5)).length+1;
   const dias=Math.round(([0,14,21,30][c2]+(f-1)*3)*1.3);
   const ini=document.getElementById('np-ini').value||new Date().toISOString().split('T')[0];
   const ed=new Date(ini);ed.setDate(ed.getDate()+dias);
@@ -4904,7 +5099,14 @@ function criarProjeto(){
   const modo=_npModo||'completo';
   const numTasks=modo==='rapido'?15:30;
   const deVal=document.getElementById('np-data-entrega')?.value||'';
-  const np={id:Date.now(),nome,cli,tipo:selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#D4A017',urg:_npUrg!=='normal'?_npUrg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(numTasks).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo,briefing:getBriefData(),dataEntrega:deVal||undefined,notasFase:[],feedbackFase:[],origemPropostaId:window._propParaMover||null,origemOrcamentoId:window._orcParaMover||null};
+  // Compute custom offsets
+  let _faseOffsets=null,_faseNomes=null,_faseTasks=null;
+  if(_customFasesData){
+    let off=0;_faseOffsets=[];_faseNomes=[];_faseTasks=[];
+    _customFasesData.forEach(f=>{_faseOffsets.push(off);_faseNomes.push(f.nome);_faseTasks.push(f.tasks);off+=f.tasks.length;});
+  }
+  const totalTasks=_customFasesData?_customFasesData.reduce((s,f)=>s+f.tasks.length,0):numTasks;
+  const np={id:Date.now(),nome,cli,tipo:_customFasesData?'Personalizado':selTipoV,fi:0,pct:0,prazo:ed.toISOString().split('T')[0],dias,cor:cores[selTipoV]||'#7C3AED',urg:_npUrg!=='normal'?_npUrg:'',st:'Em andamento',pausado:false,pMot:'',pObs:'',val:parseFloat(document.getElementById('np-val').value)||0,tasks:new Array(totalTasks).fill(false),revisoes:0,maxRevisoes:2,revisaoHist:[],fileLinks:[],modo,briefing:getBriefData(),dataEntrega:deVal||undefined,notasFase:[],feedbackFase:[],origemPropostaId:window._propParaMover||null,origemOrcamentoId:window._orcParaMover||null,_pessoal:document.getElementById('np-pessoal')?.checked||false,...(_customFasesData?{_customFases:true,_faseNomes,_faseTasks,_faseOffsets}:{})};
   projs.unshift(np);
   // BUG-01: deletar proposta só após projeto criado com sucesso
   if(window._propParaMover){propostas=propostas.filter(x=>x.id!==window._propParaMover);saveExtra();window._propParaMover=null;}
@@ -4912,7 +5114,8 @@ function criarProjeto(){
   if(document.getElementById('np-gcal').checked){const d=new Date(ini),gs=d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Kickoff: '+nome)}&dates=${gs}/${gs}&details=${encodeURIComponent('paulosa.studio')}` ,'_blank');}
   save();closeM('m-proj');
   document.getElementById('np-nome').value='';const bv=document.getElementById('np-brief');if(bv)bv.value='';const vv=document.getElementById('np-val');if(vv)vv.value='';const deEl=document.getElementById('np-data-entrega');if(deEl)deEl.value='';
-  selTipoV='';_npModo='completo';_npUrg='normal';document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));
+  if(_customFasesData){const saveAsTemplate=document.getElementById('custom-save-template')?.checked;const templateName=document.getElementById('custom-template-name')?.value?.trim();if(saveAsTemplate&&templateName)salvarFluxoComoTemplate(templateName,_customFasesData);}
+  selTipoV='';_npModo='completo';_npUrg='normal';document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));customStages=[];const _cfb=document.getElementById('custom-flow-builder');if(_cfb)_cfb.style.display='none';const _ctcb=document.getElementById('custom-save-template');if(_ctcb)_ctcb.checked=false;const _ctw=document.getElementById('custom-template-name-wrap');if(_ctw)_ctw.style.display='none';
   const bfEl=document.getElementById('np-brief-fields');if(bfEl)bfEl.innerHTML='';
   ganharXP('criarProjeto');toast('Projeto criado! +50 XP 🎉');curProjId=np.id;renderDash();openProj(np.id);
   setTimeout(()=>feedbackInline(document.querySelector('.proj-card')),200);
@@ -5111,11 +5314,13 @@ function renderCpopDocs(cl){
 }
 function addDocLink(){
   const cl=clients.find(x=>x.id===crmPopupId);if(!cl)return;
-  const titulo=prompt('Título do documento:');if(!titulo)return;
-  const url=prompt('URL (Drive, Dropbox, Notion...):');if(!url)return;
-  if(!cl.docs)cl.docs=[];
-  cl.docs.push({titulo,url});
-  save();renderCpopDocs(cl);toast('Link adicionado!');
+  openInputModal({titulo:'Adicionar documento',label:'Título',placeholder:'Ex: Contrato, Brief, Drive...',onOk:(titulo)=>{
+    openInputModal({titulo:'Adicionar documento',label:'URL',tipo:'url',placeholder:'https://...',onOk:(url)=>{
+      if(!cl.docs)cl.docs=[];
+      cl.docs.push({titulo,url});
+      save();renderCpopDocs(cl);toast('Link adicionado!');
+    }});
+  }});
 }
 function removeDocLink(idx){
   const cl=clients.find(x=>x.id===crmPopupId);if(!cl||!cl.docs)return;
@@ -5375,11 +5580,13 @@ function editarClientePanel(){
 
 function addDocLinkPanel(){
   const cl=clients.find(x=>x.id===crmPanelCliId);if(!cl)return;
-  const titulo=prompt('Título do documento:');if(!titulo)return;
-  const url=prompt('URL (Drive, Dropbox, Notion...):');if(!url)return;
-  if(!cl.docs)cl.docs=[];
-  cl.docs.push({titulo,url});
-  save();setCRMPanelAba('docs');toast('Link adicionado!');
+  openInputModal({titulo:'Adicionar documento',label:'Título',placeholder:'Ex: Contrato, Brief, Drive...',onOk:(titulo)=>{
+    openInputModal({titulo:'Adicionar documento',label:'URL',tipo:'url',placeholder:'https://...',onOk:(url)=>{
+      if(!cl.docs)cl.docs=[];
+      cl.docs.push({titulo,url});
+      save();setCRMPanelAba('docs');toast('Link adicionado!');
+    }});
+  }});
 }
 
 function removeDocLinkPanel(idx){
@@ -5578,13 +5785,20 @@ function renderPerfilDinamico(){
   const ccEl=document.getElementById('conq-count');
   if(ccEl) ccEl.textContent=`${unlocked}/${CONQS.length}`;
   const cqEl=document.getElementById('perfil-conquistas');
-  if(cqEl) cqEl.innerHTML=CONQS.map((c,i)=>`
-    <div class="conq-item ${c.ok?'unlocked':'locked'} card-anim" style="animation-delay:${(i*0.04).toFixed(2)}s" title="${c.d}">
-      <div class="conq-ico">${c.ico}</div>
-      <div class="conq-name">${c.n}</div>
-    </div>
-  `).join('');
+  if(cqEl){
+    cqEl.innerHTML=CONQS.map((c,i)=>`
+      <div class="conq-item ${c.ok?'unlocked':'locked'} conq-enter" style="animation-delay:${(i*0.04).toFixed(2)}s" title="${c.d}">
+        <div class="conq-ico">${c.ico}</div>
+        <div class="conq-name">${c.n}</div>
+      </div>
+    `).join('');
+    // Remove a classe de animação após conclusão para liberar o hover transform
+    cqEl.querySelectorAll('.conq-enter').forEach(el=>{
+      el.addEventListener('animationend',()=>el.classList.remove('conq-enter'),{once:true});
+    });
+  }
   renderSkills();
+  renderMetas();
 }
 
 // Override renderFin para incluir meta
@@ -6009,6 +6223,8 @@ function getDescForType(tipo, fi){
 (function(){
   const _orig=renderFase;
   renderFase=function(p,fi){
+    // OS-080: projetos de fluxo customizado usam seus próprios dados — pular patch
+    if(p._customFases){_orig(p,fi);return;}
     const origTasks=FASES[fi].tasks;
     const origDesc=FASES[fi].desc;
     FASES[fi].tasks=getTasksForType(p.tipo,fi);
@@ -6054,7 +6270,18 @@ function renderRevisoes(p){
 function addRevisao(){const p=projs.find(x=>x.id===curProjId);if(!p)return;p.revisoes=(p.revisoes||0)+1;if(!p.revisaoHist)p.revisaoHist=[];p.revisaoHist.push({data:new Date().toLocaleDateString('pt-BR'),motivo:''});if(p.revisoes>(p.maxRevisoes||2))toast('⚠ Revisão fora do escopo!','var(--rd)');else toast('Revisão registrada');save();renderRevisoes(p);}
 function setMaxRev(n){const p=projs.find(x=>x.id===curProjId);if(!p)return;p.maxRevisoes=n;save();renderRevisoes(p);}
 function renderFileLinks(p){const el=document.getElementById('g-file-links');if(!el)return;const links=p.fileLinks||[];if(links.length===0){el.innerHTML='<div style="text-align:center;padding:12px 8px"><div style="font-size:16px;margin-bottom:4px">🔗</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Adicione links do Figma, Drive, etc.</div></div>';return;}const icons={Drive:'📁',Figma:'🎨',Behance:'🎭',Apresentação:'📊',Contrato:'📄',Outro:'🔗'};el.innerHTML=links.map((l,i)=>`<div class="file-link-row"><span class="file-link-icon">${icons[l.tipo]||'🔗'}</span><div class="file-link-name">${l.nome||l.tipo}</div><a href="${l.url}" target="_blank" class="file-link-url"><i data-lucide="external-link" style="width:14px;height:14px"></i></a><span style="cursor:pointer;color:var(--t4);font-size:var(--fs-2xs);padding:1px 5px;transition:color .12s" onmouseenter="this.style.color='var(--rd)'" onmouseleave="this.style.color='var(--t4)'" onclick="removeFileLink(${i})"><i data-lucide="x" style="width:12px;height:12px"></i></span></div>`).join('');}
-function addFileLink(){const p=projs.find(x=>x.id===curProjId);if(!p)return;const tipo=prompt('Tipo (Drive, Figma, Behance, Apresentação, Contrato, Outro):','Drive');if(!tipo)return;const url=prompt('URL:','https://');if(!url||url==='https://')return;const nome=prompt('Nome:','')||tipo;if(!p.fileLinks)p.fileLinks=[];p.fileLinks.push({tipo,url,nome});save();renderFileLinks(p);toast('Link adicionado!');}
+function addFileLink(){
+  const p=projs.find(x=>x.id===curProjId);if(!p)return;
+  openInputModal({titulo:'Adicionar link',label:'Tipo',placeholder:'Drive, Figma, Behance, Notion...',valor:'Drive',onOk:(tipo)=>{
+    openInputModal({titulo:'Adicionar link',label:'URL',tipo:'url',placeholder:'https://',onOk:(url)=>{
+      openInputModal({titulo:'Adicionar link',label:'Nome (opcional)',placeholder:tipo,onOk:(nome)=>{
+        if(!p.fileLinks)p.fileLinks=[];
+        p.fileLinks.push({tipo,url,nome:nome||tipo});
+        save();renderFileLinks(p);toast('Link adicionado!');
+      }});
+    }});
+  }});
+}
 function removeFileLink(i){const p=projs.find(x=>x.id===curProjId);if(!p||!p.fileLinks)return;p.fileLinks.splice(i,1);save();renderFileLinks(p);}
 
 // ── FINANCEIRO ────────────────────────────────────────
@@ -6183,12 +6410,20 @@ function usarMeuTemplate(id){
   const t=meusTemplates.find(x=>x.id===id);if(!t)return;
   openM('m-proj');
   setTimeout(()=>{
-    _npModo=t.modo||'completo';setModoProj(_npModo);
-    selTipoV=t.tipo;
-    document.querySelectorAll('.type-opt').forEach(o=>{
-      o.classList.toggle('sel',o.getAttribute('onclick')?.includes(t.tipo));
-    });
-    renderBriefFields();
+    if(t._isCustomFlow&&t.fases){
+      // OS-080: Template de fluxo customizado
+      selTipoV='custom';
+      const cfbEl=document.getElementById('tipo-custom');if(cfbEl)selT(cfbEl,'custom');
+      customStages=t.fases.map(f=>({id:Date.now()+Math.random(),nome:f.nome,tarefas:f.tasks.length>0?[...f.tasks]:['']}));
+      renderCustomStages();
+    } else {
+      _npModo=t.modo||'completo';setModoProj(_npModo);
+      selTipoV=t.tipo;
+      document.querySelectorAll('.type-opt').forEach(o=>{
+        o.classList.toggle('sel',o.getAttribute('onclick')?.includes(t.tipo));
+      });
+      renderBriefFields();
+    }
     const nome=document.getElementById('np-nome');if(nome)nome.placeholder='Projeto usando: '+t.nome;
   },100);
   toast('Template carregado — preencha os campos');
@@ -6202,7 +6437,7 @@ function removeMeuTemplate(id){
 function renderMeusTemplates(){
   const el=document.getElementById('meus-templates-list');if(!el)return;
   if(meusTemplates.length===0){el.innerHTML='<div class="card empty-state"><div class="empty-icon empty-float">📄</div><div class="empty-title">Nenhum template salvo</div><div class="empty-desc">Crie templates ou salve a partir de projetos existentes.</div></div>';return;}
-  el.innerHTML=meusTemplates.map(t=>`<div class="card" style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:600;color:var(--t1);font-size:var(--fs-sm)">${t.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${t.tipo} · ${t.modo==='rapido'?'⚡ Rápido':'Completo'} · ${t.tarefas.length} tarefas</div></div><div style="display:flex;gap:6px"><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="usarMeuTemplate(${t.id})">Usar</button><button class="btn-g" style="font-size:14px;width:28px;padding:0;color:var(--t4)" aria-label="Remover template" onclick="removeMeuTemplate(${t.id})">×</button></div></div></div>`).join('');
+  el.innerHTML=meusTemplates.map(t=>`<div class="card" style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:600;color:var(--t1);font-size:var(--fs-sm)">${t.nome}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">${t._isCustomFlow?`Meu Fluxo · ${t.fases?.length||0} etapas`:`${t.tipo} · ${t.modo==='rapido'?'⚡ Rápido':'Completo'} · ${t.tarefas?.length||0} tarefas`}</div></div><div style="display:flex;gap:6px"><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="usarMeuTemplate(${t.id})">Usar</button><button class="btn-g" style="font-size:14px;width:28px;padding:0;color:var(--t4)" aria-label="Remover template" onclick="removeMeuTemplate(${t.id})">×</button></div></div></div>`).join('');
 }
 function toggleTplTab(tab){
   const meusEl=document.getElementById('tpl-tab-meus');
@@ -6600,10 +6835,11 @@ function reenviaProp(id){
 }
 function reajustaProp(id){
   const p=propostas.find(x=>x.id===id);if(!p)return;
-  const novoVal=prompt('Novo valor (R$):',p.val);if(novoVal===null)return;
-  p.val=parseFloat(novoVal)||p.val;
-  p.validade=new Date(Date.now()+15*86400000).toISOString().split('T')[0];
-  saveExtra();renderPipeline();toast('Valor reajustado!');
+  openInputModal({titulo:'Reajustar proposta',label:'Novo valor (R$)',tipo:'number',valor:p.val,placeholder:'0.00',onOk:(v)=>{
+    p.val=parseFloat(v)||p.val;
+    p.validade=new Date(Date.now()+15*86400000).toISOString().split('T')[0];
+    saveExtra();renderPipeline();toast('Valor reajustado!');
+  }});
 }
 function followUpProp(id){
   const p=propostas.find(x=>x.id===id);if(!p)return;
@@ -6625,6 +6861,7 @@ function renderHub(){
   const el=document.getElementById('hub-layout');if(!el)return;
   el.innerHTML=hubData.map(cat=>`<div class="hub-cat"><div class="hub-cat-hdr"><span style="width:7px;height:7px;border-radius:50%;background:${cat.cor};flex-shrink:0;display:inline-block"></span><span class="hub-cat-name">${cat.n}</span><span class="hub-cat-count">${cat.tools.length}</span></div><div class="hub-col-body">${cat.tools.map((t,ti)=>`<div class="hub-tool"><div style="flex:1;cursor:pointer" onclick="window.open('${t.u}','_blank')"><div class="hub-tn">${t.n}</div><div class="hub-td">${t.d||''}</div></div><div class="hub-tr"><span class="hub-tv ${t.v==='free'?'vf':t.v==='pago'?'vp':'vm'}">${t.v==='free'?'FREE':t.v==='pago'?'PAGO':'FREE+'}</span><span class="hub-edit" onclick="openEditT('${cat.id}',${ti})" title="Editar"><i data-lucide="pencil" style="width:12px;height:12px"></i></span><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);cursor:pointer" onclick="window.open('${t.u}','_blank')"><i data-lucide="external-link" style="width:12px;height:12px"></i></span></div></div>`).join('')}</div><div class="hub-add" onclick="prepAddT('${cat.id}')"><span style="font-size:14px">+</span> Adicionar</div></div>`).join('');
   initHubDrag();
+  renderDesafioCarreira();
 }
 function prepAddT(catId){const hc=document.getElementById('ht-cat');if(hc)hc.value=catId;openM('m-add-tool');}
 function addTool(){const n=document.getElementById('ht-nome').value.trim(),u=document.getElementById('ht-url').value.trim();if(!n||!u){toast('Preencha nome e URL!','var(--am)');return;}const cat=hubData.find(c=>c.id===document.getElementById('ht-cat').value);if(cat)cat.tools.push({n,d:document.getElementById('ht-desc').value.trim()||'Ferramenta',u:u.startsWith('http')?u:'https://'+u,v:document.getElementById('ht-val').value});save();closeM('m-add-tool');renderHub();document.getElementById('ht-nome').value='';document.getElementById('ht-url').value='';document.getElementById('ht-desc').value='';toast('Ferramenta adicionada!');}
@@ -6691,6 +6928,15 @@ function renderMetricas(){
   setEl('met-fat-ent',fmt(tE));setEl('met-fat-sai',fmt(tS));setEl('met-fat-mg',mg+'%');setEl('met-fat-total',fmt(tE));
   const maxFat=Math.max(tE,tS,1);const fatEl=document.getElementById('ch-financeiro');
   if(fatEl)fatEl.innerHTML=`<div class="fin-bar-group"><div class="fin-bar-row"><div class="fin-bar-tipo">Entradas</div><div class="fin-bar-wrap"><div class="fin-bar-fill" style="width:${Math.round(tE/maxFat*100)}%;background:var(--gr)"></div></div><div class="fin-bar-v" style="color:var(--gr)">${fmt(tE)}</div></div><div class="fin-bar-row"><div class="fin-bar-tipo">Saídas</div><div class="fin-bar-wrap"><div class="fin-bar-fill" style="width:${Math.round(tS/maxFat*100)}%;background:var(--am)"></div></div><div class="fin-bar-v" style="color:var(--am)">${fmt(tS)}</div></div></div>${lancs.length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-top:8px">Adicione lançamentos no Financeiro</div>':''}`;
+  // OS-081: Investimento em você
+  const horasInv=calcTempoInvestidoEmMim();
+  const projPessoais=[...projs,...projsFinalizados].filter(p=>p._pessoal);
+  const invEl=document.getElementById('met-investimento-voce');
+  if(invEl)invEl.innerHTML=`
+    <div class="card-title">🌱 Investimento em você</div>
+    <div style="font-size:28px;font-weight:800;color:#22C55E;margin:8px 0">${horasInv}h</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--t3)">${projPessoais.length} projeto${projPessoais.length!==1?'s':''} pessoais</div>
+  `;
   // Gargalos
   const gargs=[];
   if(comAtraso>0)gargs.push({c:'var(--rd)',t:'Prazos vencidos',d:comAtraso+' projeto'+(comAtraso>1?'s':'')+' com prazo vencido',badge:'CRÍTICO',bc:'var(--rb)',btc:'var(--rd)'});
@@ -6891,7 +7137,7 @@ function saveSkills(skills){const p=getPerfilData();p.skills=skills;savePerfilDa
 function renderSkills(){
   const el=document.getElementById('perfil-skills');if(!el)return;
   const skills=getSkills();
-  if(skills.length===0){el.innerHTML='<div style="text-align:center;padding:16px 0"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-bottom:8px">Nenhuma habilidade cadastrada</div><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="nav(\'perfil\');setTimeout(()=>{const btn=document.querySelector(\'[onclick*=openEditPerfil]\');if(btn)btn.click();},200)">+ adicionar agora</button></div>';return;}
+  if(skills.length===0){el.innerHTML='<div style="text-align:center;padding:16px 0"><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);margin-bottom:8px">Nenhuma habilidade cadastrada</div><button class="btn-g" style="font-size:var(--fs-2xs)" onclick="openM(\'m-edit-perfil\')">+ adicionar agora</button></div>';return;}
   const boosts=JSON.parse(localStorage.getItem('ph4-skill-boosts')||'{}');
   el.innerHTML=skills.map((s,i)=>{
     const total=Math.min(100,s.v+(boosts[s.n]||0));
@@ -7760,35 +8006,226 @@ function delInsight(i){ // alias retrocompat — index-based fallback
   renderInsights();
 }
 
-// Inicializar sistema criativo junto com o dashboard
-
-function toggleCriativo(){
-  const body = document.getElementById('criativo-body');
-  const chev = document.getElementById('criativo-chevron');
-  if(!body) return;
-  const isOpen = body.style.display !== 'none';
-  body.style.display = isOpen ? 'none' : 'block';
-  if(chev) chev.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
-  localStorage.setItem('ph4-criativo-open', isOpen ? '0' : '1');
-}
-
-// Restaurar estado do combustível ao iniciar
-function initCriativoState(){
-  const saved = localStorage.getItem('ph4-criativo-open');
-  const body = document.getElementById('criativo-body');
-  const chev = document.getElementById('criativo-chevron');
-  // Por padrão: colapsado (economiza espaço)
-  if(body && saved !== '1'){
-    body.style.display = 'none';
-    if(chev) chev.style.transform = 'rotate(-90deg)';
-  }
-}
-
 function initCriativo(){
   renderDose();
   renderDesafio();
   renderInsights();
-  initCriativoState();
+}
+
+// ── OS-081: PROJETOS PESSOAIS ─────────────────────────
+function calcTempoInvestidoEmMim(){
+  const pessoais=[...projs,...projsFinalizados].filter(p=>p._pessoal);
+  return pessoais.reduce((acc,p)=>acc+(p.horasFoco||0),0);
+}
+
+// ── OS-082: PORTFÓLIO TRACKER ────────────────────────
+function calcGapPortfolio(){
+  const finalizados=projsFinalizados||[];
+  const casesIds=(cases||[]).map(cs=>cs.projId).filter(Boolean);
+  const documentados=finalizados.filter(p=>casesIds.includes(p.id)||p._temCase);
+  const semDoc=finalizados.filter(p=>!casesIds.includes(p.id)&&!p._temCase);
+  return{total:finalizados.length,documentados,semDoc};
+}
+
+function renderPortfolioTracker(){
+  const{total,documentados,semDoc}=calcGapPortfolio();
+  const el=document.getElementById('portfolio-tracker');
+  if(!el)return;
+  if(total===0){el.style.display='none';return;}
+  el.style.display='';
+  const pct=Math.round(documentados.length/total*100);
+  const cor=pct>=80?'var(--gr)':pct>=50?'var(--am)':'var(--rd)';
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <div style="font-size:14px;font-weight:700;color:var(--t1)">Portfólio em dia?</div>
+      <div style="font-family:var(--mono);font-size:11px;color:${cor}">${documentados.length}/${total} documentados</div>
+    </div>
+    <div style="height:4px;background:var(--s4);border-radius:2px;overflow:hidden;margin-bottom:12px">
+      <div style="height:100%;width:${pct}%;background:${cor};border-radius:2px;transition:width .4s ease"></div>
+    </div>
+    ${semDoc.length>0?`
+      <div style="font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:8px">${semDoc.length} projeto${semDoc.length>1?'s':''} sem documentação:</div>
+      ${semDoc.slice(0,3).map(p=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--s2);border-radius:var(--radius-md);margin-bottom:4px">
+          <span style="font-size:12px;color:var(--t2);flex:1">${p.nome}</span>
+          <button onclick="abrirCriarCase('${p.id}')" style="font-family:var(--mono);font-size:10px;color:var(--y);background:none;border:none;cursor:pointer;white-space:nowrap">+ Criar case →</button>
+        </div>`).join('')}
+      ${semDoc.length>3?`<div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:4px">+${semDoc.length-3} outros</div>`:''}
+    `:`<div style="font-family:var(--mono);font-size:11px;color:var(--gr)">✓ Todos os projetos estão documentados!</div>`}
+  `;
+}
+
+function abrirCriarCase(projId){
+  curProjId=projId;
+  nav('cases');
+}
+
+// ── OS-083: METAS DE CARREIRA ────────────────────────
+function renderMetas(){
+  const metas=JSON.parse(localStorage.getItem('ph4-metas-carreira')||'[]');
+  const el=document.getElementById('metas-list');
+  if(!el)return;
+  const ativas=metas.filter(m=>!m.concluida);
+  const concluidas=metas.filter(m=>m.concluida);
+  if(metas.length===0){
+    el.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--t4);padding:8px 0">Nenhuma meta definida. O que você quer conquistar esse trimestre?</div>`;
+    return;
+  }
+  const renderMeta=(m)=>{
+    const hoje=new Date();
+    const prazo=m.prazo?new Date(m.prazo):null;
+    const diasRestantes=prazo?Math.ceil((prazo-hoje)/(1000*60*60*24)):null;
+    const vencida=prazo&&diasRestantes<0&&!m.concluida;
+    return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--s2);border:1px solid var(--e1);border-radius:var(--radius-md);margin-bottom:6px;opacity:${m.concluida?'0.5':'1'}">
+      <div onclick="toggleMeta(${m.id})" style="width:18px;height:18px;border-radius:4px;border:2px solid ${m.concluida?'var(--gr)':'var(--e2)'};background:${m.concluida?'var(--gr)':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:1px;font-size:11px;color:#080809">${m.concluida?'✓':''}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;color:var(--t1);${m.concluida?'text-decoration:line-through;':''}line-height:1.4;margin-bottom:3px">${m.texto}</div>
+        ${prazo?`<div style="font-family:var(--mono);font-size:10px;color:${vencida?'var(--rd)':diasRestantes<=7?'var(--am)':'var(--t4)'}">${m.concluida?'Concluída':vencida?`⚠️ Venceu há ${Math.abs(diasRestantes)} dias`:diasRestantes===0?'⚡ Vence hoje':diasRestantes<=7?`⏰ ${diasRestantes} dias restantes`:`Prazo: ${prazo.toLocaleDateString('pt-BR')}`}</div>`:''}
+      </div>
+      <button onclick="removerMeta(${m.id})" style="background:none;border:none;color:var(--t4);cursor:pointer;font-size:14px;padding:0 4px;opacity:0;transition:opacity .12s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">×</button>
+    </div>`;
+  };
+  el.innerHTML=ativas.map(renderMeta).join('')+(concluidas.length>0?`<div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin:10px 0 6px">Concluídas (${concluidas.length})</div>${concluidas.slice(-3).map(renderMeta).join('')}`:'');
+}
+
+function toggleMeta(id){
+  const metas=JSON.parse(localStorage.getItem('ph4-metas-carreira')||'[]');
+  const m=metas.find(x=>x.id===id);
+  if(!m)return;
+  m.concluida=!m.concluida;
+  if(m.concluida)ganharXP('concluirMeta');
+  localStorage.setItem('ph4-metas-carreira',JSON.stringify(metas));
+  renderMetas();
+}
+
+function removerMeta(id){
+  let metas=JSON.parse(localStorage.getItem('ph4-metas-carreira')||'[]');
+  metas=metas.filter(x=>x.id!==id);
+  localStorage.setItem('ph4-metas-carreira',JSON.stringify(metas));
+  renderMetas();
+}
+
+function salvarNovaMeta(){
+  const texto=document.getElementById('nm-texto')?.value?.trim();
+  if(!texto){toast('Digite o texto da meta','var(--am)');return;}
+  const prazo=document.getElementById('nm-prazo')?.value||null;
+  const metas=JSON.parse(localStorage.getItem('ph4-metas-carreira')||'[]');
+  metas.push({id:Date.now(),texto,prazo,concluida:false,criadaEm:new Date().toLocaleDateString('pt-BR')});
+  localStorage.setItem('ph4-metas-carreira',JSON.stringify(metas));
+  closeM('m-nova-meta');
+  const nm=document.getElementById('nm-texto');if(nm)nm.value='';
+  const np=document.getElementById('nm-prazo');if(np)np.value='';
+  renderMetas();
+  toast('Meta adicionada ✓');
+}
+
+// ── OS-084: PROTEÇÃO DE TEMPO ─────────────────────────
+function getNumeroSemana(data){
+  const d=new Date(data);
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate()+3-(d.getDay()+6)%7);
+  const w=new Date(d.getFullYear(),0,4);
+  return d.getFullYear()+'-W'+String(1+Math.round(((d-w)/86400000-3+(w.getDay()+6)%7)/7)).padStart(2,'0');
+}
+
+function calcHorasPessoaisNaSemana(){
+  const pessoais=projs.filter(p=>p._pessoal);
+  return pessoais.reduce((acc,p)=>acc+(p.horasFoco||0),0);
+}
+
+function salvarCfgHorasPessoal(val){
+  localStorage.setItem('ph4-horas-pessoal-meta',parseInt(val)||0);
+  toast('Proteção de tempo atualizada ✓');
+}
+
+function mostrarLembreteProtecao(meta,realizado){
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;bottom:80px;right:24px;z-index:998;background:var(--s2);border:1px solid rgba(34,197,94,0.25);border-radius:var(--radius-lg);padding:16px 18px;max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,0.3);animation:slideUp .3s ease';
+  el.innerHTML=`<div style="font-size:20px;margin-bottom:8px">🌱</div>
+    <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:6px">Essa semana, você investiu em você?</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Meta: ${meta}h · Realizado: ${realizado}h${realizado===0?'<br>Ainda dá tempo hoje.':''}</div>
+    <div style="display:flex;gap:8px">
+      <button onclick="this.closest('div').parentElement.remove()" style="flex:1;height:30px;background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-md);font-family:var(--mono);font-size:10px;color:var(--t2);cursor:pointer">Depois</button>
+      <button onclick="nav('projetos');this.closest('div').parentElement.remove()" style="flex:1;height:30px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.2);border-radius:var(--radius-md);font-family:var(--mono);font-size:10px;color:#22C55E;cursor:pointer">Ver projetos →</button>
+    </div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>{if(el.parentNode)el.remove();},12000);
+}
+
+function checkProtecaoTempo(){
+  const meta=parseInt(localStorage.getItem('ph4-horas-pessoal-meta')||'0');
+  if(meta===0)return;
+  const hoje=new Date();
+  const diaSemana=hoje.getDay();
+  if(diaSemana!==0&&diaSemana!==6)return;
+  const semanaKey=getNumeroSemana(hoje);
+  const jaNotificou=localStorage.getItem('ph4-protecao-notif-'+semanaKey);
+  if(jaNotificou)return;
+  const horasEssaSemana=calcHorasPessoaisNaSemana();
+  if(horasEssaSemana<meta){
+    localStorage.setItem('ph4-protecao-notif-'+semanaKey,'1');
+    setTimeout(()=>mostrarLembreteProtecao(meta,horasEssaSemana),2000);
+  }
+}
+
+// ── OS-085: DESAFIOS DE CARREIRA ──────────────────────
+const DESAFIOS_CARREIRA=[
+  {id:'dc01',texto:'Documente o processo de um projeto finalizado e crie um case.',duracao:'Esta semana',xp:200,acao:'cases'},
+  {id:'dc02',texto:'Atualize a seção "Sobre" do seu portfólio com projetos recentes.',duracao:'Hoje',xp:80,acao:null},
+  {id:'dc03',texto:'Peça um depoimento para um cliente com quem trabalhou recentemente.',duracao:'Hoje',xp:100,acao:'crm'},
+  {id:'dc04',texto:'Defina uma nova meta de carreira para o próximo trimestre.',duracao:'Hoje',xp:80,acao:'meta'},
+  {id:'dc05',texto:'Reserve 2h na agenda para trabalhar no seu projeto pessoal.',duracao:'Esta semana',xp:60,acao:'calendario'},
+  {id:'dc06',texto:'Revise sua precificação. Seus preços refletem sua evolução?',duracao:'Esta semana',xp:80,acao:'financeiro'},
+  {id:'dc07',texto:'Publique um insight sobre seu processo de trabalho nas redes.',duracao:'Hoje',xp:60,acao:null},
+  {id:'dc08',texto:'Crie um template a partir de um projeto que deu especialmente certo.',duracao:'Esta semana',xp:120,acao:'templates'},
+  {id:'dc09',texto:'Calcule quanto tempo você investiu em você mesmo esse mês.',duracao:'Hoje',xp:40,acao:'metricas'},
+  {id:'dc10',texto:'Identifique um gap de habilidade e adicione ao seu plano de desenvolvimento.',duracao:'Hoje',xp:80,acao:'perfil'},
+];
+
+function getDesafioCarreiraSemana(){
+  const semana=getNumeroSemana(new Date());
+  const salvo=localStorage.getItem('ph4-desafio-carreira-semana');
+  const salvoData=localStorage.getItem('ph4-desafio-carreira-semana-key');
+  if(salvoData===semana&&salvo){
+    return DESAFIOS_CARREIRA.find(d=>d.id===salvo)||DESAFIOS_CARREIRA[0];
+  }
+  const ultimo=salvo;
+  const disponiveis=DESAFIOS_CARREIRA.filter(d=>d.id!==ultimo);
+  const novo=disponiveis[Math.floor(Math.random()*disponiveis.length)];
+  localStorage.setItem('ph4-desafio-carreira-semana',novo.id);
+  localStorage.setItem('ph4-desafio-carreira-semana-key',semana);
+  localStorage.removeItem('ph4-desafio-carreira-concluido-'+semana);
+  return novo;
+}
+
+function concluirDesafioCarreira(){
+  const semana=getNumeroSemana(new Date());
+  const desafio=getDesafioCarreiraSemana();
+  const jaConcluiu=localStorage.getItem('ph4-desafio-carreira-concluido-'+semana);
+  if(jaConcluiu){toast('Desafio já concluído essa semana!','var(--am)');return;}
+  localStorage.setItem('ph4-desafio-carreira-concluido-'+semana,'1');
+  ganharXP('desafioCarreira',desafio.xp);
+  renderDesafioCarreira();
+  toast(`+${desafio.xp} XP · Desafio concluído! 🎯`);
+}
+
+function renderDesafioCarreira(){
+  const el=document.getElementById('desafio-carreira-card');
+  if(!el)return;
+  const desafio=getDesafioCarreiraSemana();
+  const semana=getNumeroSemana(new Date());
+  const concluido=!!localStorage.getItem('ph4-desafio-carreira-concluido-'+semana);
+  const acaoBtnHtml=desafio.acao?`<button onclick="${desafio.acao==='meta'?"nav('perfil');setTimeout(()=>openM('m-nova-meta'),300)":"nav('"+desafio.acao+"')"}" style="height:30px;padding:0 14px;background:var(--s3);border:1px solid var(--e2);border-radius:var(--radius-md);font-family:var(--mono);font-size:10px;color:var(--t2);cursor:pointer">Ir agora →</button>`:'';
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--y);text-transform:uppercase;letter-spacing:.08em">🎯 Desafio de carreira</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--t4)">${desafio.duracao}</div>
+    </div>
+    <div style="font-size:13px;color:var(--t1);line-height:1.6;margin-bottom:14px;${concluido?'text-decoration:line-through;opacity:.5':''}">${desafio.texto}</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      ${!concluido?`<button onclick="concluirDesafioCarreira()" style="height:30px;padding:0 14px;background:var(--y);border:none;border-radius:var(--radius-md);font-family:var(--mono);font-size:10px;font-weight:700;color:#080809;cursor:pointer">✓ Concluí!</button>${acaoBtnHtml}<div style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--y)">+${desafio.xp} XP</div>`:`<div style="font-family:var(--mono);font-size:11px;color:var(--gr)">✓ Desafio concluído essa semana!</div>`}
+    </div>
+  `;
 }
 
 // ── INICIALIZAÇÃO ──────────────────────────────────────
@@ -7805,6 +8242,8 @@ setTimeout(refreshIcons, 100);
     setTimeout(()=>ganharXP('abrirPlataforma'),1200);
   }
 })();
+// OS-084: verificação de proteção de tempo (fins de semana)
+checkProtecaoTempo();
 
 // ═══════════════════════════════════════════════════════════════
 // MELHORIAS UX — PRIORIDADE 1, 2 e 3
@@ -8515,6 +8954,9 @@ function copiarFeedback(){
     </div>
   </div>
 </div>
+
+<!-- BUG-1: Toast element -->
+<div id="toast" class="toast"></div>
 
 </body>
 </html>
