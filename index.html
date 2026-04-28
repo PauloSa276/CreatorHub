@@ -8329,23 +8329,25 @@ function checkWhatsNew(){
   if(lastSeen===APP_VERSION)return; // já viu esta versão
   const entry=CHANGELOG.find(c=>c.versao===APP_VERSION);
   if(!entry)return;
-  // popular o modal
-  const setEl2=(id,v)=>{const e=document.getElementById(id);if(e)e.innerHTML=v;};
-  setEl2('wn-emoji',entry.emoji);
-  setEl2('wn-versao','Novidades · '+entry.versao);
-  setEl2('wn-titulo',entry.titulo);
-  setEl2('wn-data',entry.data);
-  setEl2('wn-ver-badge',entry.versao);
-  const novEl=document.getElementById('wn-novidades');
-  if(novEl)novEl.innerHTML=entry.novidades.map(n=>`
-    <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;background:var(--s2);border:1px solid var(--e1);border-radius:var(--radius-md)">
-      <div style="font-size:18px;flex-shrink:0;line-height:1;margin-top:1px">${n.ico}</div>
-      <div>
-        <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px">${n.titulo}</div>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--t3);line-height:1.5">${n.desc}</div>
-      </div>
-    </div>`).join('');
-  setTimeout(()=>openM('m-whats-new'),900);
+  // Aguarda o DOM estar completo antes de popular e abrir o modal
+  setTimeout(()=>{
+    const setEl2=(id,v)=>{const e=document.getElementById(id);if(e)e.innerHTML=v;};
+    setEl2('wn-emoji',entry.emoji);
+    setEl2('wn-versao','Novidades · '+entry.versao);
+    setEl2('wn-titulo',entry.titulo);
+    setEl2('wn-data',entry.data);
+    setEl2('wn-ver-badge',entry.versao);
+    const novEl=document.getElementById('wn-novidades');
+    if(novEl)novEl.innerHTML=entry.novidades.map(n=>`
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;background:var(--s2);border:1px solid var(--e1);border-radius:var(--radius-md)">
+        <div style="font-size:18px;flex-shrink:0;line-height:1;margin-top:1px">${n.ico}</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px">${n.titulo}</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--t3);line-height:1.5">${n.desc}</div>
+        </div>
+      </div>`).join('');
+    openM('m-whats-new');
+  },900);
 }
 
 function fecharWhatsNew(){
