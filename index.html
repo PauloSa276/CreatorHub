@@ -903,6 +903,7 @@ button:active{transform:scale(.97)}
 @keyframes fadeOut{to{opacity:0}}
 @keyframes slideUpXP{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes bounceFloat{from{transform:scale(1)}to{transform:scale(1.08)}}
+@keyframes levelBounce{from{transform:scale(1) rotate(-2deg)}to{transform:scale(1.08) rotate(2deg)}}
 .cel-title{font-size:var(--fs-2xl);font-weight:var(--fw-black);color:var(--t1);letter-spacing:-.03em;margin-bottom:var(--sp-1)}
 .cel-sub{font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--sp-2)}
 .cel-xp{font-size:var(--fs-xl);font-weight:var(--fw-black);color:var(--y);letter-spacing:-.02em;margin-bottom:var(--sp-4)}
@@ -3096,7 +3097,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v13.0.0</span>
+      <span class="version-txt" id="version-label">v13.2.0</span>
       <span class="version-date">20 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -4125,11 +4126,22 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v13.0.0';
-const APP_DATE='25 abr 2026';
+const APP_VERSION='v13.2.0';
+const APP_DATE='27 abr 2026';
 
 // ── CHANGELOG — adicionar entrada a cada sprint ────────
 const CHANGELOG=[
+  {
+    versao:'v13.2.0',
+    data:'27 abr 2026',
+    titulo:'Ritual de Level-Up',
+    emoji:'🏆',
+    novidades:[
+      {ico:'🏆',titulo:'Cerimônia de progressão',desc:'Ao subir de nível, um overlay imersivo mostra o que você construiu — projetos, clientes, contratos, faturamento e mais.'},
+      {ico:'📊',titulo:'Stats reais da jornada',desc:'Cada stat só aparece se tiver valor real: projetos entregues, horas de foco, cases documentados, metas concluídas.'},
+      {ico:'✍️',titulo:'Mensagens por nível',desc:'Cada nível (Júnior → Lenda) tem uma mensagem motivacional própria sobre a sua evolução profissional.'},
+    ]
+  },
   {
     versao:'v13.0.0',
     data:'25 abr 2026',
@@ -4499,36 +4511,91 @@ function _xpLabel(xp){
   const n=getNivelAtual(xp);
   return 'Nível '+n.nivel+' — '+n.titulo;
 }
+// OS-087: coleta stats reais da jornada para o ritual de level-up
+function calcEstatisticasNivel(){
+  const todosProjs=[...(projs||[]),...(projsFinalizados||[])];
+  const finalizados=projsFinalizados||[];
+  const projsFeitos=finalizados.length;
+  const clientesUnicos=new Set(finalizados.map(p=>p.cliId||p.cli).filter(Boolean)).size;
+  const orcsAprovados=(orcamentos||[]).filter(o=>o.status==='aprovado').length;
+  const horasFoco=Math.round(todosProjs.reduce((acc,p)=>acc+(p.horasFoco||0),0));
+  const projsPessoais=todosProjs.filter(p=>p._pessoal).length;
+  const casesFeitos=(cases||[]).length;
+  const metas=JSON.parse(localStorage.getItem('ph4-metas-carreira')||'[]');
+  const metasConcluidas=metas.filter(m=>m.concluida).length;
+  const receitaTotal=(lancs||[]).filter(l=>l.tipo==='entrada').reduce((acc,l)=>acc+(parseFloat(l.val)||0),0);
+  return{projsFeitos,clientesUnicos,orcsAprovados,horasFoco,projsPessoais,casesFeitos,metasConcluidas,receitaTotal};
+}
+
 function mostrarCerimoniaLevelUp(nivel){
+  // Não mostrar se já celebrou esse nível
+  const jaCelebrou=localStorage.getItem('ph4-nivel-celebrado');
+  if(jaCelebrou&&parseInt(jaCelebrou)>=nivel.nivel)return;
+
+  const stats=calcEstatisticasNivel();
+  const statCards=[
+    {ico:'📁',valor:stats.projsFeitos,label:stats.projsFeitos===1?'projeto entregue':'projetos entregues',ok:stats.projsFeitos>0},
+    {ico:'👤',valor:stats.clientesUnicos,label:stats.clientesUnicos===1?'cliente atendido':'clientes atendidos',ok:stats.clientesUnicos>0},
+    {ico:'✅',valor:stats.orcsAprovados,label:stats.orcsAprovados===1?'contrato fechado':'contratos fechados',ok:stats.orcsAprovados>0},
+    {ico:'⏱️',valor:stats.horasFoco+'h',label:'no modo foco',ok:stats.horasFoco>0},
+    {ico:'🌱',valor:stats.projsPessoais,label:stats.projsPessoais===1?'projeto pessoal':'projetos pessoais',ok:stats.projsPessoais>0},
+    {ico:'🏆',valor:stats.casesFeitos,label:stats.casesFeitos===1?'case documentado':'cases documentados',ok:stats.casesFeitos>0},
+    {ico:'🎯',valor:stats.metasConcluidas,label:stats.metasConcluidas===1?'meta de carreira':'metas de carreira',ok:stats.metasConcluidas>0},
+    {ico:'💰',valor:'R$ '+stats.receitaTotal.toLocaleString('pt-BR',{maximumFractionDigits:0}),label:'faturados',ok:stats.receitaTotal>0},
+  ].filter(s=>s.ok).slice(0,6);
+
+  const cols=statCards.length<=3?statCards.length:3;
+  const statsHtml=statCards.length>0?`
+    <div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;display:flex;align-items:center;gap:10px">
+      <div style="flex:1;height:1px;background:var(--e1)"></div>sua jornada até aqui<div style="flex:1;height:1px;background:var(--e1)"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:8px;margin-bottom:28px">
+      ${statCards.map(s=>`<div style="background:var(--s2);border:1px solid var(--e1);border-radius:var(--radius-md);padding:12px 10px;text-align:center">
+        <div style="font-size:20px;margin-bottom:4px">${s.ico}</div>
+        <div style="font-size:18px;font-weight:800;letter-spacing:-.03em;color:${nivel.cor};line-height:1;margin-bottom:3px">${s.valor}</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t3);line-height:1.3">${s.label}</div>
+      </div>`).join('')}
+    </div>`:'';
+
   const ov=document.createElement('div');
   ov.id='levelup-overlay';
-  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(8,8,9,0.92);display:flex;align-items:center;justify-content:center;animation:fadeIn .3s ease';
-  ov.innerHTML=`<div style="text-align:center;max-width:420px;padding:40px;animation:scaleIn .4s cubic-bezier(.34,1.4,.64,1)">
-    <div style="font-size:72px;margin-bottom:16px;animation:bounceFloat 1s ease infinite alternate">${nivel.icone}</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--y);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px">Novo nível desbloqueado</div>
-    <div style="font-size:42px;font-weight:900;letter-spacing:-.04em;color:${nivel.cor};line-height:1;margin-bottom:12px">${nivel.titulo}</div>
-    <div style="font-size:15px;color:var(--t2);line-height:1.6;margin-bottom:32px">${getMensagemNivel(nivel.nivel)}</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:32px">${(nivel.xpMin).toLocaleString('pt-BR')} XP · Nível ${nivel.nivel} de 7</div>
-    <button onclick="fecharCerimoniaLevelUp()" style="height:46px;padding:0 32px;background:${nivel.cor};color:#080809;border:none;border-radius:999px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:-.01em">Continuar →</button>
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(8,8,9,0.94);display:flex;align-items:center;justify-content:center;animation:fadeIn .35s ease;padding:20px;overflow-y:auto';
+  ov.innerHTML=`<div style="text-align:center;max-width:500px;width:100%;animation:scaleIn .45s cubic-bezier(.34,1.3,.64,1)">
+    <div style="font-size:64px;margin-bottom:6px;filter:drop-shadow(0 0 24px ${nivel.cor}60);animation:levelBounce 1.2s ease infinite alternate">${nivel.icone}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:${nivel.cor};text-transform:uppercase;letter-spacing:.14em;margin-bottom:10px;opacity:.8">Novo nível desbloqueado</div>
+    <div style="font-size:48px;font-weight:900;letter-spacing:-.05em;color:${nivel.cor};line-height:1;margin-bottom:10px;text-shadow:0 0 40px ${nivel.cor}40">${nivel.titulo}</div>
+    <div style="font-size:15px;color:var(--t2);line-height:1.65;margin-bottom:28px;max-width:380px;margin-left:auto;margin-right:auto">${getMensagemNivel(nivel.nivel)}</div>
+    ${statsHtml}
+    <div style="font-family:var(--mono);font-size:11px;color:var(--t4);margin-bottom:24px">${nivel.xpMin.toLocaleString('pt-BR')} XP acumulados · Nível ${nivel.nivel} de 7</div>
+    <button onclick="fecharCerimoniaLevelUp()"
+      style="height:48px;padding:0 40px;background:${nivel.cor};color:#080809;border:none;border-radius:999px;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;letter-spacing:-.02em;transition:all .15s;box-shadow:0 8px 28px ${nivel.cor}40"
+      onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 36px ${nivel.cor}50'"
+      onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 28px ${nivel.cor}40'">
+      Continuar minha jornada →
+    </button>
   </div>`;
   document.body.appendChild(ov);
   ov.addEventListener('click',e=>{if(e.target===ov)fecharCerimoniaLevelUp();});
+  const escH=e=>{if(e.key==='Escape'){fecharCerimoniaLevelUp();document.removeEventListener('keydown',escH);}};
+  document.addEventListener('keydown',escH);
   localStorage.setItem('ph4-nivel-celebrado',String(nivel.nivel));
 }
+
 function fecharCerimoniaLevelUp(){
   const el=document.getElementById('levelup-overlay');
-  if(el){el.style.animation='fadeOut .2s ease forwards';setTimeout(()=>el.remove(),200);}
+  if(el){el.style.animation='fadeOut .25s ease forwards';setTimeout(()=>el.remove(),250);}
 }
+
 function getMensagemNivel(n){
   const msgs={
-    2:'Você está construindo ritmo. Cada projeto concluído é uma prova de que você está no caminho certo.',
-    3:'Meio caminho andado. Designers plenos sabem que processo e entrega não são opostos — são parceiros.',
-    4:'Sênior. Você já não entrega só o trabalho — entrega confiança. Clientes percebem isso.',
-    5:'Mestre do ofício. Poucos chegam aqui. Seu estúdio é prova de consistência e ambição.',
-    6:'Referência no mercado. O que você constrói hoje inspira outros designers amanhã.',
-    7:'Lenda. Não há mais nível — só legado. Continue sendo o padrão que outros querem alcançar.',
+    2:'Você não está mais começando. Cada projeto entregue foi uma prova de que você pertence a este caminho.',
+    3:'Designers plenos sabem que processo e resultado não se contradizem — eles se constroem juntos. Você chegou lá.',
+    4:'Sênior. Seus clientes não contratam mais só o seu trabalho — eles contratam a sua presença e confiança.',
+    5:'Mestre. Poucos profissionais chegam até aqui. O que você construiu não é apenas um portfólio — é uma carreira.',
+    6:'Referência. O mercado não te segue mais por acidente. Você se tornou o padrão que outros querem alcançar.',
+    7:'Lenda. Não há mais nível depois deste. Só legado. Continue sendo a prova de que consistência vence talento.',
   };
-  return msgs[n]||'Você evoluiu. Siga em frente.';
+  return msgs[n]||'Você evoluiu. Isso não é dado — é conquistado.';
 }
 function mostrarXPGanho(quantidade){
   const el=document.createElement('div');
