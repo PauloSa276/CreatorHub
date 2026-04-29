@@ -2320,7 +2320,7 @@ button:active{transform:scale(.97);transition:transform .08s}
 <div class="moverlay" id="m-lanc">
   <div class="modal" style="max-width:440px">
     <div class="modal-title">Novo lançamento</div>
-    <div class="fg"><label class="flbl">Tipo *</label><select class="fse" id="fl-tipo"><option value="entrada">Entrada (recebimento)</option><option value="saida">Saída (despesa)</option></select></div>
+    <div class="fg"><label class="flbl">Tipo *</label><select class="fse" id="fl-tipo" onchange="toggleNFWrap()"><option value="entrada">Entrada (recebimento)</option><option value="saida">Saída (despesa)</option></select></div>
     <div class="fg"><label class="flbl">Descrição *</label><input class="fi" id="fl-desc" placeholder="Ex: 50% entrada — Zangão Studio"></div>
     <div class="g2" style="gap:11px">
       <div class="fg" style="margin-bottom:0"><label class="flbl">Valor (R$) *</label><input class="fi" id="fl-val" type="number" placeholder="0" min="0"></div>
@@ -2328,6 +2328,18 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="fg" style="margin-top:13px"><label class="flbl">Projeto</label><select class="fse" id="fl-proj"><option value="">Nenhum</option></select></div>
     <div class="fg"><label class="flbl">Status</label><select class="fse" id="fl-status"><option value="recebido">Recebido / Pago</option><option value="pendente">Pendente</option><option value="atrasado">Atrasado</option><option value="recusado">Recusado</option><option value="perdido">Perdido</option></select></div>
+    <!-- OS-089: Nota Fiscal Tracker -->
+    <div id="nf-wrap" style="margin-top:14px;padding:12px 14px;background:rgba(212,160,23,0.06);border:1px solid rgba(212,160,23,0.18);border-radius:var(--radius-md)">
+      <div style="font-family:var(--mono);font-size:11px;font-weight:600;color:var(--y);margin-bottom:10px;letter-spacing:.04em">🧾 NOTA FISCAL</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button id="nf-btn-nao" onclick="setNFStatus('nao_emitida')" style="flex:1;font-family:var(--mono);font-size:11px;padding:6px 4px;border-radius:var(--radius-sm);border:1px solid var(--e2);background:var(--y);color:#0C0C0E;cursor:pointer;font-weight:600">📋 Pendente</button>
+        <button id="nf-btn-emitida" onclick="setNFStatus('emitida')" style="flex:1;font-family:var(--mono);font-size:11px;padding:6px 4px;border-radius:var(--radius-sm);border:1px solid var(--e2);background:var(--s2);color:var(--t3);cursor:pointer">✅ Emitida</button>
+        <button id="nf-btn-aplica" onclick="setNFStatus('nao_aplica')" style="flex:1;font-family:var(--mono);font-size:11px;padding:6px 4px;border-radius:var(--radius-sm);border:1px solid var(--e2);background:var(--s2);color:var(--t3);cursor:pointer">🚫 N/A</button>
+      </div>
+      <div id="nf-numero-wrap" style="display:none">
+        <input class="fi" id="fl-nf-numero" placeholder="Número da NF (ex: NF-2024-001)" style="font-size:12px">
+      </div>
+    </div>
     <div class="modal-footer"><button class="btn-g" onclick="closeM('m-lanc')">Cancelar</button><button class="btn-p" onclick="addLanc()">Registrar</button></div>
   </div>
 </div>
@@ -3097,7 +3109,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v13.2.0</span>
+      <span class="version-txt" id="version-label">v13.3.0</span>
       <span class="version-date">20 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -3349,6 +3361,12 @@ button:active{transform:scale(.97);transition:transform .08s}
 
         <!-- OS-082: Portfolio Tracker -->
         <div class="card" id="portfolio-tracker"></div>
+
+        <!-- OS-088: Alerta teto faturamento -->
+        <div id="alerta-teto-dash" style="display:none"></div>
+
+        <!-- OS-089: NFs pendentes -->
+        <div id="nfs-pendentes-dash" style="display:none"></div>
 
         <!-- CALCULADORA DE PRAZO -->
         <div class="card">
@@ -3767,6 +3785,10 @@ button:active{transform:scale(.97);transition:transform .08s}
       </div>
     </div>
     <div style="padding:0 24px 24px">
+    <!-- OS-088: Alerta teto faturamento -->
+    <div id="alerta-teto-fin" style="display:none;margin-top:16px"></div>
+    <!-- OS-089: NFs pendentes card -->
+    <div id="nfs-pendentes-fin" style="display:none;margin-bottom:11px"></div>
     <div style="padding:16px 0 0;display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn-p" onclick="openLanc()">+ Lançamento</button></div>
     <div class="kpi-row">
       <div class="kpi"><div class="kpi-label">Faturamento mês</div><div class="kpi-val ok" id="fin-mes">R$ 0</div><div class="kpi-sub" id="fin-mes-s">0 entradas</div></div>
@@ -4103,6 +4125,34 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:8px">0 = proteção de tempo desativada</div>
     </div>
 
+    <!-- OS-088: Regime Fiscal -->
+    <div class="card" style="margin-bottom:11px">
+      <div class="card-title">🏛️ Regime Fiscal</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Configure seu regime tributário para receber alertas quando se aproximar do teto de faturamento anual.</div>
+      <div id="regime-options-wrap" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"></div>
+      <div id="regime-info-box" style="display:none;padding:12px 14px;border-radius:var(--radius-md);border:1px solid var(--e2);background:var(--s2)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div>
+            <div id="regime-info-nome" style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:3px"></div>
+            <div id="regime-info-desc" style="font-family:var(--mono);font-size:11px;color:var(--t3)"></div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:2px">Teto anual</div>
+            <div id="regime-info-limite" style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--y)"></div>
+          </div>
+        </div>
+        <div style="margin-top:10px" id="regime-progress-wrap">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--t4)">Faturamento anual atual</span>
+            <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--t2)" id="regime-fat-pct"></span>
+          </div>
+          <div style="height:6px;background:var(--e2);border-radius:999px;overflow:hidden">
+            <div id="regime-fat-bar" style="height:100%;border-radius:999px;transition:width .4s ease"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- LIMPAR DADOS -->
     <div class="card">
       <div class="card-title" style="color:var(--rd)">Zona de perigo</div>
@@ -4126,11 +4176,22 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v13.2.0';
-const APP_DATE='27 abr 2026';
+const APP_VERSION='v13.3.0';
+const APP_DATE='28 abr 2026';
 
 // ── CHANGELOG — adicionar entrada a cada sprint ────────
 const CHANGELOG=[
+  {
+    versao:'v13.3.0',
+    data:'28 abr 2026',
+    titulo:'Regime Fiscal & NF Tracker',
+    emoji:'🧾',
+    novidades:[
+      {ico:'🏛️',titulo:'Regime Fiscal',desc:'Configure seu regime tributário (MEI, Simples, etc.) e receba alertas automáticos quando se aproximar do teto de faturamento anual.'},
+      {ico:'🧾',titulo:'Nota Fiscal Tracker',desc:'Acompanhe quais entradas precisam de NF — badge visual em cada lançamento e card de pendências no Dashboard e Financeiro.'},
+      {ico:'⚠️',titulo:'Alerta de teto',desc:'Alerta inteligente a partir de 70% do limite anual do seu regime, com progressão visual e sugestão de revisão.'},
+    ]
+  },
   {
     versao:'v13.2.0',
     data:'27 abr 2026',
@@ -4178,6 +4239,16 @@ const FASES=[
 const FN=['Imersão','Definição','Desenvolv.','Protótipo','Entrega','Florescimento'];
 const FT=['f-briefing','f-conceito','f-producao','f-revisao','f-entrega','f-fechado'];
 
+// ── OS-088: REGIMES FISCAIS BRASILEIROS ───────────────
+const REGIMES_FISCAIS=[
+  {id:'mei',n:'MEI',desc:'Microempreendedor Individual',limite:169200,cor:'#22C55E',aviso:'Próximo do teto MEI. Considere migrar para Simples Nacional.'},
+  {id:'simples_a',n:'Simples Nacional (Anexo IV)',desc:'Serviços gráficos, design, publicidade',limite:4800000,cor:'#3B82F6',aviso:'Atenção ao teto do Simples Nacional.'},
+  {id:'lucro_presumido',n:'Lucro Presumido',desc:'Empresas com faturamento até R$ 78M',limite:78000000,cor:'#8B5CF6',aviso:'Acompanhe seu faturamento anual.'},
+  {id:'autonomo',n:'Autônomo / PF',desc:'Sem CNPJ, emite recibo',limite:0,cor:'#F59E0B',aviso:'Considere formalizar seu negócio.'},
+  {id:'ltda',n:'LTDA / S.A.',desc:'Empresa de médio/grande porte',limite:0,cor:'#6B7280',aviso:''},
+  {id:'outro',n:'Outro',desc:'Regime não listado',limite:0,cor:'#6B7280',aviso:''},
+];
+
 // ── STATE (sem dados mockados — localStorage puro) ────────────
 let projs=JSON.parse(localStorage.getItem('ph4-projs')||'[]');
 let clients=JSON.parse(localStorage.getItem('ph4-cli')||'[]');
@@ -4207,6 +4278,8 @@ let insightsList=JSON.parse(localStorage.getItem('ph4-insights')||'[]').map(x=>{
 });
 let doseIdx=null;
 let desafioFeito=false;
+let _nfStatus='nao_emitida'; // 'nao_emitida' | 'emitida' | 'nao_aplica'
+let _lancEditId=null; // id do lançamento sendo editado para NF
 
 function DEF_HUB_DATA(){return[
   {id:'inspiracao',n:'Inspiração & Referência',cor:'#60A5FA',tools:[
@@ -4370,7 +4443,7 @@ function openM(id){
   if(id==='m-proj'){populateNpCli();updateFilaAuto();calcPrev();const d=new Date().toISOString().split('T')[0];const ini=document.getElementById('np-ini');if(ini)ini.value=d;checkCapAlert();setModoProj('completo');setUrgProj('normal');renderBriefFields();}
   if(id==='m-edit-perfil'){const p=getPerfilData();const en=document.getElementById('ep-nome');if(en)en.value=p.nome;const ee=document.getElementById('ep-espec');if(ee)ee.value=p.espec||'';const es=document.getElementById('ep-site');if(es)es.value=p.site||'';const eb=document.getElementById('ep-bio');if(eb)eb.value=p.bio||'';const ep2=document.getElementById('ep-pass');if(ep2)ep2.value='';window._epSkills=getSkills().map(s=>({...s}));renderSkillsEditor();}
   if(id==='m-feedback'){const ap=document.querySelector('.page.active');const fbp=document.getElementById('fb-page');if(fbp&&ap)fbp.textContent=ap.id.replace('page-','');document.querySelectorAll('.fb-type-btn').forEach(b=>b.style.background='');document.getElementById('fb-desc').value='';window._fbType=null;}
-  if(id==='m-lanc'){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];}
+  if(id==='m-lanc'){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];toggleNFWrap();}
   // Focar no campo de nome ao abrir modal de cliente
   if(id==='m-cliente'){setTimeout(()=>{
     // Limpar todos os campos
@@ -4643,6 +4716,7 @@ function nav(id,el){
     const cs=document.getElementById('cfg-site');if(cs)cs.value=p.site||'';
     const cm=document.getElementById('cfg-cap-max');if(cm)cm.value=capMax;
     const inputHP=document.getElementById('cfg-horas-pessoal');if(inputHP)inputHP.value=localStorage.getItem('ph4-horas-pessoal-meta')||'0';
+    renderRegimeOptions();
   }
   // Animate number counters after render
   setTimeout(()=>animateCounters(pg),80);
@@ -4771,7 +4845,7 @@ function renderDash(){
       } else if(c3){c3.style.display='none';}
     } else { nsEl.style.display='none'; }
   }
-  renderDashProjs();renderAgenda();renderAlertas();renderDayTasks();atualizarNotificacoes();initCriativo();renderCarga();renderPortfolioTracker();
+  renderDashProjs();renderAgenda();renderAlertas();renderDayTasks();atualizarNotificacoes();initCriativo();renderCarga();renderPortfolioTracker();renderAlertaTeto();renderNFsPendentes();
 }
 
 function setEl(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
@@ -6380,15 +6454,21 @@ function addFileLink(){
 function removeFileLink(i){const p=projs.find(x=>x.id===curProjId);if(!p||!p.fileLinks)return;p.fileLinks.splice(i,1);save();renderFileLinks(p);}
 
 // ── FINANCEIRO ────────────────────────────────────────
-function openLanc(){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];openM('m-lanc');}
+function openLanc(){populateLancProj();const d=document.getElementById('fl-data');if(d)d.value=new Date().toISOString().split('T')[0];_nfStatus='nao_emitida';_lancEditId=null;toggleNFWrap();openM('m-lanc');}
 function populateLancProj(){const fp=document.getElementById('fl-proj');if(fp)fp.innerHTML='<option value="">Nenhum</option>'+projs.map(p=>`<option>${p.nome}</option>`).join('');}
 function populateNpCli(){const sel=document.getElementById('np-cli');if(!sel)return;let html='<option value="">Selecione...</option>';clients.forEach(c=>{html+=`<option value="${c.nome}">${c.nome}</option>`;});html+='<option value="_novo">+ Novo cliente</option>';sel.innerHTML=html;sel.onchange=function(){if(this.value==='_novo'){this.value='';openM('m-cliente');}};}
 
 function addLanc(){
   const desc=document.getElementById('fl-desc').value.trim(),val=parseFloat(document.getElementById('fl-val').value)||0,data=document.getElementById('fl-data').value;
   if(!desc||!val||!data){toast('Preencha todos os campos!','var(--am)');return;}
-  lancs.unshift({id:Date.now(),tipo:document.getElementById('fl-tipo').value,desc,proj:document.getElementById('fl-proj').value,val,data,st:document.getElementById('fl-status').value});
-  save();closeM('m-lanc');document.getElementById('fl-desc').value='';document.getElementById('fl-val').value='';renderFin();toast('Lançamento registrado!');
+  const tipo=document.getElementById('fl-tipo').value;
+  const nfNumero=(document.getElementById('fl-nf-numero')?.value||'').trim();
+  const obj={id:Date.now(),tipo,desc,proj:document.getElementById('fl-proj').value,val,data,st:document.getElementById('fl-status').value};
+  if(tipo==='entrada'){obj.nf=_nfStatus;if(nfNumero)obj.nfNumero=nfNumero;}
+  lancs.unshift(obj);
+  save();closeM('m-lanc');document.getElementById('fl-desc').value='';document.getElementById('fl-val').value='';
+  _nfStatus='nao_emitida';
+  renderFin();toast('Lançamento registrado!');
 }
 function _isRejected(l){return l.st==='recusado'||l.st==='perdido';}
 function renderFin(){
@@ -6403,8 +6483,14 @@ function renderFin(){
   const _mesAno=m+'-'+y,_ckMes='ph4-comemorou-'+_mesAno;
   if(tE-tS>0&&!localStorage.getItem(_ckMes)){localStorage.setItem(_ckMes,'1');setTimeout(()=>toast('🎉 Mês positivo! Saldo: '+fmt(tE-tS),'var(--gr)'),800);}
   const mg_el=document.getElementById('fin-marg');if(mg_el){mg_el.textContent=mg+'%';mg_el.className='m-val '+(mg>50?'ok':mg>20?'warn':'danger');}
+  // OS-088+089: render alerts
+  renderAlertaTeto();renderNFsPendentes();
   const lista=document.getElementById('fin-lista');
-  if(lista)lista.innerHTML=lancs.length===0?'<div class="empty-state"><div class="empty-icon empty-float">💰</div><div class="empty-title">Sem lançamentos</div><div class="empty-desc">Registre entradas e saídas para acompanhar a saúde financeira do estúdio.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-lanc\')">+ Novo lançamento</button></div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp','recusado':'vp','perdido':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO','recusado':'RECUSADO','perdido':'PERDIDO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div><span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
+  if(lista)lista.innerHTML=lancs.length===0?'<div class="empty-state"><div class="empty-icon empty-float">💰</div><div class="empty-title">Sem lançamentos</div><div class="empty-desc">Registre entradas e saídas para acompanhar a saúde financeira do estúdio.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-lanc\')">+ Novo lançamento</button></div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp','recusado':'vp','perdido':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO','recusado':'RECUSADO','perdido':'PERDIDO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();
+  // OS-089: NF badge
+  let nfBadge='';
+  if(isE){const ns=l.nf||'nao_emitida';if(ns==='nao_emitida')nfBadge='<span style="font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(212,160,23,0.12);color:var(--y);border:1px solid rgba(212,160,23,0.2);cursor:pointer;margin-left:4px" onclick="abrirEditarNF('+l.id+')">🧾 NF</span>';else if(ns==='emitida')nfBadge='<span style="font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(34,197,94,0.1);color:var(--gr);border:1px solid rgba(34,197,94,0.2)" title="'+(l.nfNumero||'NF emitida')+'">✅ NF</span>';else nfBadge='<span style="font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;background:var(--s2);color:var(--t4)">N/A</span>';}
+  return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}${nfBadge}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div><span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
   const ppEl=document.getElementById('fin-proj');if(ppEl){const bp={};ent.filter(l=>l.proj).forEach(l=>{if(!bp[l.proj])bp[l.proj]={t:0,r:0};bp[l.proj].t+=l.val;if(l.st==='recebido')bp[l.proj].r+=l.val;});ppEl.innerHTML=Object.keys(bp).length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Nenhum lançamento</div>':Object.entries(bp).map(([proj,d])=>`<div style="padding:7px 0;border-bottom:1px solid var(--e1)"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-size:var(--fs-sm);color:var(--t2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${proj}</div><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--y)">${fmt(d.t)}</div></div><div class="xtg"><div class="xfg" style="width:${Math.round(d.r/d.t*100)}%"></div></div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${Math.round(d.r/d.t*100)}% recebido</div></div>`).join('');}
   const distEl=document.getElementById('fin-dist');if(distEl)distEl.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Entradas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--gr)">${fmt(tE)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Saídas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--am)">${fmt(tS)}</span></div><div style="height:1px;background:var(--e1);margin:7px 0"></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Margem líquida</span><span style="font-size:20px;font-weight:900;letter-spacing:-.05em;color:var(--y)">${mg}%</span></div><div class="xts" style="margin-top:5px"><div class="xfs" style="width:${mg}%"></div></div>`;
 }
@@ -6597,6 +6683,156 @@ function renderSaudeMes(){
   <div class="xts"><div class="xfs" style="width:${pct}%;background:${corRes}"></div></div>
   ${pontoEq>0&&receitaMes<pontoEq?`<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--am);margin-top:8px">Você precisa faturar mais ${fmt(pontoEq-receitaMes)} para cobrir tudo.</div>`:''}`;
 }
+// ── OS-088: REGIME FISCAL ────────────────────────────
+function getRegimeFiscalId(){return localStorage.getItem('ph4-regime-fiscal')||'mei';}
+function setRegimeFiscal(id){
+  localStorage.setItem('ph4-regime-fiscal',id);
+  renderRegimeOptions();
+  atualizarRegimeInfo();
+}
+function calcFaturamentoAnualAtual(){
+  const y=new Date().getFullYear();
+  return lancs.filter(l=>l.tipo==='entrada'&&!_isRejected(l)&&new Date(l.data).getFullYear()===y).reduce((s,l)=>s+(l.val||0),0);
+}
+function renderRegimeOptions(){
+  const wrap=document.getElementById('regime-options-wrap');if(!wrap)return;
+  const atual=getRegimeFiscalId();
+  wrap.innerHTML=REGIMES_FISCAIS.map(r=>{
+    const sel=r.id===atual;
+    return `<div onclick="setRegimeFiscal('${r.id}')" style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius-md);border:1px solid ${sel?r.cor:'var(--e2)'};background:${sel?'rgba('+hexToRgb(r.cor)+',0.08)':'var(--s2)'};cursor:pointer;transition:all .15s">
+      <div style="width:10px;height:10px;border-radius:50%;background:${r.cor};flex-shrink:0;box-shadow:${sel?'0 0 0 3px rgba('+hexToRgb(r.cor)+',0.25)':'none'}"></div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:${sel?'600':'400'};color:${sel?'var(--t1)':'var(--t2)'}">${r.n}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:1px">${r.desc}</div>
+      </div>
+      ${sel?'<span style="font-family:var(--mono);font-size:10px;color:'+r.cor+';font-weight:700">✓</span>':''}
+    </div>`;
+  }).join('');
+  atualizarRegimeInfo();
+}
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return isNaN(r)?'212,160,23':`${r},${g},${b}`;
+}
+function atualizarRegimeInfo(){
+  const id=getRegimeFiscalId();
+  const r=REGIMES_FISCAIS.find(x=>x.id===id);
+  const box=document.getElementById('regime-info-box');if(!box||!r)return;
+  box.style.display='block';
+  const nEl=document.getElementById('regime-info-nome');if(nEl)nEl.textContent=r.n;
+  const dEl=document.getElementById('regime-info-desc');if(dEl)dEl.textContent=r.desc;
+  const lEl=document.getElementById('regime-info-limite');
+  const pw=document.getElementById('regime-progress-wrap');
+  if(r.limite>0){
+    if(lEl)lEl.textContent=fmt(r.limite)+'/ano';
+    const fat=calcFaturamentoAnualAtual();
+    const pct=Math.min(100,Math.round(fat/r.limite*100));
+    const cor=pct>=90?'var(--rd)':pct>=70?'var(--am)':r.cor;
+    const fatPct=document.getElementById('regime-fat-pct');if(fatPct)fatPct.textContent=fmt(fat)+' · '+pct+'%';
+    const bar=document.getElementById('regime-fat-bar');if(bar){bar.style.width=pct+'%';bar.style.background=cor;}
+    if(pw)pw.style.display='block';
+  }else{
+    if(lEl)lEl.textContent='Sem teto definido';
+    if(pw)pw.style.display='none';
+  }
+}
+function renderAlertaTeto(){
+  const id=getRegimeFiscalId();
+  const r=REGIMES_FISCAIS.find(x=>x.id===id);
+  const ids=['alerta-teto-fin','alerta-teto-dash'];
+  ids.forEach(elId=>{
+    const el=document.getElementById(elId);if(!el)return;
+    if(!r||r.limite<=0){el.style.display='none';return;}
+    const fat=calcFaturamentoAnualAtual();
+    const pct=Math.round(fat/r.limite*100);
+    if(pct<70){el.style.display='none';return;}
+    el.style.display='block';
+    const cor=pct>=90?'var(--rd)':'var(--am)';
+    const ico=pct>=90?'🔴':'⚠️';
+    const msg=pct>=90?'Limite atingido!':'Atenção ao teto!';
+    el.innerHTML=`<div class="card" style="margin-bottom:11px;border-color:${cor};background:rgba(${pct>=90?'239,68,68':'245,158,11'},0.06)">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="font-size:20px;flex-shrink:0">${ico}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:${cor};margin-bottom:4px">${msg} Faturamento ${pct}% do teto ${r.n}</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:10px">${fmt(fat)} de ${fmt(r.limite)}/ano · ${r.aviso||'Consulte seu contador.'}</div>
+          <div style="height:6px;background:var(--e2);border-radius:999px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:${cor};border-radius:999px;transition:width .4s ease"></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+// ── OS-089: NOTA FISCAL TRACKER ──────────────────────
+function toggleNFWrap(){
+  const tipo=document.getElementById('fl-tipo')?.value;
+  const wrap=document.getElementById('nf-wrap');
+  if(wrap)wrap.style.display=(tipo==='entrada')?'block':'none';
+  if(tipo==='entrada')setNFStatus(_nfStatus||'nao_emitida');
+}
+function setNFStatus(status){
+  _nfStatus=status;
+  const btns={nao_emitida:'nf-btn-nao',emitida:'nf-btn-emitida',nao_aplica:'nf-btn-aplica'};
+  Object.entries(btns).forEach(([k,btnId])=>{
+    const btn=document.getElementById(btnId);if(!btn)return;
+    const active=k===status;
+    btn.style.background=active?'var(--y)':'var(--s2)';
+    btn.style.color=active?'#0C0C0E':'var(--t3)';
+    btn.style.borderColor=active?'var(--y)':'var(--e2)';
+    btn.style.fontWeight=active?'700':'400';
+  });
+  const numWrap=document.getElementById('nf-numero-wrap');
+  if(numWrap)numWrap.style.display=status==='emitida'?'block':'none';
+}
+function calcNFsPendentes(){
+  return lancs.filter(l=>l.tipo==='entrada'&&!_isRejected(l)&&(l.nf==='nao_emitida'||(!l.nf&&l.tipo==='entrada')));
+}
+function renderNFsPendentes(){
+  const pendentes=calcNFsPendentes();
+  const ids=['nfs-pendentes-fin','nfs-pendentes-dash'];
+  ids.forEach(elId=>{
+    const el=document.getElementById(elId);if(!el)return;
+    if(pendentes.length===0){el.style.display='none';return;}
+    el.style.display='block';
+    el.innerHTML=`<div class="card" style="margin-bottom:11px;border-color:rgba(212,160,23,0.25)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">🧾</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--t1)">Notas Fiscais Pendentes</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--t3)">${pendentes.length} entrada${pendentes.length>1?'s':''} sem NF emitida</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${pendentes.slice(0,3).map(l=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--s2);border-radius:var(--radius-sm);border:1px solid var(--e1)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:500;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.desc}</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--t3)">${fmt(l.val)}</div>
+          </div>
+          <button onclick="abrirEditarNF(${l.id})" style="font-family:var(--mono);font-size:10px;padding:4px 8px;border-radius:6px;border:1px solid rgba(212,160,23,0.3);background:rgba(212,160,23,0.08);color:var(--y);cursor:pointer;flex-shrink:0;margin-left:8px">Emitir</button>
+        </div>`).join('')}
+        ${pendentes.length>3?`<div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-align:center;padding:4px">+ ${pendentes.length-3} mais</div>`:''}
+      </div>
+    </div>`;
+  });
+}
+function abrirEditarNF(lancId){
+  const l=lancs.find(x=>x.id===lancId);if(!l)return;
+  showConfirm({
+    titulo:'🧾 Atualizar Nota Fiscal',
+    desc:`Lançamento: ${l.desc}\nValor: ${fmt(l.val)}\n\nMarcar NF como emitida?`,
+    labelOk:'✅ Marcar como emitida',
+    icone:'🧾',
+    onOk:()=>{
+      l.nf='emitida';
+      save();renderFin();toast('NF marcada como emitida!','var(--gr)');
+    }
+  });
+}
+
 // Hook renderFin to also render custos fixos + saúde
 ;(function(){
   const _origRenderFin=renderFin;
