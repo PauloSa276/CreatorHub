@@ -2329,15 +2329,15 @@ button:active{transform:scale(.97);transition:transform .08s}
     <div class="fg" style="margin-top:13px"><label class="flbl">Projeto</label><select class="fse" id="fl-proj"><option value="">Nenhum</option></select></div>
     <div class="fg"><label class="flbl">Status</label><select class="fse" id="fl-status"><option value="recebido">Recebido / Pago</option><option value="pendente">Pendente</option><option value="atrasado">Atrasado</option><option value="recusado">Recusado</option><option value="perdido">Perdido</option></select></div>
     <!-- OS-089: Nota Fiscal Tracker -->
-    <div id="nf-wrap" style="margin-top:14px;padding:12px 14px;background:rgba(212,160,23,0.06);border:1px solid rgba(212,160,23,0.18);border-radius:var(--radius-md)">
-      <div style="font-family:var(--mono);font-size:11px;font-weight:600;color:var(--y);margin-bottom:10px;letter-spacing:.04em">🧾 NOTA FISCAL</div>
-      <div style="display:flex;gap:8px;margin-bottom:10px">
-        <button id="nf-btn-nao" onclick="setNFStatus('nao_emitida')" style="flex:1;font-family:var(--mono);font-size:11px;padding:6px 4px;border-radius:var(--radius-sm);border:1px solid var(--e2);background:var(--y);color:#0C0C0E;cursor:pointer;font-weight:600">📋 Pendente</button>
-        <button id="nf-btn-emitida" onclick="setNFStatus('emitida')" style="flex:1;font-family:var(--mono);font-size:11px;padding:6px 4px;border-radius:var(--radius-sm);border:1px solid var(--e2);background:var(--s2);color:var(--t3);cursor:pointer">✅ Emitida</button>
-        <button id="nf-btn-aplica" onclick="setNFStatus('nao_aplica')" style="flex:1;font-family:var(--mono);font-size:11px;padding:6px 4px;border-radius:var(--radius-sm);border:1px solid var(--e2);background:var(--s2);color:var(--t3);cursor:pointer">🚫 N/A</button>
+    <div id="fl-nf-wrap" style="display:none;margin-top:4px;padding-top:14px;border-top:1px solid var(--e1)">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Nota Fiscal</div>
+      <div style="display:flex;gap:6px" id="fl-nf-status-btns">
+        <button onclick="setNFStatus('nao_emitida')" id="fl-nf-nao" style="flex:1;height:32px;border-radius:var(--radius-md);font-family:var(--mono);font-size:10px;cursor:pointer;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.1);color:#EF4444">⚠️ Não emitida</button>
+        <button onclick="setNFStatus('emitida')" id="fl-nf-emitida" style="flex:1;height:32px;border-radius:var(--radius-md);font-family:var(--mono);font-size:10px;cursor:pointer;border:1px solid var(--e2);background:var(--s2);color:var(--t3)">✓ Emitida</button>
+        <button onclick="setNFStatus('nao_aplica')" id="fl-nf-na" style="flex:1;height:32px;border-radius:var(--radius-md);font-family:var(--mono);font-size:10px;cursor:pointer;border:1px solid var(--e2);background:var(--s2);color:var(--t3)">— N/A</button>
       </div>
-      <div id="nf-numero-wrap" style="display:none">
-        <input class="fi" id="fl-nf-numero" placeholder="Número da NF (ex: NF-2024-001)" style="font-size:12px">
+      <div id="fl-nf-numero-wrap" style="display:none;margin-top:8px">
+        <input class="fi" id="fl-nf-numero" style="height:32px;font-size:11px" placeholder="Número da NF ou observação (opcional)">
       </div>
     </div>
     <div class="modal-footer"><button class="btn-g" onclick="closeM('m-lanc')">Cancelar</button><button class="btn-p" onclick="addLanc()">Registrar</button></div>
@@ -3109,7 +3109,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v13.3.0</span>
+      <span class="version-txt" id="version-label">v13.3.2</span>
       <span class="version-date">20 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -4176,8 +4176,8 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v13.3.0';
-const APP_DATE='28 abr 2026';
+const APP_VERSION='v13.3.2';
+const APP_DATE='29 abr 2026';
 
 // ── CHANGELOG — adicionar entrada a cada sprint ────────
 const CHANGELOG=[
@@ -4241,12 +4241,12 @@ const FT=['f-briefing','f-conceito','f-producao','f-revisao','f-entrega','f-fech
 
 // ── OS-088: REGIMES FISCAIS BRASILEIROS ───────────────
 const REGIMES_FISCAIS=[
-  {id:'mei',n:'MEI',desc:'Microempreendedor Individual',limite:169200,cor:'#22C55E',aviso:'Próximo do teto MEI. Considere migrar para Simples Nacional.'},
-  {id:'simples_a',n:'Simples Nacional (Anexo IV)',desc:'Serviços gráficos, design, publicidade',limite:4800000,cor:'#3B82F6',aviso:'Atenção ao teto do Simples Nacional.'},
-  {id:'lucro_presumido',n:'Lucro Presumido',desc:'Empresas com faturamento até R$ 78M',limite:78000000,cor:'#8B5CF6',aviso:'Acompanhe seu faturamento anual.'},
-  {id:'autonomo',n:'Autônomo / PF',desc:'Sem CNPJ, emite recibo',limite:0,cor:'#F59E0B',aviso:'Considere formalizar seu negócio.'},
-  {id:'ltda',n:'LTDA / S.A.',desc:'Empresa de médio/grande porte',limite:0,cor:'#6B7280',aviso:''},
-  {id:'outro',n:'Outro',desc:'Regime não listado',limite:0,cor:'#6B7280',aviso:''},
+  {id:'mei',n:'MEI',desc:'Microempreendedor Individual',limite:81000,cor:'#22C55E',aviso:'Próximo do teto MEI. Considere migrar para ME (Simples Nacional).'},
+  {id:'me',n:'ME',desc:'Microempresa (Simples Nacional)',limite:360000,cor:'#3B82F6',aviso:'Atenção ao teto de Microempresa — verifique enquadramento.'},
+  {id:'epp',n:'EPP',desc:'Empresa de Pequeno Porte',limite:4800000,cor:'#8B5CF6',aviso:'Acompanhe o faturamento para não ultrapassar o teto do Simples.'},
+  {id:'autonomo',n:'Autônomo / PF',desc:'Pessoa Física, sem CNPJ',limite:0,cor:'#F59E0B',aviso:'Considere formalizar seu negócio para ter mais proteção.'},
+  {id:'lucro_presumido',n:'Lucro Presumido',desc:'CNPJ fora do Simples Nacional',limite:78000000,cor:'#EC4899',aviso:'Acompanhe o faturamento anual com seu contador.'},
+  {id:'outro',n:'Outro',desc:'Regime não listado acima',limite:0,cor:'#6B7280',aviso:''},
 ];
 
 // ── STATE (sem dados mockados — localStorage puro) ────────────
@@ -6488,9 +6488,16 @@ function renderFin(){
   const lista=document.getElementById('fin-lista');
   if(lista)lista.innerHTML=lancs.length===0?'<div class="empty-state"><div class="empty-icon empty-float">💰</div><div class="empty-title">Sem lançamentos</div><div class="empty-desc">Registre entradas e saídas para acompanhar a saúde financeira do estúdio.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-lanc\')">+ Novo lançamento</button></div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp','recusado':'vp','perdido':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO','recusado':'RECUSADO','perdido':'PERDIDO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();
   // OS-089: NF badge
+  // OS-089: NF badge — flex-shrink:0 + white-space:nowrap para não quebrar o layout
   let nfBadge='';
-  if(isE){const ns=l.nf||'nao_emitida';if(ns==='nao_emitida')nfBadge='<span style="font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(212,160,23,0.12);color:var(--y);border:1px solid rgba(212,160,23,0.2);cursor:pointer;margin-left:4px" onclick="abrirEditarNF('+l.id+')">🧾 NF</span>';else if(ns==='emitida')nfBadge='<span style="font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(34,197,94,0.1);color:var(--gr);border:1px solid rgba(34,197,94,0.2)" title="'+(l.nfNumero||'NF emitida')+'">✅ NF</span>';else nfBadge='<span style="font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;background:var(--s2);color:var(--t4)">N/A</span>';}
-  return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}${nfBadge}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div><span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
+  if(isE){
+    const ns=l.nf||'nao_emitida';
+    const baseStyle='font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:999px;white-space:nowrap;flex-shrink:0;';
+    if(ns==='nao_emitida')nfBadge=`<span style="${baseStyle}background:rgba(212,160,23,0.12);color:var(--y);border:1px solid rgba(212,160,23,0.2);cursor:pointer" onclick="abrirEditarNF(${l.id})" title="NF pendente — clique para emitir">🧾 NF</span>`;
+    else if(ns==='emitida')nfBadge=`<span style="${baseStyle}background:rgba(34,197,94,0.1);color:var(--gr);border:1px solid rgba(34,197,94,0.2)" title="${l.nfNumero||'NF emitida'}">✅ NF</span>`;
+    else nfBadge=`<span style="${baseStyle}background:var(--s2);color:var(--t4);border:1px solid var(--e1)">N/A</span>`;
+  }
+  return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div>${nfBadge}<span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
   const ppEl=document.getElementById('fin-proj');if(ppEl){const bp={};ent.filter(l=>l.proj).forEach(l=>{if(!bp[l.proj])bp[l.proj]={t:0,r:0};bp[l.proj].t+=l.val;if(l.st==='recebido')bp[l.proj].r+=l.val;});ppEl.innerHTML=Object.keys(bp).length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Nenhum lançamento</div>':Object.entries(bp).map(([proj,d])=>`<div style="padding:7px 0;border-bottom:1px solid var(--e1)"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-size:var(--fs-sm);color:var(--t2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${proj}</div><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--y)">${fmt(d.t)}</div></div><div class="xtg"><div class="xfg" style="width:${Math.round(d.r/d.t*100)}%"></div></div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${Math.round(d.r/d.t*100)}% recebido</div></div>`).join('');}
   const distEl=document.getElementById('fin-dist');if(distEl)distEl.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Entradas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--gr)">${fmt(tE)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Saídas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--am)">${fmt(tS)}</span></div><div style="height:1px;background:var(--e1);margin:7px 0"></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Margem líquida</span><span style="font-size:20px;font-weight:900;letter-spacing:-.05em;color:var(--y)">${mg}%</span></div><div class="xts" style="margin-top:5px"><div class="xfs" style="width:${mg}%"></div></div>`;
 }
@@ -6768,22 +6775,27 @@ function renderAlertaTeto(){
 // ── OS-089: NOTA FISCAL TRACKER ──────────────────────
 function toggleNFWrap(){
   const tipo=document.getElementById('fl-tipo')?.value;
-  const wrap=document.getElementById('nf-wrap');
+  const wrap=document.getElementById('fl-nf-wrap');
   if(wrap)wrap.style.display=(tipo==='entrada')?'block':'none';
   if(tipo==='entrada')setNFStatus(_nfStatus||'nao_emitida');
 }
 function setNFStatus(status){
   _nfStatus=status;
-  const btns={nao_emitida:'nf-btn-nao',emitida:'nf-btn-emitida',nao_aplica:'nf-btn-aplica'};
-  Object.entries(btns).forEach(([k,btnId])=>{
+  // 'nao_emitida' → vermelho-alarme; 'emitida' → verde; 'nao_aplica' → neutro
+  const styles={
+    nao_emitida:{border:'rgba(239,68,68,0.3)',bg:'rgba(239,68,68,0.1)',color:'#EF4444'},
+    emitida:    {border:'rgba(34,197,94,0.3)', bg:'rgba(34,197,94,0.1)', color:'#22C55E'},
+    nao_aplica: {border:'var(--e2)',           bg:'var(--s2)',            color:'var(--t3)'},
+  };
+  const neutral={border:'var(--e2)',bg:'var(--s2)',color:'var(--t3)'};
+  [['nao_emitida','fl-nf-nao'],['emitida','fl-nf-emitida'],['nao_aplica','fl-nf-na']].forEach(([k,btnId])=>{
     const btn=document.getElementById(btnId);if(!btn)return;
     const active=k===status;
-    btn.style.background=active?'var(--y)':'var(--s2)';
-    btn.style.color=active?'#0C0C0E':'var(--t3)';
-    btn.style.borderColor=active?'var(--y)':'var(--e2)';
+    const s=active?styles[k]:neutral;
+    btn.style.borderColor=s.border;btn.style.background=s.bg;btn.style.color=s.color;
     btn.style.fontWeight=active?'700':'400';
   });
-  const numWrap=document.getElementById('nf-numero-wrap');
+  const numWrap=document.getElementById('fl-nf-numero-wrap');
   if(numWrap)numWrap.style.display=status==='emitida'?'block':'none';
 }
 function calcNFsPendentes(){
@@ -8609,6 +8621,13 @@ setTimeout(refreshIcons, 100);
 checkProtecaoTempo();
 // What's New — mostra pop-up quando a versão muda
 checkWhatsNew();
+// OS-091: toast regime fiscal para usuários existentes (1x apenas)
+(function(){
+  if(localStorage.getItem('ph4-regime-configurado'))return;
+  if(!localStorage.getItem('ph4-onboarded'))return; // onboarding vai cuidar disso
+  setTimeout(()=>{toast('💡 Configure seu regime fiscal em Configurações para monitorar o teto de faturamento','var(--y)',8000);},2000);
+  localStorage.setItem('ph4-regime-configurado','1');
+})();
 
 // ═══════════════════════════════════════════════════════════════
 // MELHORIAS UX — PRIORIDADE 1, 2 e 3
@@ -8911,6 +8930,7 @@ function verProjsDoCliente(nomeCliente){
 
 // ─── ONBOARDING DE PRIMEIRO ACESSO (3 passos) ───────────────
 let _obStep=1;
+let _obRegime='mei'; // default MEI no onboarding
 function _obRender(){
   const ov=document.getElementById('ob-overlay');if(!ov)return;
   const dots='<div style="display:flex;gap:6px;justify-content:center;margin-bottom:24px">'+[1,2,3].map(i=>'<div style="width:8px;height:8px;border-radius:50%;background:'+(_obStep===i?'var(--y)':'var(--e3)')+'"></div>').join('')+'</div>';
@@ -8944,10 +8964,31 @@ function _obRender(){
       </div>`;
   } else {
     content=`${stepLabel}${dots}
-      <div style="font-size:48px;margin-bottom:16px">📁</div>
-      <div style="font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:6px">Crie seu primeiro projeto</div>
-      <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:24px;line-height:1.6">Opcional — comece quando estiver pronto.</div>
-      <div style="display:flex;gap:8px;margin-top:8px">
+      <div style="font-size:48px;margin-bottom:16px">🏛️</div>
+      <div style="font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:6px">Sua situação fiscal</div>
+      <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:20px;line-height:1.6">Isso ajuda a plataforma a monitorar seu teto de faturamento e evitar surpresas.</div>
+      <div id="ob-regime-options" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left">
+        <div onclick="setObRegime('mei')" id="ob-regime-mei" style="padding:10px 12px;border-radius:var(--radius-md);border:2px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);cursor:pointer;transition:all .15s">
+          <div style="font-size:13px;font-weight:800;color:#22C55E;margin-bottom:2px">MEI</div>
+          <div style="font-family:var(--mono);font-size:9px;color:#22C55E;opacity:.8">até R$81k/ano</div>
+        </div>
+        <div onclick="setObRegime('me')" id="ob-regime-me" style="padding:10px 12px;border-radius:var(--radius-md);border:2px solid var(--e2);background:var(--s2);cursor:pointer;transition:all .15s">
+          <div style="font-size:13px;font-weight:800;color:var(--t2);margin-bottom:2px">ME</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--t3)">até R$360k/ano</div>
+        </div>
+        <div onclick="setObRegime('epp')" id="ob-regime-epp" style="padding:10px 12px;border-radius:var(--radius-md);border:2px solid var(--e2);background:var(--s2);cursor:pointer;transition:all .15s">
+          <div style="font-size:13px;font-weight:800;color:var(--t2);margin-bottom:2px">EPP</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--t3)">até R$4,8M/ano</div>
+        </div>
+        <div onclick="setObRegime('autonomo')" id="ob-regime-autonomo" style="padding:10px 12px;border-radius:var(--radius-md);border:2px solid var(--e2);background:var(--s2);cursor:pointer;transition:all .15s">
+          <div style="font-size:13px;font-weight:800;color:var(--t2);margin-bottom:2px">Autônomo</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--t3)">Pessoa Física</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:10px">
+        <span onclick="setObRegime('outro')" style="font-family:var(--mono);font-size:10px;color:var(--t4);cursor:pointer;text-decoration:underline;text-underline-offset:3px">Outro regime ou prefiro configurar depois</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:20px">
         <button class="btn-g" style="flex:1" onclick="_obFinish()">Entrar no hub</button>
         <button class="btn-p" style="flex:1" onclick="_obFinish();setTimeout(()=>{openM('m-proj');if(clients.length){const s=document.getElementById('np-cli');if(s)s.value=clients[0].nome;}},300)">Criar projeto</button>
       </div>`;
@@ -8979,9 +9020,31 @@ function _obNext2(){
   save();
   _obStep=3;_obRender();
 }
+function setObRegime(id){
+  _obRegime=id;
+  const cores={
+    mei:     {border:'rgba(34,197,94,0.4)', bg:'rgba(34,197,94,0.08)', text:'#22C55E'},
+    me:      {border:'rgba(59,130,246,0.4)',bg:'rgba(59,130,246,0.08)',text:'#3B82F6'},
+    epp:     {border:'rgba(139,92,246,0.4)',bg:'rgba(139,92,246,0.08)',text:'#8B5CF6'},
+    autonomo:{border:'rgba(245,158,11,0.4)',bg:'rgba(245,158,11,0.08)',text:'#F59E0B'},
+    outro:   {border:'var(--e2)',           bg:'var(--s2)',            text:'var(--t2)'},
+  };
+  ['mei','me','epp','autonomo'].forEach(r=>{
+    const btn=document.getElementById('ob-regime-'+r);if(!btn)return;
+    const active=r===id;
+    const c=active?(cores[id]||cores.outro):null;
+    btn.style.borderColor=active?c.border:'var(--e2)';
+    btn.style.background=active?c.bg:'var(--s2)';
+    const titulo=btn.querySelector('div:first-child');if(titulo)titulo.style.color=active?c.text:'var(--t2)';
+    const sub=btn.querySelector('div:last-child');if(sub)sub.style.color=active?c.text:'var(--t3)';
+  });
+}
 function _obFinish(){
   // Garantir persistência de todos os dados criados no onboarding
   save();saveExtra();
+  // OS-091: salvar regime fiscal escolhido no onboarding
+  localStorage.setItem('ph4-regime-fiscal',_obRegime);
+  localStorage.setItem('ph4-regime-configurado','1'); // não mostrar toast para novos usuários
   localStorage.setItem('ph4-onboarded','1');
   const ov=document.getElementById('ob-overlay');if(ov)ov.remove();
   renderDash();renderCRM();atualizarSidebar();
