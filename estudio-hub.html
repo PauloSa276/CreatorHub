@@ -832,6 +832,11 @@ button:active{transform:scale(.97)}
 }
 .fin-row:last-child{border-bottom:none}
 
+/* ── Abas Financeiro (OS-093) ── */
+.fin-tab{padding:10px 18px;border:none;background:transparent;font-family:var(--mono);font-size:11px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;white-space:nowrap;margin-bottom:-1px}
+.fin-tab:hover{color:var(--t1)}
+.fin-tab-active{color:var(--t1);border-bottom-color:var(--y);font-weight:600}
+
 /* ── Calendário ── */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .cal-dl{font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4);text-align:center;padding-bottom:var(--sp-1);text-transform:uppercase;letter-spacing:.05em}
@@ -3109,7 +3114,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v13.4.0</span>
+      <span class="version-txt" id="version-label">v14.0.0</span>
       <span class="version-date">20 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -3784,54 +3789,17 @@ button:active{transform:scale(.97);transition:transform .08s}
         <div class="pg-header-sub">Controle de entradas, saídas e margem do estúdio</div>
       </div>
     </div>
-    <div style="padding:0 24px 24px">
-    <!-- OS-088: Alerta teto faturamento -->
-    <div id="alerta-teto-fin" style="display:none;margin-top:16px"></div>
-    <!-- OS-089: NFs pendentes card -->
-    <div id="nfs-pendentes-fin" style="display:none;margin-bottom:11px"></div>
-    <div style="padding:16px 0 0;display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn-p" onclick="openLanc()">+ Lançamento</button></div>
-    <div class="kpi-row">
-      <div class="kpi"><div class="kpi-label">Faturamento mês</div><div class="kpi-val ok" id="fin-mes">R$ 0</div><div class="kpi-sub" id="fin-mes-s">0 entradas</div></div>
-      <div class="kpi"><div class="kpi-label">A receber</div><div class="kpi-val warn" id="fin-rec">R$ 0</div><div class="kpi-sub">pendente</div></div>
-      <div class="kpi"><div class="kpi-label">Recebido</div><div class="kpi-val ok" id="fin-recb">R$ 0</div><div class="kpi-sub">confirmado</div></div>
-      <div class="kpi"><div class="kpi-label">Margem líquida</div><div class="kpi-val" id="fin-marg">0%</div><div class="kpi-sub">entradas - saídas</div></div>
+    <!-- OS-093: Sistema de abas -->
+    <div id="fin-tabs" style="display:flex;gap:0;padding:0 24px;border-bottom:1px solid var(--e1);margin-bottom:0">
+      <button onclick="setFinTab('geral')" id="fin-tab-geral" class="fin-tab fin-tab-active">Visão Geral</button>
+      <button onclick="setFinTab('anual')" id="fin-tab-anual" class="fin-tab">Anual</button>
+      <button onclick="setFinTab('mes')" id="fin-tab-mes" class="fin-tab">Mês Atual</button>
+      <button onclick="setFinTab('lancamentos')" id="fin-tab-lancamentos" class="fin-tab">Entradas & Saídas</button>
     </div>
-    <!-- SAÚDE DO MÊS (OS-049) -->
-    <div class="card" style="margin-bottom:11px" id="fin-saude-card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="card-title" style="margin:0;display:flex;align-items:center;gap:6px"><i data-lucide="heart-pulse" style="width:13px;height:13px;color:var(--t3)"></i>Saúde do Mês</div>
-        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Pró-labore: <input class="fi" id="fin-prolabore" type="number" placeholder="0" style="width:100px;padding:4px 8px;font-size:var(--fs-2xs)" oninput="saveProlabore();renderSaudeMes()"></div>
-      </div>
-      <div id="fin-saude-body"></div>
-    </div>
-    <!-- META MENSAL -->
-    <div class="card" style="margin-bottom:11px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="card-title" style="margin:0;display:flex;align-items:center;gap:6px"><i data-lucide="target" style="width:13px;height:13px;color:var(--t3)"></i>Meta do Mês</div>
-        <button class="btn-g" style="font-size:var(--fs-2xs)" onclick="openMetaModal()">Definir meta</button>
-      </div>
-      <div id="fin-meta-body"><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t4);padding:12px 0">Nenhuma meta definida. <span style="color:var(--y);cursor:pointer" onclick="openMetaModal()">+ Definir agora</span></div></div>
-    </div>
-    <div class="g2" style="gap:11px">
-      <div class="card"><div class="card-title">Lançamentos</div><div id="fin-lista"></div></div>
-      <div style="display:flex;flex-direction:column;gap:11px">
-        <div class="card"><div class="card-title">Por projeto</div><div id="fin-proj"></div></div>
-        <div class="card"><div class="card-title">Distribuição</div><div id="fin-dist"></div></div>
-      </div>
-    </div>
-    <!-- CUSTOS FIXOS (OS-048) -->
-    <div class="card" style="margin-top:11px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div class="card-title" style="margin:0;display:flex;align-items:center;gap:6px"><i data-lucide="repeat" style="width:13px;height:13px;color:var(--t3)"></i>Custos Fixos Mensais</div>
-        <button class="btn-g" style="font-size:var(--fs-2xs)" onclick="openM('m-custo-fixo')">+ Novo custo</button>
-      </div>
-      <div id="custos-fixos-list"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--e1)">
-        <span style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3)">Total mensal</span>
-        <span style="font-family:var(--mono);font-size:var(--fs-md);font-weight:900;color:var(--am)" id="custos-fixos-total">R$ 0</span>
-      </div>
-    </div>
-    </div><!-- /padding wrapper -->
+    <div id="fin-content-geral"></div>
+    <div id="fin-content-anual" style="display:none"></div>
+    <div id="fin-content-mes" style="display:none"></div>
+    <div id="fin-content-lancamentos" style="display:none"></div>
   </div>
 
   <!-- ══════ HUB ══════ -->
@@ -4165,11 +4133,23 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v13.4.0';
+const APP_VERSION='v14.0.0';
 const APP_DATE='29 abr 2026';
 
 // ── CHANGELOG — adicionar entrada a cada sprint ────────
 const CHANGELOG=[
+  {
+    versao:'v14.0.0',
+    data:'29 abr 2026',
+    titulo:'Financeiro Completo',
+    emoji:'💰',
+    novidades:[
+      {ico:'📊',titulo:'4 abas no Financeiro',desc:'Visão Geral · Anual · Mês Atual · Entradas & Saídas — cada aba com dados e foco específico.'},
+      {ico:'📈',titulo:'Gráfico Anual',desc:'Barras dos 12 meses com entradas e saídas lado a lado. Mês atual destacado, tooltip com valor.'},
+      {ico:'🧾',titulo:'Entradas & Saídas por período',desc:'Seletor de mês + tabela completa com NF badge, delete e alinhamento em colunas fixas.'},
+      {ico:'⚡',titulo:'Custos Fixos inline',desc:'Lista compacta com linha de adição no rodapé — sem modal, sem scroll, Enter para adicionar.'},
+    ]
+  },
   {
     versao:'v13.4.0',
     data:'29 abr 2026',
@@ -5970,16 +5950,7 @@ function renderPerfilDinamico(){
   renderMetas();
 }
 
-// Override renderFin para incluir meta
-(function(){
-  const _orig=renderFin;
-  renderFin=function(){
-    _orig();
-    const n=new Date(),m=n.getMonth(),y=n.getFullYear();
-    const tM=lancs.filter(l=>l.tipo==='entrada').filter(l=>{const d=new Date(l.data);return d.getMonth()===m&&d.getFullYear()===y;}).reduce((s,l)=>s+l.val,0);
-    renderFinMeta(tM);
-  };
-})();
+// renderFinMeta agora é chamada internamente por renderFinGeral()
 // ══════════════════════════════════════════════════════════
 // GAP 1 — BRIEFING ESTRUTURADO
 // ══════════════════════════════════════════════════════════
@@ -6471,35 +6442,236 @@ function addLanc(){
   renderFin();toast('Lançamento registrado!');
 }
 function _isRejected(l){return l.st==='recusado'||l.st==='perdido';}
-function renderFin(){
+// ── OS-093: FINANCEIRO EM ABAS ────────────────────────
+let _finActiveTab='geral';
+let _finLancMes=new Date().getMonth();
+let _finLancAno=new Date().getFullYear();
+
+function renderFin(){setFinTab(_finActiveTab||'geral');}
+
+function setFinTab(aba){
+  _finActiveTab=aba;
+  ['geral','anual','mes','lancamentos'].forEach(a=>{
+    const btn=document.getElementById('fin-tab-'+a);
+    const div=document.getElementById('fin-content-'+a);
+    if(btn)btn.classList.toggle('fin-tab-active',a===aba);
+    if(div)div.style.display=a===aba?'block':'none';
+  });
+  if(aba==='geral')renderFinGeral();
+  if(aba==='anual')renderFinAnual();
+  if(aba==='mes')renderFinMes();
+  if(aba==='lancamentos')renderFinLancamentos();
+}
+
+function renderFinGeral(){
+  const el=document.getElementById('fin-content-geral');if(!el)return;
   const n=new Date(),m=n.getMonth(),y=n.getFullYear();
-  const ent=lancs.filter(l=>l.tipo==='entrada'&&!_isRejected(l)),sai=lancs.filter(l=>l.tipo==='saida'&&!_isRejected(l));
-  const rec=ent.filter(l=>l.st==='recebido').reduce((s,l)=>s+l.val,0),arec=ent.filter(l=>l.st!=='recebido').reduce((s,l)=>s+l.val,0);
+  const ent=lancs.filter(l=>l.tipo==='entrada'&&!_isRejected(l));
+  const sai=lancs.filter(l=>l.tipo==='saida'&&!_isRejected(l));
+  const rec=ent.filter(l=>l.st==='recebido').reduce((s,l)=>s+l.val,0);
+  const arec=ent.filter(l=>l.st!=='recebido').reduce((s,l)=>s+l.val,0);
   const enM=ent.filter(l=>{const d=new Date(l.data);return d.getMonth()===m&&d.getFullYear()===y;});
   const tM=enM.reduce((s,l)=>s+l.val,0),tE=ent.reduce((s,l)=>s+l.val,0),tS=sai.reduce((s,l)=>s+l.val,0);
   const mg=tE>0?Math.round((tE-tS)/tE*100):0;
-  setEl('fin-mes',fmt(tM));setEl('fin-mes-s',enM.length+' entradas');setEl('fin-rec',fmt(arec));setEl('fin-recb',fmt(rec));
-  // OS-068 nível 3: comemorar mês positivo uma vez por mês
-  const _mesAno=m+'-'+y,_ckMes='ph4-comemorou-'+_mesAno;
-  if(tE-tS>0&&!localStorage.getItem(_ckMes)){localStorage.setItem(_ckMes,'1');setTimeout(()=>toast('🎉 Mês positivo! Saldo: '+fmt(tE-tS),'var(--gr)'),800);}
-  const mg_el=document.getElementById('fin-marg');if(mg_el){mg_el.textContent=mg+'%';mg_el.className='m-val '+(mg>50?'ok':mg>20?'warn':'danger');}
-  // OS-088+089: render alerts
-  renderAlertaTeto();renderNFsPendentes();
-  const lista=document.getElementById('fin-lista');
-  if(lista)lista.innerHTML=lancs.length===0?'<div class="empty-state"><div class="empty-icon empty-float">💰</div><div class="empty-title">Sem lançamentos</div><div class="empty-desc">Registre entradas e saídas para acompanhar a saúde financeira do estúdio.</div><button class="btn-p" style="margin-top:8px" onclick="openM(\'m-lanc\')">+ Novo lançamento</button></div>':lancs.map(l=>{const isE=l.tipo==='entrada',cor=isE?'var(--gr)':'var(--am)',sinal=isE?'+':'-';const stC={'recebido':'vf','pendente':'vm','atrasado':'vp','recusado':'vp','perdido':'vp'}[l.st]||'vm';const stL={'recebido':'OK','pendente':'PENDENTE','atrasado':'ATRASADO','recusado':'RECUSADO','perdido':'PERDIDO'}[l.st]||'—';const d=new Date(l.data+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();
-  // OS-089: NF badge
-  // OS-089: NF badge — flex-shrink:0 + white-space:nowrap para não quebrar o layout
-  let nfBadge='';
-  if(isE){
-    const ns=l.nf||'nao_emitida';
-    const baseStyle='font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:999px;white-space:nowrap;flex-shrink:0;';
-    if(ns==='nao_emitida')nfBadge=`<span style="${baseStyle}background:rgba(212,160,23,0.12);color:var(--y);border:1px solid rgba(212,160,23,0.2);cursor:pointer" onclick="abrirEditarNF(${l.id})" title="NF pendente — clique para emitir">🧾 NF</span>`;
-    else if(ns==='emitida')nfBadge=`<span style="${baseStyle}background:rgba(34,197,94,0.1);color:var(--gr);border:1px solid rgba(34,197,94,0.2)" title="${l.nfNumero||'NF emitida'}">✅ NF</span>`;
-    else nfBadge=`<span style="${baseStyle}background:var(--s2);color:var(--t4);border:1px solid var(--e1)">N/A</span>`;
-  }
-  return `<div class="fin-row"><div style="width:3px;height:34px;border-radius:2px;background:${cor};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc}</div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:1px">${d}${l.proj?' · '+l.proj:''}</div></div>${nfBadge}<span class="${stC}">${stL}</span><div style="font-family:var(--mono);font-size:var(--fs-2xs);font-weight:700;color:${cor};min-width:68px;text-align:right">${sinal}${fmt(l.val)}</div></div>`;}).join('');
-  const ppEl=document.getElementById('fin-proj');if(ppEl){const bp={};ent.filter(l=>l.proj).forEach(l=>{if(!bp[l.proj])bp[l.proj]={t:0,r:0};bp[l.proj].t+=l.val;if(l.st==='recebido')bp[l.proj].r+=l.val;});ppEl.innerHTML=Object.keys(bp).length===0?'<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t4)">Nenhum lançamento</div>':Object.entries(bp).map(([proj,d])=>`<div style="padding:7px 0;border-bottom:1px solid var(--e1)"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-size:var(--fs-sm);color:var(--t2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${proj}</div><div style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--y)">${fmt(d.t)}</div></div><div class="xtg"><div class="xfg" style="width:${Math.round(d.r/d.t*100)}%"></div></div><div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3);margin-top:2px">${Math.round(d.r/d.t*100)}% recebido</div></div>`).join('');}
-  const distEl=document.getElementById('fin-dist');if(distEl)distEl.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Entradas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--gr)">${fmt(tE)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Saídas</span><span style="font-family:var(--mono);font-size:var(--fs-xs);font-weight:700;color:var(--am)">${fmt(tS)}</span></div><div style="height:1px;background:var(--e1);margin:7px 0"></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Margem líquida</span><span style="font-size:20px;font-weight:900;letter-spacing:-.05em;color:var(--y)">${mg}%</span></div><div class="xts" style="margin-top:5px"><div class="xfs" style="width:${mg}%"></div></div>`;
+  const mgCor=mg>50?'var(--gr)':mg>20?'var(--am)':'var(--rd)';
+  // Celebrar mês positivo
+  const _ck='ph4-comemorou-'+m+'-'+y;
+  if(tE-tS>0&&!localStorage.getItem(_ck)){localStorage.setItem(_ck,'1');setTimeout(()=>toast('🎉 Mês positivo! Saldo: '+fmt(tE-tS),'var(--gr)'),800);}
+  el.innerHTML=`<div style="padding:0 24px 24px">
+    <div style="padding:16px 0 0;display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn-p" onclick="openLanc()">+ Lançamento</button></div>
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-label">Faturamento mês</div><div class="kpi-val ok">${fmt(tM)}</div><div class="kpi-sub">${enM.length} entradas</div></div>
+      <div class="kpi"><div class="kpi-label">A receber</div><div class="kpi-val warn">${fmt(arec)}</div><div class="kpi-sub">pendente</div></div>
+      <div class="kpi"><div class="kpi-label">Recebido</div><div class="kpi-val ok">${fmt(rec)}</div><div class="kpi-sub">confirmado</div></div>
+      <div class="kpi"><div class="kpi-label">Margem líquida</div><div class="kpi-val" style="color:${mgCor}">${mg}%</div><div class="kpi-sub">entradas - saídas</div></div>
+    </div>
+    <!-- Alertas -->
+    <div id="alerta-teto-fin"></div>
+    <div id="nfs-pendentes-fin"></div>
+    <!-- Saúde do Mês -->
+    <div class="card" style="margin-bottom:11px" id="fin-saude-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="card-title" style="margin:0;display:flex;align-items:center;gap:6px"><i data-lucide="heart-pulse" style="width:13px;height:13px;color:var(--t3)"></i>Saúde do Mês</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:var(--fs-2xs);color:var(--t3)">Pró-labore: <input class="fi" id="fin-prolabore" type="number" placeholder="0" style="width:100px;padding:4px 8px;font-size:var(--fs-2xs)" oninput="saveProlabore();renderSaudeMes()"></div>
+      </div>
+      <div id="fin-saude-body"></div>
+    </div>
+    <!-- Meta Mensal -->
+    <div class="card" style="margin-bottom:11px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="card-title" style="margin:0;display:flex;align-items:center;gap:6px"><i data-lucide="target" style="width:13px;height:13px;color:var(--t3)"></i>Meta do Mês</div>
+        <button class="btn-g" style="font-size:var(--fs-2xs)" onclick="openMetaModal()">Definir meta</button>
+      </div>
+      <div id="fin-meta-body"><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t4);padding:4px 0">Nenhuma meta definida. <span style="color:var(--y);cursor:pointer" onclick="openMetaModal()">+ Definir agora</span></div></div>
+    </div>
+    <!-- Custos Fixos — inline compacto -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:700;color:var(--t1)">Custos Fixos</div>
+        <div style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--t3)" id="custos-total-label"></div>
+      </div>
+      <div id="custos-fixos-list"></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--e1);margin-top:4px">
+        <input class="fi" id="cf-nome-inline" placeholder="Nome do custo (ex: Adobe CC)" style="flex:2;height:30px;font-size:12px;background:transparent;border-color:transparent" onfocus="this.style.borderColor='var(--e2)'" onblur="this.style.borderColor='transparent'" onkeydown="if(event.key==='Enter')addCustoFixoInline()">
+        <input class="fi" id="cf-val-inline" type="number" placeholder="R$" style="flex:1;height:30px;font-size:12px;background:transparent;border-color:transparent;max-width:100px" onfocus="this.style.borderColor='var(--e2)'" onblur="this.style.borderColor='transparent'" onkeydown="if(event.key==='Enter')addCustoFixoInline()">
+        <select class="fse" id="cf-cat-inline" style="flex:1;height:30px;font-size:11px;max-width:130px"><option value="Ferramentas">Ferramentas</option><option value="Infraestrutura">Infraestrutura</option><option value="Educação">Educação</option><option value="Marketing">Marketing</option><option value="Outros">Outros</option></select>
+        <button onclick="addCustoFixoInline()" style="height:30px;padding:0 12px;background:var(--y);border:none;border-radius:var(--radius-md);font-family:var(--mono);font-size:11px;font-weight:700;color:#080809;cursor:pointer;white-space:nowrap">+ Add</button>
+      </div>
+    </div>
+  </div>`;
+  const plEl=document.getElementById('fin-prolabore');if(plEl)plEl.value=prolabore||localStorage.getItem('ph4-prolabore')||0;
+  renderAlertaTeto();renderNFsPendentes();renderSaudeMes();renderCustosFixosList();renderFinMeta(tM);
+  refreshIcons();
+}
+
+function renderFinAnual(){
+  const el=document.getElementById('fin-content-anual');if(!el)return;
+  const anoAtual=new Date().getFullYear();
+  const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const mesAtual=new Date().getMonth();
+  const dados=meses.map((_,i)=>{
+    const ok=l=>{const d=new Date(l.data||l.criadoEm);return d.getFullYear()===anoAtual&&d.getMonth()===i;};
+    const entradas=(lancs||[]).filter(l=>l.tipo==='entrada'&&ok(l)).reduce((a,l)=>a+(parseFloat(l.val)||0),0);
+    const saidas=(lancs||[]).filter(l=>l.tipo==='saida'&&ok(l)).reduce((a,l)=>a+(parseFloat(l.val)||0),0);
+    return{mes:meses[i],entradas,saidas,saldo:entradas-saidas};
+  });
+  const maxVal=Math.max(...dados.map(d=>Math.max(d.entradas,d.saidas)),1);
+  const totE=dados.reduce((a,d)=>a+d.entradas,0),totS=dados.reduce((a,d)=>a+d.saidas,0);
+  const fmtK=v=>v>=1000?'R$'+(v/1000).toFixed(0)+'k':'R$'+v.toLocaleString('pt-BR',{maximumFractionDigits:0});
+  el.innerHTML=`<div style="padding:0 24px 24px">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;padding-top:16px">
+      <div class="card"><div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Entradas ${anoAtual}</div><div style="font-size:22px;font-weight:800;color:var(--gr);letter-spacing:-.03em">${fmtK(totE)}</div></div>
+      <div class="card"><div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Saídas ${anoAtual}</div><div style="font-size:22px;font-weight:800;color:var(--rd);letter-spacing:-.03em">${fmtK(totS)}</div></div>
+      <div class="card"><div style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Resultado ${anoAtual}</div><div style="font-size:22px;font-weight:800;color:${totE-totS>=0?'var(--gr)':'var(--rd)'};letter-spacing:-.03em">${totE-totS>=0?'+':''}${fmtK(totE-totS)}</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:16px">Evolução mensal ${anoAtual}</div>
+      <div style="display:flex;gap:16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--t3)"><div style="width:10px;height:10px;border-radius:2px;background:var(--gr)"></div>Entradas</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--t3)"><div style="width:10px;height:10px;border-radius:2px;background:var(--rd)"></div>Saídas</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-end;height:160px">
+        ${dados.map((d,i)=>`
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%">
+            <div style="flex:1;width:100%;display:flex;align-items:flex-end;gap:2px">
+              <div style="flex:1;border-radius:3px 3px 0 0;background:${d.entradas>0?'var(--gr)':'var(--s3)'};opacity:${i===mesAtual?1:0.55};height:${d.entradas>0?Math.max(4,Math.round(d.entradas/maxVal*140)):4}px;align-self:flex-end;transition:height .3s ease" title="Entradas: ${fmtK(d.entradas)}"></div>
+              <div style="flex:1;border-radius:3px 3px 0 0;background:${d.saidas>0?'var(--rd)':'var(--s3)'};opacity:${i===mesAtual?1:0.55};height:${d.saidas>0?Math.max(4,Math.round(d.saidas/maxVal*140)):4}px;align-self:flex-end;transition:height .3s ease" title="Saídas: ${fmtK(d.saidas)}"></div>
+            </div>
+            <div style="font-family:var(--mono);font-size:9px;color:${i===mesAtual?'var(--y)':'var(--t4)'};font-weight:${i===mesAtual?700:400};white-space:nowrap">${d.mes}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderFinMes(){
+  const el=document.getElementById('fin-content-mes');if(!el)return;
+  const hoje=new Date(),mes=hoje.getMonth(),ano=hoje.getFullYear();
+  const nomeMes=hoje.toLocaleString('pt-BR',{month:'long'});
+  const filtra=tipo=>(lancs||[]).filter(l=>{const d=new Date(l.data||l.criadoEm);return l.tipo===tipo&&d.getMonth()===mes&&d.getFullYear()===ano;}).sort((a,b)=>new Date(b.data)-new Date(a.data));
+  const entradas=filtra('entrada'),saidas=filtra('saida');
+  const totE=entradas.reduce((a,l)=>a+(parseFloat(l.val)||0),0);
+  const totS=saidas.reduce((a,l)=>a+(parseFloat(l.val)||0),0);
+  const fmtK=v=>'R$'+parseFloat(v||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
+  const nfSpan=l=>l.nf?`<span style="font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:999px;white-space:nowrap;flex-shrink:0;background:${l.nf==='emitida'?'rgba(34,197,94,0.1)':'rgba(239,68,68,0.1)'};color:${l.nf==='emitida'?'#22C55E':'#EF4444'};border:1px solid ${l.nf==='emitida'?'rgba(34,197,94,0.2)':'rgba(239,68,68,0.2)'}">${l.nf==='emitida'?'✓ NF':'⚠️ Sem NF'}</span>`:'';
+  const linhaFn=l=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--e1)"><div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc||'—'}</div><div style="font-family:var(--mono);font-size:10px;color:var(--t4)">${l.data?new Date(l.data).toLocaleDateString('pt-BR'):''}</div></div>${l.tipo==='entrada'?nfSpan(l):''}<div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${l.tipo==='entrada'?'var(--gr)':'var(--rd)'};white-space:nowrap;flex-shrink:0">${l.tipo==='entrada'?'+':'-'}${fmtK(l.val)}</div></div>`;
+  el.innerHTML=`<div style="padding:0 24px 24px">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;padding-top:16px">
+      <div class="card"><div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Entradas</div><div style="font-size:22px;font-weight:800;color:var(--gr)">${fmtK(totE)}</div></div>
+      <div class="card"><div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Saídas</div><div style="font-size:22px;font-weight:800;color:var(--rd)">${fmtK(totS)}</div></div>
+      <div class="card"><div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Saldo</div><div style="font-size:22px;font-weight:800;color:${totE-totS>=0?'var(--gr)':'var(--rd)'}">${fmtK(totE-totS)}</div></div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:12px;text-transform:capitalize">Entradas de ${nomeMes} <span style="font-family:var(--mono);font-size:11px;font-weight:400;color:var(--t3)">(${entradas.length})</span></div>
+      ${entradas.length>0?entradas.map(linhaFn).join(''):`<div style="font-family:var(--mono);font-size:11px;color:var(--t4)">Nenhuma entrada este mês.</div>`}
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:12px;text-transform:capitalize">Saídas de ${nomeMes} <span style="font-family:var(--mono);font-size:11px;font-weight:400;color:var(--t3)">(${saidas.length})</span></div>
+      ${saidas.length>0?saidas.map(linhaFn).join(''):`<div style="font-family:var(--mono);font-size:11px;color:var(--t4)">Nenhuma saída este mês.</div>`}
+    </div>
+  </div>`;
+}
+
+function renderFinLancamentos(){
+  const el=document.getElementById('fin-content-lancamentos');if(!el)return;
+  const mesesSet=new Set((lancs||[]).map(l=>{const d=new Date(l.data||l.criadoEm);return d.getFullYear()+'-'+d.getMonth();}));
+  mesesSet.add(new Date().getFullYear()+'-'+new Date().getMonth());
+  const mesesArr=[...mesesSet].map(s=>{const[a,m]=s.split('-').map(Number);return{ano:a,mes:m};}).sort((a,b)=>b.ano!==a.ano?b.ano-a.ano:b.mes-a.mes);
+  const lancMes=(lancs||[]).filter(l=>{const d=new Date(l.data||l.criadoEm);return d.getMonth()===_finLancMes&&d.getFullYear()===_finLancAno;});
+  const entradas=lancMes.filter(l=>l.tipo==='entrada'),saidas=lancMes.filter(l=>l.tipo==='saida');
+  const totE=entradas.reduce((a,l)=>a+(parseFloat(l.val)||0),0),totS=saidas.reduce((a,l)=>a+(parseFloat(l.val)||0),0);
+  const fmtV=v=>'R$'+parseFloat(v||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
+  const nomeSel=new Date(_finLancAno,_finLancMes).toLocaleString('pt-BR',{month:'long',year:'numeric'});
+  const nfCell=l=>{if(l.tipo!=='entrada')return '<span style="color:var(--t4)">—</span>';const ns=l.nf||'nao_emitida';return `<span style="font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:999px;background:${ns==='emitida'?'rgba(34,197,94,0.1)':ns==='nao_aplica'?'var(--s3)':'rgba(239,68,68,0.1)'};color:${ns==='emitida'?'#22C55E':ns==='nao_aplica'?'var(--t4)':'#EF4444'};cursor:${ns!=='emitida'?'pointer':'default'}" onclick="${ns!=='emitida'?`abrirEditarNF(${l.id})`:''}">${ns==='emitida'?'✓':ns==='nao_aplica'?'—':'⚠️'}</span>`;};
+  const sorted=[...lancMes].sort((a,b)=>new Date(b.data||b.criadoEm)-new Date(a.data||a.criadoEm));
+  el.innerHTML=`<div style="padding:0 24px 24px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-top:16px">
+      <div style="font-size:14px;font-weight:700;color:var(--t1)">Período:</div>
+      <select onchange="setFinLancMes(this.value)" style="height:36px;padding:0 12px;background:var(--s2);border:1px solid var(--e2);border-radius:var(--radius-md);font-family:var(--mono);font-size:12px;color:var(--t1);outline:none;cursor:pointer">
+        ${mesesArr.map(m=>{const nome=new Date(m.ano,m.mes).toLocaleString('pt-BR',{month:'long',year:'numeric'});const val=m.ano+'-'+m.mes;const sel=m.mes===_finLancMes&&m.ano===_finLancAno;return`<option value="${val}" ${sel?'selected':''}>${nome}</option>`;}).join('')}
+      </select>
+      <button onclick="openLanc()" style="margin-left:auto;height:36px;padding:0 16px;background:var(--y);border:none;border-radius:var(--radius-md);font-family:var(--mono);font-size:11px;font-weight:700;color:#080809;cursor:pointer">+ Novo lançamento</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+      <div class="card" style="border-color:rgba(34,197,94,0.15)"><div style="font-family:var(--mono);font-size:10px;color:var(--gr);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Entradas</div><div style="font-size:20px;font-weight:800;color:var(--gr)">${fmtV(totE)}</div><div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:3px">${entradas.length} lançamento${entradas.length!==1?'s':''}</div></div>
+      <div class="card" style="border-color:rgba(239,68,68,0.15)"><div style="font-family:var(--mono);font-size:10px;color:var(--rd);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Saídas</div><div style="font-size:20px;font-weight:800;color:var(--rd)">${fmtV(totS)}</div><div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:3px">${saidas.length} lançamento${saidas.length!==1?'s':''}</div></div>
+      <div class="card" style="border-color:${totE-totS>=0?'rgba(34,197,94,0.15)':'rgba(239,68,68,0.15)'}"><div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Resultado</div><div style="font-size:20px;font-weight:800;color:${totE-totS>=0?'var(--gr)':'var(--rd)'}">${totE-totS>=0?'+':''}${fmtV(Math.abs(totE-totS))}</div><div style="font-family:var(--mono);font-size:10px;color:${totE-totS>=0?'var(--gr)':'var(--rd)'};margin-top:3px">${totE-totS>=0?'Superávit':'Déficit'}</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;color:var(--t1);text-transform:capitalize;margin-bottom:14px">${nomeSel}</div>
+      ${lancMes.length===0?`<div style="font-family:var(--mono);font-size:11px;color:var(--t4);padding:12px 0">Nenhum lançamento em ${nomeSel}.</div>`:`
+      <div style="display:flex;gap:10px;padding:0 0 8px;border-bottom:1px solid var(--e1);font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.06em">
+        <div style="flex:2">Descrição</div><div style="width:80px">Data</div><div style="width:60px;text-align:right">NF</div><div style="width:90px;text-align:right">Valor</div><div style="width:24px"></div>
+      </div>
+      ${sorted.map(l=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--e1)">
+        <div style="flex:2;min-width:0"><div style="font-size:12.5px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.desc||'—'}</div></div>
+        <div style="width:80px;font-family:var(--mono);font-size:10px;color:var(--t3);white-space:nowrap;flex-shrink:0">${l.data?new Date(l.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):'—'}</div>
+        <div style="width:60px;text-align:right;flex-shrink:0">${nfCell(l)}</div>
+        <div style="width:90px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0;color:${l.tipo==='entrada'?'var(--gr)':'var(--rd)'}">${l.tipo==='entrada'?'+':'-'}${fmtV(l.val)}</div>
+        <div style="width:24px;flex-shrink:0"><button onclick="deleteLanc(${l.id})" style="background:none;border:none;color:var(--t4);cursor:pointer;font-size:14px;opacity:0;transition:opacity .12s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">×</button></div>
+      </div>`).join('')}`}
+    </div>
+  </div>`;
+}
+
+function setFinLancMes(val){const[ano,mes]=val.split('-').map(Number);_finLancMes=mes;_finLancAno=ano;renderFinLancamentos();}
+
+function deleteLanc(id){
+  showConfirm({titulo:'Remover lançamento',desc:'Esta ação não pode ser desfeita.',icone:'🗑️',labelOk:'Remover',onOk:()=>{
+    lancs=lancs.filter(l=>l.id!==id);save();renderFin();toast('Lançamento removido','var(--am)');
+  }});
+}
+
+function renderCustosFixosList(){
+  const el=document.getElementById('custos-fixos-list');
+  const totalEl=document.getElementById('custos-total-label');
+  if(!el)return;
+  const total=custosFixos.reduce((a,c)=>a+(parseFloat(c.val)||0),0);
+  if(totalEl)totalEl.textContent='Total: R$'+total.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})+'/mês';
+  if(custosFixos.length===0){el.innerHTML='<div style="font-family:var(--mono);font-size:11px;color:var(--t4);padding:8px 0">Nenhum custo fixo cadastrado.</div>';return;}
+  el.innerHTML=custosFixos.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--e1)">
+    <div style="flex:2;font-size:12.5px;color:var(--t1)">${c.nome}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--t2);white-space:nowrap">R$${parseFloat(c.val).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})}</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--t4);padding:2px 7px;background:var(--s3);border-radius:999px;white-space:nowrap">${c.cat||'Outros'}</div>
+    <button onclick="removeCustoFixoInline('${c.id}')" style="background:none;border:none;color:var(--t4);cursor:pointer;font-size:14px;padding:0 4px;opacity:0;transition:opacity .12s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">×</button>
+  </div>`).join('');
+}
+
+function addCustoFixoInline(){
+  const nome=document.getElementById('cf-nome-inline')?.value?.trim();
+  const val=document.getElementById('cf-val-inline')?.value;
+  const cat=document.getElementById('cf-cat-inline')?.value;
+  if(!nome||!val){toast('Preencha o nome e o valor','var(--am)');return;}
+  custosFixos.push({id:Date.now(),nome,val:parseFloat(val),cat:cat||'Outros',obs:''});
+  saveCustosFixos();
+  const nEl=document.getElementById('cf-nome-inline');const vEl=document.getElementById('cf-val-inline');
+  if(nEl){nEl.value='';nEl.focus();}if(vEl)vEl.value='';
+  renderCustosFixosList();renderSaudeMes();toast('Custo fixo adicionado ✓');
+}
+
+function removeCustoFixoInline(id){
+  custosFixos=custosFixos.filter(c=>String(c.id)!==String(id));
+  saveCustosFixos();renderCustosFixosList();renderSaudeMes();
 }
 
 // ── MODO RÁPIDO (OS-052) ─────────────────────────────
@@ -6918,11 +7090,7 @@ function abrirEditarNF(lancId){
   });
 }
 
-// Hook renderFin to also render custos fixos + saúde
-;(function(){
-  const _origRenderFin=renderFin;
-  renderFin=function(){_origRenderFin();renderCustosFixos();renderSaudeMes();};
-})();
+// renderCustosFixos e renderSaudeMes agora são chamadas por renderFinGeral()
 
 // ── PIPELINE ──────────────────────────────────────────
 function populatePropCli(){const sel=document.getElementById('prop-cli');if(!sel)return;sel.innerHTML='<option value="">Selecione...</option><option value="_novo">+ Novo cliente</option>';clients.forEach(c=>sel.innerHTML+=`<option value="${c.nome}">${c.nome}</option>`);}
