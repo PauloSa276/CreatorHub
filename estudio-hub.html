@@ -3109,7 +3109,7 @@ button:active{transform:scale(.97);transition:transform .08s}
     </div>
     <div class="version-indicator">
       <span class="version-dot"></span>
-      <span class="version-txt" id="version-label">v13.3.2</span>
+      <span class="version-txt" id="version-label">v13.4.0</span>
       <span class="version-date">20 abr 2026</span>
     </div>
     <div id="sb-backup-status" onclick="nav('config',null)" style="cursor:pointer;padding:5px 12px 8px;display:flex;align-items:center;gap:6px;transition:opacity .15s" title="Clique para fazer backup"></div>
@@ -3362,12 +3362,6 @@ button:active{transform:scale(.97);transition:transform .08s}
         <!-- OS-082: Portfolio Tracker -->
         <div class="card" id="portfolio-tracker"></div>
 
-        <!-- OS-088: Alerta teto faturamento -->
-        <div id="alerta-teto-dash" style="display:none"></div>
-
-        <!-- OS-089: NFs pendentes -->
-        <div id="nfs-pendentes-dash" style="display:none"></div>
-
         <!-- CALCULADORA DE PRAZO -->
         <div class="card">
           <div class="card-header">
@@ -3399,6 +3393,12 @@ button:active{transform:scale(.97);transition:transform .08s}
             <span style="font-size:20px;font-weight:800;letter-spacing:-.04em;color:#0C0C0E" id="e-res">28 dias</span>
           </div>
         </div>
+
+        <!-- OS-088: Alerta teto faturamento — full width, rodapé do dashboard -->
+        <div id="alerta-teto-dash" style="display:none;grid-column:1/-1"></div>
+
+        <!-- OS-089: NFs pendentes — full width, rodapé do dashboard -->
+        <div id="nfs-pendentes-dash" style="display:none;grid-column:1/-1"></div>
 
     </div>
     </div><!-- /dashboard padding -->
@@ -4125,30 +4125,19 @@ button:active{transform:scale(.97);transition:transform .08s}
       <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:8px">0 = proteção de tempo desativada</div>
     </div>
 
-    <!-- OS-088: Regime Fiscal -->
+    <!-- OS-088+092: Regime Fiscal — seletor compacto -->
     <div class="card" style="margin-bottom:11px">
       <div class="card-title">🏛️ Regime Fiscal</div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Configure seu regime tributário para receber alertas quando se aproximar do teto de faturamento anual.</div>
-      <div id="regime-options-wrap" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"></div>
-      <div id="regime-info-box" style="display:none;padding:12px 14px;border-radius:var(--radius-md);border:1px solid var(--e2);background:var(--s2)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-          <div>
-            <div id="regime-info-nome" style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:3px"></div>
-            <div id="regime-info-desc" style="font-family:var(--mono);font-size:11px;color:var(--t3)"></div>
-          </div>
-          <div style="text-align:right;flex-shrink:0">
-            <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:2px">Teto anual</div>
-            <div id="regime-info-limite" style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--y)"></div>
-          </div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.5">Define o teto de faturamento monitorado pela plataforma.</div>
+      <div id="cfg-regime-select"></div>
+      <div id="regime-aviso" style="display:none;margin-top:10px;padding:10px 12px;border-radius:var(--radius-md);border-left:3px solid var(--am);background:rgba(245,158,11,0.06);font-size:12px;color:var(--t2);line-height:1.5"></div>
+      <div id="regime-progress-block" style="display:none;margin-top:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--t4)">Faturamento anual atual</span>
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--t2)" id="regime-fat-pct"></span>
         </div>
-        <div style="margin-top:10px" id="regime-progress-wrap">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--t4)">Faturamento anual atual</span>
-            <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--t2)" id="regime-fat-pct"></span>
-          </div>
-          <div style="height:6px;background:var(--e2);border-radius:999px;overflow:hidden">
-            <div id="regime-fat-bar" style="height:100%;border-radius:999px;transition:width .4s ease"></div>
-          </div>
+        <div style="height:6px;background:var(--e2);border-radius:999px;overflow:hidden">
+          <div id="regime-fat-bar" style="height:100%;border-radius:999px;transition:width .4s ease"></div>
         </div>
       </div>
     </div>
@@ -4176,11 +4165,22 @@ button:active{transform:scale(.97);transition:transform .08s}
 // ═══════════════════════════════════════════════════════
 
 // ── DADOS & CONSTANTES ──────────────────────────────────
-const APP_VERSION='v13.3.2';
+const APP_VERSION='v13.4.0';
 const APP_DATE='29 abr 2026';
 
 // ── CHANGELOG — adicionar entrada a cada sprint ────────
 const CHANGELOG=[
+  {
+    versao:'v13.4.0',
+    data:'29 abr 2026',
+    titulo:'Seletores Compactos',
+    emoji:'⚡',
+    novidades:[
+      {ico:'⚡',titulo:'SelectCompact',desc:'Seletores de uma linha com dropdown — substituem os grids grandes. Menos espaço, mesma clareza.'},
+      {ico:'🏛️',titulo:'Regime Fiscal compacto',desc:'Card de Configurações e passo do onboarding agora usam o seletor compacto com dropdown e chevron.'},
+      {ico:'📐',titulo:'Dashboard reequilibrado',desc:'Alertas fiscais e NFs pendentes reposicionados no rodapé do dashboard, sem deslocar a calculadora de prazo.'},
+    ]
+  },
   {
     versao:'v13.3.0',
     data:'28 abr 2026',
@@ -6690,32 +6690,105 @@ function renderSaudeMes(){
   <div class="xts"><div class="xfs" style="width:${pct}%;background:${corRes}"></div></div>
   ${pontoEq>0&&receitaMes<pontoEq?`<div style="font-family:var(--mono);font-size:var(--fs-2xs);color:var(--am);margin-top:8px">Você precisa faturar mais ${fmt(pontoEq-receitaMes)} para cobrir tudo.</div>`:''}`;
 }
+// ── OS-092: SELECT COMPACT — componente reutilizável ─
+function renderSelectCompact(containerId,opcoes,valorAtual,onChange){
+  const container=document.getElementById(containerId);if(!container)return;
+  const sel=opcoes.find(o=>o.id===valorAtual)||opcoes[0];
+  container.innerHTML=`
+    <div style="position:relative" id="${containerId}-wrap">
+      <div onclick="toggleSelectCompact('${containerId}')"
+        style="display:flex;align-items:center;gap:10px;height:40px;padding:0 12px;background:var(--s2);border:1px solid var(--e2);border-radius:var(--radius-md);cursor:pointer;transition:border-color .12s;user-select:none"
+        onmouseenter="this.style.borderColor='var(--e3)'" onmouseleave="this.style.borderColor='var(--e2)'">
+        <div style="width:8px;height:8px;border-radius:50%;background:${sel.cor||'var(--y)'};flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--t1);letter-spacing:-.01em">${sel.label}</div>
+          ${sel.sublabel?`<div style="font-family:var(--mono);font-size:10px;color:var(--t3)">${sel.sublabel}</div>`:''}
+        </div>
+        <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--t3);flex-shrink:0;transition:transform .15s" id="${containerId}-chevron"></i>
+      </div>
+      <div id="${containerId}-dropdown" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:50;background:var(--s2);border:1px solid var(--e2);border-radius:var(--radius-md);overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.3)">
+        ${opcoes.map(op=>`
+          <div onclick="selecionarSelectCompact('${containerId}','${op.id}')"
+            style="display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;transition:background .1s;background:${op.id===valorAtual?'var(--s3)':'transparent'}"
+            onmouseenter="this.style.background='var(--s3)'" onmouseleave="this.style.background='${op.id===valorAtual?'var(--s3)':'transparent'}'">
+            <div style="width:8px;height:8px;border-radius:50%;background:${op.cor||'var(--t3)'};flex-shrink:0"></div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:${op.id===valorAtual?'700':'500'};color:${op.id===valorAtual?'var(--t1)':'var(--t2)'}">${op.label}</div>
+              ${op.sublabel?`<div style="font-family:var(--mono);font-size:10px;color:var(--t3)">${op.sublabel}</div>`:''}
+            </div>
+            ${op.id===valorAtual?`<i data-lucide="check" style="width:13px;height:13px;color:var(--y);flex-shrink:0"></i>`:''}
+          </div>`).join('')}
+      </div>
+    </div>`;
+  window[`_sc_cb_${containerId}`]=onChange;
+  window[`_sc_opts_${containerId}`]=opcoes;
+  refreshIcons();
+}
+function toggleSelectCompact(id){
+  const dropdown=document.getElementById(`${id}-dropdown`);
+  const chevron=document.getElementById(`${id}-chevron`);
+  if(!dropdown)return;
+  const isOpen=dropdown.style.display==='block';
+  dropdown.style.display=isOpen?'none':'block';
+  if(chevron)chevron.style.transform=isOpen?'rotate(0)':'rotate(180deg)';
+  if(!isOpen){
+    setTimeout(()=>{
+      document.addEventListener('click',function closeOut(e){
+        const wrap=document.getElementById(`${id}-wrap`);
+        if(wrap&&!wrap.contains(e.target)){
+          dropdown.style.display='none';
+          if(chevron)chevron.style.transform='rotate(0)';
+          document.removeEventListener('click',closeOut);
+        }
+      });
+    },0);
+  }
+}
+function selecionarSelectCompact(id,novoId){
+  const dropdown=document.getElementById(`${id}-dropdown`);
+  const chevron=document.getElementById(`${id}-chevron`);
+  if(dropdown)dropdown.style.display='none';
+  if(chevron)chevron.style.transform='rotate(0)';
+  const cb=window[`_sc_cb_${id}`];
+  const opts=window[`_sc_opts_${id}`];
+  if(cb)cb(novoId);
+  if(opts)renderSelectCompact(id,opts,novoId,cb);
+}
+
 // ── OS-088: REGIME FISCAL ────────────────────────────
 function getRegimeFiscalId(){return localStorage.getItem('ph4-regime-fiscal')||'mei';}
 function setRegimeFiscal(id){
   localStorage.setItem('ph4-regime-fiscal',id);
-  renderRegimeOptions();
-  atualizarRegimeInfo();
+  renderCfgRegimeFiscal(); // re-renderiza seletor compacto com novo valor
 }
 function calcFaturamentoAnualAtual(){
   const y=new Date().getFullYear();
   return lancs.filter(l=>l.tipo==='entrada'&&!_isRejected(l)&&new Date(l.data).getFullYear()===y).reduce((s,l)=>s+(l.val||0),0);
 }
-function renderRegimeOptions(){
-  const wrap=document.getElementById('regime-options-wrap');if(!wrap)return;
+function _regimeOpcoes(){
+  return REGIMES_FISCAIS.map(r=>({
+    id:r.id,
+    label:r.n,
+    sublabel:r.limite>0?`até ${fmt(r.limite).replace('R$ ','R$ ')}/ano`:r.desc,
+    cor:r.cor
+  }));
+}
+function renderCfgRegimeFiscal(){
   const atual=getRegimeFiscalId();
-  wrap.innerHTML=REGIMES_FISCAIS.map(r=>{
-    const sel=r.id===atual;
-    return `<div onclick="setRegimeFiscal('${r.id}')" style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius-md);border:1px solid ${sel?r.cor:'var(--e2)'};background:${sel?'rgba('+hexToRgb(r.cor)+',0.08)':'var(--s2)'};cursor:pointer;transition:all .15s">
-      <div style="width:10px;height:10px;border-radius:50%;background:${r.cor};flex-shrink:0;box-shadow:${sel?'0 0 0 3px rgba('+hexToRgb(r.cor)+',0.25)':'none'}"></div>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:${sel?'600':'400'};color:${sel?'var(--t1)':'var(--t2)'}">${r.n}</div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:1px">${r.desc}</div>
-      </div>
-      ${sel?'<span style="font-family:var(--mono);font-size:10px;color:'+r.cor+';font-weight:700">✓</span>':''}
-    </div>`;
-  }).join('');
+  renderSelectCompact('cfg-regime-select',_regimeOpcoes(),atual,(novoId)=>setRegimeFiscal(novoId));
   atualizarRegimeInfo();
+}
+// Alias para compatibilidade (chamado pelo nav())
+function renderRegimeOptions(){renderCfgRegimeFiscal();}
+
+function renderObRegimeFiscal(){
+  const opcoes=REGIMES_FISCAIS.slice(0,5).map(r=>({
+    id:r.id,
+    label:r.n,
+    sublabel:r.limite>0?`até ${fmt(r.limite).replace('R$ ','R$ ')}/ano`:'Sem teto definido',
+    cor:r.cor
+  }));
+  renderSelectCompact('ob-regime-select',opcoes,_obRegime,(novoId)=>{_obRegime=novoId;});
 }
 function hexToRgb(hex){
   const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
@@ -6724,23 +6797,23 @@ function hexToRgb(hex){
 function atualizarRegimeInfo(){
   const id=getRegimeFiscalId();
   const r=REGIMES_FISCAIS.find(x=>x.id===id);
-  const box=document.getElementById('regime-info-box');if(!box||!r)return;
-  box.style.display='block';
-  const nEl=document.getElementById('regime-info-nome');if(nEl)nEl.textContent=r.n;
-  const dEl=document.getElementById('regime-info-desc');if(dEl)dEl.textContent=r.desc;
-  const lEl=document.getElementById('regime-info-limite');
-  const pw=document.getElementById('regime-progress-wrap');
-  if(r.limite>0){
-    if(lEl)lEl.textContent=fmt(r.limite)+'/ano';
-    const fat=calcFaturamentoAnualAtual();
-    const pct=Math.min(100,Math.round(fat/r.limite*100));
-    const cor=pct>=90?'var(--rd)':pct>=70?'var(--am)':r.cor;
-    const fatPct=document.getElementById('regime-fat-pct');if(fatPct)fatPct.textContent=fmt(fat)+' · '+pct+'%';
-    const bar=document.getElementById('regime-fat-bar');if(bar){bar.style.width=pct+'%';bar.style.background=cor;}
-    if(pw)pw.style.display='block';
-  }else{
-    if(lEl)lEl.textContent='Sem teto definido';
-    if(pw)pw.style.display='none';
+  // Aviso de regime
+  const avEl=document.getElementById('regime-aviso');
+  if(avEl){
+    if(r?.aviso){avEl.style.display='block';avEl.textContent=r.aviso;}
+    else avEl.style.display='none';
+  }
+  // Barra de progresso de faturamento
+  const pb=document.getElementById('regime-progress-block');
+  if(pb){
+    if(r?.limite>0){
+      pb.style.display='block';
+      const fat=calcFaturamentoAnualAtual();
+      const pct=Math.min(100,Math.round(fat/r.limite*100));
+      const cor=pct>=90?'var(--rd)':pct>=70?'var(--am)':r.cor;
+      const fatPct=document.getElementById('regime-fat-pct');if(fatPct)fatPct.textContent=fmt(fat)+' · '+pct+'%';
+      const bar=document.getElementById('regime-fat-bar');if(bar){bar.style.width=pct+'%';bar.style.background=cor;}
+    }else pb.style.display='none';
   }
 }
 function renderAlertaTeto(){
@@ -8966,27 +9039,13 @@ function _obRender(){
     content=`${stepLabel}${dots}
       <div style="font-size:48px;margin-bottom:16px">🏛️</div>
       <div style="font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--t1);margin-bottom:6px">Sua situação fiscal</div>
-      <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:20px;line-height:1.6">Isso ajuda a plataforma a monitorar seu teto de faturamento e evitar surpresas.</div>
-      <div id="ob-regime-options" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left">
-        <div onclick="setObRegime('mei')" id="ob-regime-mei" style="padding:10px 12px;border-radius:var(--radius-md);border:2px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);cursor:pointer;transition:all .15s">
-          <div style="font-size:13px;font-weight:800;color:#22C55E;margin-bottom:2px">MEI</div>
-          <div style="font-family:var(--mono);font-size:9px;color:#22C55E;opacity:.8">até R$81k/ano</div>
+      <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--t3);margin-bottom:16px;line-height:1.6">Isso ajuda a plataforma a monitorar seu teto de faturamento e evitar surpresas.</div>
+      <div style="margin-top:4px">
+        <label style="font-family:var(--mono);font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Situação fiscal</label>
+        <div id="ob-regime-select"></div>
+        <div style="text-align:center;margin-top:8px">
+          <span onclick="selecionarSelectCompact('ob-regime-select','outro')" style="font-family:var(--mono);font-size:10px;color:var(--t4);cursor:pointer;text-decoration:underline;text-underline-offset:3px">Outro ou configurar depois</span>
         </div>
-        <div onclick="setObRegime('me')" id="ob-regime-me" style="padding:10px 12px;border-radius:var(--radius-md);border:2px solid var(--e2);background:var(--s2);cursor:pointer;transition:all .15s">
-          <div style="font-size:13px;font-weight:800;color:var(--t2);margin-bottom:2px">ME</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--t3)">até R$360k/ano</div>
-        </div>
-        <div onclick="setObRegime('epp')" id="ob-regime-epp" style="padding:10px 12px;border-radius:var(--radius-md);border:2px solid var(--e2);background:var(--s2);cursor:pointer;transition:all .15s">
-          <div style="font-size:13px;font-weight:800;color:var(--t2);margin-bottom:2px">EPP</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--t3)">até R$4,8M/ano</div>
-        </div>
-        <div onclick="setObRegime('autonomo')" id="ob-regime-autonomo" style="padding:10px 12px;border-radius:var(--radius-md);border:2px solid var(--e2);background:var(--s2);cursor:pointer;transition:all .15s">
-          <div style="font-size:13px;font-weight:800;color:var(--t2);margin-bottom:2px">Autônomo</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--t3)">Pessoa Física</div>
-        </div>
-      </div>
-      <div style="text-align:center;margin-top:10px">
-        <span onclick="setObRegime('outro')" style="font-family:var(--mono);font-size:10px;color:var(--t4);cursor:pointer;text-decoration:underline;text-underline-offset:3px">Outro regime ou prefiro configurar depois</span>
       </div>
       <div style="display:flex;gap:8px;margin-top:20px">
         <button class="btn-g" style="flex:1" onclick="_obFinish()">Entrar no hub</button>
@@ -8994,6 +9053,8 @@ function _obRender(){
       </div>`;
   }
   ov.querySelector('.ob-content').innerHTML=content;
+  // Após injetar HTML, inicializar seletores do passo 3
+  if(_obStep===3)setTimeout(()=>renderObRegimeFiscal(),0);
 }
 function _obNext1(){
   const studio=document.getElementById('ob-studio').value.trim();
@@ -9020,25 +9081,8 @@ function _obNext2(){
   save();
   _obStep=3;_obRender();
 }
-function setObRegime(id){
-  _obRegime=id;
-  const cores={
-    mei:     {border:'rgba(34,197,94,0.4)', bg:'rgba(34,197,94,0.08)', text:'#22C55E'},
-    me:      {border:'rgba(59,130,246,0.4)',bg:'rgba(59,130,246,0.08)',text:'#3B82F6'},
-    epp:     {border:'rgba(139,92,246,0.4)',bg:'rgba(139,92,246,0.08)',text:'#8B5CF6'},
-    autonomo:{border:'rgba(245,158,11,0.4)',bg:'rgba(245,158,11,0.08)',text:'#F59E0B'},
-    outro:   {border:'var(--e2)',           bg:'var(--s2)',            text:'var(--t2)'},
-  };
-  ['mei','me','epp','autonomo'].forEach(r=>{
-    const btn=document.getElementById('ob-regime-'+r);if(!btn)return;
-    const active=r===id;
-    const c=active?(cores[id]||cores.outro):null;
-    btn.style.borderColor=active?c.border:'var(--e2)';
-    btn.style.background=active?c.bg:'var(--s2)';
-    const titulo=btn.querySelector('div:first-child');if(titulo)titulo.style.color=active?c.text:'var(--t2)';
-    const sub=btn.querySelector('div:last-child');if(sub)sub.style.color=active?c.text:'var(--t3)';
-  });
-}
+// setObRegime usado pelo link "Outro ou configurar depois" via selecionarSelectCompact
+function setObRegime(id){_obRegime=id;}
 function _obFinish(){
   // Garantir persistência de todos os dados criados no onboarding
   save();saveExtra();
