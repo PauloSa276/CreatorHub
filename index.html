@@ -3356,19 +3356,16 @@ button:active{transform:scale(.97);transition:transform .08s}
           <div id="agenda-hoje"></div>
         </div>
 
-        <!-- ALERTAS — span 2 -->
-        <div class="card bento-span2">
+        <!-- ALERTAS — full width -->
+        <div class="card" style="grid-column:1/-1">
           <div class="card-header">
             <div class="card-title">Alertas</div>
           </div>
           <div id="alertas"></div>
         </div>
 
-        <!-- OS-082: Portfolio Tracker -->
-        <div class="card" id="portfolio-tracker"></div>
-
-        <!-- CALCULADORA DE PRAZO — full width para preencher grid -->
-        <div class="card" style="grid-column:1/-1">
+        <!-- CALCULADORA DE PRAZO — span 2 (lado a lado com portfolio) -->
+        <div class="card bento-span2">
           <div class="card-header">
             <div class="card-title">Calculadora de prazo</div>
           </div>
@@ -3398,6 +3395,9 @@ button:active{transform:scale(.97);transition:transform .08s}
             <span style="font-size:20px;font-weight:800;letter-spacing:-.04em;color:#0C0C0E" id="e-res">28 dias</span>
           </div>
         </div>
+
+        <!-- OS-082: Portfolio Tracker — span 1 (ao lado da calculadora) -->
+        <div class="card" id="portfolio-tracker"></div>
 
         <!-- OS-088: Alerta teto faturamento — full width, rodapé do dashboard -->
         <div id="alerta-teto-dash" style="display:none;grid-column:1/-1"></div>
